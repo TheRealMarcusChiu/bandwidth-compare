@@ -1,0 +1,16 @@
+{
+  "name": "bandwidth-compare",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BANDWIDTH / compare: static site comparing peak interface bandwidth",
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "test": "node --test \"tests/unit/*.test.mjs\"",
+    "test:e2e": "playwright test",
+    "test:all": "npm test && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
+  }
+}
