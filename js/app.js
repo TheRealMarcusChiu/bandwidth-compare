@@ -5,6 +5,7 @@ import {
   UNITS, valueIn, formatValue, humanScale, formatRatio, compare, ratioSentence, ratioShort,
   parseState, serializeState, buildIndex, search, SORTS, DEFAULT_SORT, sortItems,
 } from './compare.js';
+import { MODES, viewOf } from './mode.js';
 import { Combobox } from './combobox.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -22,12 +23,18 @@ const el = (tag, props = {}, ...kids) => {
 
 const index = buildIndex(INTERFACES);
 const parsed = parseState(location.search, BY_ID, { a: DEFAULT_A, b: DEFAULT_B });
-const state = { a: parsed.a, b: parsed.b, unit: parsed.unit };
+const state = { a: parsed.a, b: parsed.b, unit: parsed.unit, mode: parsed.mode };
+/** Display view of a catalog entry in the selected mode. Everything shown goes through this. */
+const V = (item) => viewOf(item, state.mode);
+const modeLabel = () => MODES[state.mode].label;
 
 // ------------------------------------------------------------ pickers
 
 const unitLabel = () => UNITS[state.unit].label;
-const meta = (item) => `${formatValue(valueIn(item, state.unit))} ${unitLabel()} · ${BASES[item.basis].short}`;
+const meta = (item) => {
+  const v = V(item);
+  return `${formatValue(valueIn(v, state.unit))} ${unitLabel()} · ${BASES[v.basis].short}`;
+};
 
 const pickers = {
   a: new Combobox($('.picker[data-side="a"] .cb'), { index, renderMeta: meta, onSelect: (i) => set({ a: i.id }) }),
@@ -81,9 +88,11 @@ function renderDetail(node, item, side) {
     el('h3', { class: 'detail-name' }, el('span', { class: `dot dot-${side}`, 'aria-hidden': 'true' }), `${side.toUpperCase()} · ${item.name}`),
     el('dl', { class: 'detail-list' }, ...[
       row('Value', `${formatValue(item.GBps)} GB/s = ${formatValue(item.Gbps)} Gb/s`),
+      row('Figures', item.modeNote),
       row('Formula', el('code', { class: 'formula', text: `${item.formula} = ${formatValue(item.GBps)} GB/s` })),
       row('Basis', el('span', { class: `badge badge-basis basis-${item.basis}`, text: basis.short }), ` ${basis.label}. ${basis.description}`),
       row('Width', item.width.label),
+      item.channels ? row('Channels', `${item.channels} × ${item.channelBits}-bit channel${item.channels === 1 ? '' : 's'} (${item.width.count}-bit aggregate)`) : null,
       item.encoding ? row('Encoding', item.encoding) : null,
       item.asymmetric ? row('Reverse direction', reverseText(item)) : null,
       row('Status', STATUSES[item.status]),
@@ -116,12 +125,13 @@ function formatPct(p) {
 }
 
 function render() {
-  const a = BY_ID.get(state.a);
-  const b = BY_ID.get(state.b);
+  // The pickers hold catalog entries; everything displayed uses the mode's view.
+  pickers.a.setSelected(BY_ID.get(state.a));
+  pickers.b.setSelected(BY_ID.get(state.b));
+  const a = V(BY_ID.get(state.a));
+  const b = V(BY_ID.get(state.b));
   const cmp = compare(a, b);
 
-  pickers.a.setSelected(a);
-  pickers.b.setSelected(b);
   pickers.a.refresh();
   pickers.b.refresh();
 
@@ -135,12 +145,13 @@ function render() {
   rn.classList.toggle('is-even', cmp.same || cmp.equalValue);
   rn.style.setProperty('--chars', String(Math.max(rn.textContent.length, 4)));
   $('#ratio-text').textContent = ratioShort(cmp);
+  $('#ratio-mode').textContent = `${modeLabel()} figures:`;
   $('#ratio-full').textContent = ratioSentence(a, b, cmp);
 
   renderBar('a', a, cmp.widthA);
   renderBar('b', b, cmp.widthB);
   $('#bars').setAttribute('aria-label',
-    `Bar comparison: ${a.name} ${formatValue(valueIn(a, state.unit))} ${unitLabel()}, ${b.name} ${formatValue(valueIn(b, state.unit))} ${unitLabel()}.`);
+    `Bar comparison, ${modeLabel().toLowerCase()}: ${a.name} ${formatValue(valueIn(a, state.unit))} ${unitLabel()}, ${b.name} ${formatValue(valueIn(b, state.unit))} ${unitLabel()}.`);
 
   // Each notice: a short visible flag in the comparison, the full explanation in details.
   const notes = [];
@@ -149,14 +160,24 @@ function render() {
     notes.push(['warn', 'Mixed basis: not like for like',
       `A is ${BASES[a.basis].label.toLowerCase()}; B is ${BASES[b.basis].label.toLowerCase()}. The ratio compares different kinds of number.`]);
   }
+  // Sides the selected mode cannot apply to (memory never counts). The compact flag is
+  // skipped when "Mixed basis" already flags the comparison; details always explain.
+  const fixed = [['A', a], ['B', b]].filter(([, v]) => !v.modeApplied && v.modeSupport !== 'memory' && !(cmp.same && v === b));
+  if (fixed.length) {
+    const what = state.mode === 'raw' ? 'raw signaling' : 'encoding adjustment';
+    notes.push(['info', `${fixed.map(([s]) => s).join(', ')}: ${what} unavailable`,
+      fixed.map(([s, v]) => `${s}: ${v.modeNote}`).join(' '), cmp.mixedBasis]);
+  }
   if (cmp.anyAsymmetric) notes.push(['info', 'Asymmetric link', 'Only the faster direction is compared. Directions are never added together.']);
   if (cmp.anyUnverified) notes.push(['warn', 'Unverified figure', 'At least one side is user-supplied seed data that has not been checked against a source.']);
   if (!cmp.same && cmp.ratio >= 1000) notes.push(['info', 'Extreme difference', 'At linear scale the smaller bar may be too short to see. The numbers above are exact.']);
-  $('#notices').replaceChildren(...notes.map(([kind, title]) => el('p', { class: `flag flag-${kind}`, role: 'note', text: title })));
+  $('#notices').replaceChildren(...notes.filter(([, , , detailsOnly]) => !detailsOnly)
+    .map(([kind, title]) => el('p', { class: `flag flag-${kind}`, role: 'note', text: title })));
   $('#notice-details').replaceChildren(...notes.map(([kind, title, body]) =>
     el('div', { class: `notice notice-${kind}` }, el('p', { class: 'notice-title', text: `${title}.` }), el('p', { class: 'notice-body', text: body }))));
 
   document.querySelectorAll('input[name="unit"]').forEach((r) => { r.checked = r.value === state.unit; });
+  document.querySelectorAll('input[name="mode"]').forEach((r) => { r.checked = r.value === state.mode; });
   $('#cat-unit').textContent = unitLabel();
   renderCatalog();
   document.title = `${a.name} vs ${b.name} · BANDWIDTH / compare`;
@@ -177,7 +198,7 @@ function renderChips() {
 }
 
 function renderCatalog() {
-  const rows = sortItems(search(index, catState.q).filter((i) => catState.cat === 'all' || i.category === catState.cat), catState.sort);
+  const rows = sortItems(search(index, catState.q).filter((i) => catState.cat === 'all' || i.category === catState.cat).map(V), catState.sort);
   const grouped = GROUPED_SORTS.has(catState.sort);
   $('#cat-empty').hidden = rows.length > 0;
   const body = $('#cat-body');
@@ -207,7 +228,7 @@ function renderCatalog() {
   const [col, dir] = catState.sort.split('-');
   document.querySelectorAll('.cat thead th[aria-sort]').forEach((th) => th.removeAttribute('aria-sort'));
   if (SORT_COLUMN[col]) $(SORT_COLUMN[col]).setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
-  $('#cat-caption').textContent = `All interfaces, values in the selected unit, ${catState.sort === DEFAULT_SORT ? 'in catalog order' : `sorted by ${SORTS[catState.sort].toLowerCase()}`}`;
+  $('#cat-caption').textContent = `All interfaces, ${modeLabel().toLowerCase()} figures in the selected unit, ${catState.sort === DEFAULT_SORT ? 'in catalog order' : `sorted by ${SORTS[catState.sort].toLowerCase()}`}`;
   $('#catalog-count').textContent = rows.length === INTERFACES.length ? `${INTERFACES.length} interfaces` : `${rows.length} of ${INTERFACES.length}`;
 }
 
@@ -239,6 +260,8 @@ $('#swap').addEventListener('click', () => set({ a: state.b, b: state.a }));
 
 document.querySelectorAll('input[name="unit"]').forEach((r) =>
   r.addEventListener('change', () => { if (r.checked) set({ unit: r.value }); }));
+document.querySelectorAll('input[name="mode"]').forEach((r) =>
+  r.addEventListener('change', () => { if (r.checked) set({ mode: r.value }); }));
 
 let toastTimer;
 function toast(msg) {
@@ -291,9 +314,10 @@ let resizeRaf;
 window.addEventListener('resize', () => {
   cancelAnimationFrame(resizeRaf);
   resizeRaf = requestAnimationFrame(() => {
-    const cmp = compare(BY_ID.get(state.a), BY_ID.get(state.b));
-    renderBar('a', BY_ID.get(state.a), cmp.widthA);
-    renderBar('b', BY_ID.get(state.b), cmp.widthB);
+    const [a, b] = [V(BY_ID.get(state.a)), V(BY_ID.get(state.b))];
+    const cmp = compare(a, b);
+    renderBar('a', a, cmp.widthA);
+    renderBar('b', b, cmp.widthB);
   });
 });
 
@@ -303,7 +327,9 @@ if (parsed.errors.length) {
   const n = $('#url-notice');
   n.hidden = false;
   n.textContent = parsed.errors
-    .map((e) => (e.key === 'u' ? `Unknown unit “${e.value}”, using GB/s.` : `Unknown interface “${e.value}” for ${e.key.toUpperCase()}, showing the default.`))
+    .map((e) => (e.key === 'u' ? `Unknown unit “${e.value}”, using GB/s.`
+      : e.key === 'm' ? `Unknown mode “${e.value}”, using ${modeLabel()}.`
+        : `Unknown interface “${e.value}” for ${e.key.toUpperCase()}, showing the default.`))
     .join(' ');
 }
 $('#count').textContent = String(INTERFACES.length);

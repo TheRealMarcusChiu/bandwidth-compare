@@ -23,6 +23,11 @@
         <label><input type="radio" name="unit" value="GBps" checked><span>GB/s</span></label>
         <label><input type="radio" name="unit" value="Gbps"><span>Gb/s</span></label>
       </fieldset>
+      <fieldset class="seg seg-mode" aria-label="Figures">
+        <legend class="vh">Figures</legend>
+        <label title="Raw signaling: line rate before encoding"><input type="radio" name="mode" value="raw"><span><span class="seg-long">Raw signaling</span><span class="seg-short" aria-hidden="true">Raw</span></span></label>
+        <label title="Encoding-adjusted: known line code subtracted where documented"><input type="radio" name="mode" value="adjusted" checked><span><span class="seg-long">Encoding-adjusted</span><span class="seg-short" aria-hidden="true">Enc-adj</span></span></label>
+      </fieldset>
       <button type="button" class="btn" id="share"><svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="btn-label">Copy link</span></button>
     </div>
   </header>
@@ -98,7 +103,7 @@
     <details class="drawer cmp-details" id="cmp-details">
       <summary><span class="drawer-title">Comparison details</span><span class="drawer-meta">Formulas, notes, caveats</span></summary>
       <div class="drawer-body">
-        <p class="ratio-full" id="ratio-full"></p>
+        <p class="ratio-full"><span class="ratio-mode" id="ratio-mode"></span> <span id="ratio-full"></span></p>
         <div class="detail-sides">
           <article class="detail" id="detail-a"></article>
           <article class="detail" id="detail-b"></article>
@@ -135,6 +140,7 @@
           <ul class="rules">
             <li><strong>Peak, not throughput.</strong> Every figure is a theoretical or advertised ceiling. Real transfers are lower.</li>
             <li><strong>One direction.</strong> Full-duplex links are never summed. Asymmetric modes show the faster direction and state the reverse rate.</li>
+            <li><strong>Raw signaling or encoding-adjusted.</strong> The <em>Figures</em> switch applies to every number on the page. Encoding-adjusted (default) subtracts a documented line code (8b/10b, 128b/130b) from PCIe 1.0–5.0, SATA, SD UHS-II/III and the connectors that carry them; raw signaling shows their line rate. It is still not usable throughput: packet and protocol overhead remain. Memory is the same in both. Rows with no recorded line-code factor (PCIe 6.0+, SAS, DisplayPort, HDMI, USB, Thunderbolt, Ethernet) stay as listed, and their details say so.</li>
             <li><strong>Decimal units.</strong> 1 GB/s = 10<sup>9</sup> bytes/s. 1 Gb/s = 10<sup>9</sup> bits/s. GB/s = Gb/s ÷ 8.</li>
             <li><strong>Memory.</strong> Data rate per pin × bus width ÷ 8. DDR and LPDDR use a 64-bit channel (LPDDR normalized), except LPDDR6 at 24 bits. HBM is per stack.</li>
             <li><strong>Connectors are not speeds.</strong> U.2, U.3 and M.2 are form factors and NVMe is a protocol; their rows repeat the underlying PCIe or SATA link.</li>

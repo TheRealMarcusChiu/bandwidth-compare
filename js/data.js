@@ -456,21 +456,42 @@ const gddr = [
   }),
 );
 
-/** DDR / LPDDR: MT/s × 64 bits (normalized channel) ÷ 8. */
-function ddrEntries(family, idPrefix, rates, { status = () => 'standard', verification = () => 'sourced', sources = () => ['jedec-ddr'], notes = 'One 64-bit channel (DIMM, no ECC).', aliases = [], width = 64, label = (r) => `${family}-${r}` } = {}) {
-  return rates.map((rate) =>
-    memory({
-      id: `${idPrefix}-${rate}`,
-      name: label(rate),
-      family,
-      perPinMbps: rate,
-      widthBits: width,
-      status: status(rate),
-      verification: verification(rate),
-      sources: sources(rate),
-      aliases: [`${family} ${rate}`, `${family}${rate}`, `PC ${rate}`, ...aliases],
-      notes,
-      formula: `${rate} MT/s × ${width} bits ÷ 8`,
+/** DDR channel configurations: N × 64-bit channels. */
+export const DDR_CHANNELS = [1, 2, 4, 8, 12, 16];
+const CHANNEL_BITS = 64;
+
+const channelLabel = (n) => `${n} channel${n === 1 ? '' : 's'}`;
+const CHANNEL_WORDS = { 1: ['single channel'], 2: ['dual channel'], 4: ['quad channel'], 8: ['octa channel', 'eight channel'], 12: ['twelve channel'], 16: ['sixteen channel'] };
+
+/**
+ * DDR–DDR5: MT/s × 64 bits × N channels ÷ 8, one row per channel count.
+ * The 1-channel row keeps the original id (`ddr5-6400`) so old share links work;
+ * the others get a stable suffix (`ddr5-6400-8ch`). Every configuration inherits
+ * the rate's status, verification and sources: it is arithmetic, not a platform claim.
+ */
+function ddrEntries(family, idPrefix, rates, { status = () => 'standard', verification = () => 'sourced', sources = () => ['jedec-ddr'], notes = 'One 64-bit channel (DIMM, no ECC).', aliases = [], label = (r) => `${family}-${r}` } = {}) {
+  return rates.flatMap((rate) =>
+    DDR_CHANNELS.map((n) => {
+      const bits = CHANNEL_BITS * n;
+      return memory({
+        id: n === 1 ? `${idPrefix}-${rate}` : `${idPrefix}-${rate}-${n}ch`,
+        name: `${label(rate)} · ${channelLabel(n)}`,
+        family,
+        perPinMbps: rate,
+        widthBits: bits,
+        width: { count: bits, label: n === 1 ? `${bits}-bit` : `${bits}-bit (${n} × ${CHANNEL_BITS})` },
+        channels: n,
+        channelBits: CHANNEL_BITS,
+        status: status(rate),
+        verification: verification(rate),
+        sources: sources(rate),
+        aliases: [`${family} ${rate}`, `${family}${rate}`, `PC ${rate}`, ...aliases, ...CHANNEL_WORDS[n]],
+        notes: n === 1
+          ? notes
+          : `${notes} Theoretical ${n}-channel configuration: ${n} × ${CHANNEL_BITS}-bit channels = ${bits}-bit aggregate. ` +
+            `Not a claim that any processor supports ${channelLabel(n)} of ${family}; inherits the ${family}-${rate} rate's status and source.`,
+        formula: `${rate} MT/s × ${CHANNEL_BITS} bits × ${channelLabel(n)} ÷ 8`,
+      });
     }),
   );
 }
@@ -493,16 +514,24 @@ const ddr = [
     verification: (r) => (r === 9200 ? 'unverified' : 'sourced'),
     sources: (r) => (r === 9200 ? ['user-seed'] : ['jedec-ddr']),
     label: (r) => (r === 9200 ? 'DDR5-9200 (sampled)' : `DDR5-${r}`),
-    notes: 'One 64-bit DIMM (two 32-bit subchannels). JEDEC grades through 8800 per JESD79-5C.',
+    notes: 'Each 64-bit channel here is one DDR5 DIMM\'s two 32-bit subchannels, counted once (2 × 32 = 64 bits, not doubled). JEDEC grades through 8800 per JESD79-5C.',
   }),
-  ...ddrEntries('DDR5 MRDIMM', 'ddr5-mrdimm', [8000, 8800, 10400, 12800], {
-    status: (r) => (r === 8800 ? 'standard' : r === 12800 ? 'developing' : 'vendor-claim'),
-    verification: (r) => (r === 8800 ? 'sourced' : 'unverified'),
-    sources: (r) => (r === 8800 ? ['jedec-mrdimm'] : ['user-seed']),
-    label: (r) => `DDR5 MRDIMM-${r} (host channel)`,
-    aliases: ['MCR DIMM', 'multiplexed rank'],
-    notes: 'Host-side 64-bit channel rate; the DRAM ranks run at half the rate.',
-  }),
+  // MRDIMM keeps its single host-channel rows (no channel variants).
+  ...[8000, 8800, 10400, 12800].map((rate) =>
+    memory({
+      id: `ddr5-mrdimm-${rate}`,
+      name: `DDR5 MRDIMM-${rate} (host channel)`,
+      family: 'DDR5 MRDIMM',
+      perPinMbps: rate,
+      widthBits: 64,
+      status: rate === 8800 ? 'standard' : rate === 12800 ? 'developing' : 'vendor-claim',
+      verification: rate === 8800 ? 'sourced' : 'unverified',
+      sources: rate === 8800 ? ['jedec-mrdimm'] : ['user-seed'],
+      aliases: [`DDR5 MRDIMM ${rate}`, `DDR5 MRDIMM${rate}`, `PC ${rate}`, 'MCR DIMM', 'multiplexed rank'],
+      notes: 'Host-side 64-bit channel rate; the DRAM ranks run at half the rate.',
+      formula: `${rate} MT/s × 64 bits ÷ 8`,
+    }),
+  ),
 ];
 
 const lp = [

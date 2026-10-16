@@ -41,10 +41,10 @@ test('keyboard: type to filter, arrows, Enter on side A', async ({ page }) => {
   await input.focus();
   await page.keyboard.type('ddr5 6400');
   await expect(input).toHaveAttribute('aria-expanded', 'true');
-  await expect(page.locator('#lb-a [role="option"]').first()).toContainText('DDR5-6400');
+  await expect(page.locator('#lb-a [role="option"]').first()).toContainText('DDR5-6400 · 1 channel');
   await page.keyboard.press('Enter');
   await expect(input).toHaveAttribute('aria-expanded', 'false');
-  await expect(input).toHaveValue('DDR5-6400');
+  await expect(input).toHaveValue('DDR5-6400 · 1 channel');
   await expect(valueA(page)).toHaveText('51.2');
   await expect(page).toHaveURL(/a=ddr5-6400/);
   // DDR (memory) vs SATA (encoding): mixed basis notice is shown.
@@ -115,7 +115,7 @@ test('empty state and outside click dismiss', async ({ page }) => {
 test('swap exchanges sides and URL', async ({ page }) => {
   await page.goto('/?a=hbm3&b=ddr4-3200');
   await page.locator('#swap').click();
-  await expect(page.locator('#cb-a')).toHaveValue('DDR4-3200');
+  await expect(page.locator('#cb-a')).toHaveValue('DDR4-3200 · 1 channel');
   await expect(page.locator('#cb-b')).toHaveValue('HBM3');
   await expect(valueA(page)).toHaveText('25.6');
   await expect(page).toHaveURL(/a=ddr4-3200&b=hbm3/);
@@ -418,4 +418,162 @@ test('catalog sort: compact, fits the viewport and is keyboard operable', async 
   const bg = await sort.evaluate((e) => getComputedStyle(e).backgroundColor);
   expect(bg).toBe('rgb(18, 20, 18)');
   await page.screenshot({ path: `/tmp/bandwidth-sort-${test.info().project.name}.png`, fullPage: false });
+});
+
+// ------------------------------------------------------------ raw signaling / encoding-adjusted mode
+
+const modeRadio = (page, name) => page.getByRole('radio', { name, exact: true });
+const pickMode = async (page, name) => { await page.locator('label', { has: modeRadio(page, name) }).click(); };
+const barRatio = (page) => page.evaluate(() => document.querySelector('#bar-b').getBoundingClientRect().width / document.querySelector('#bar-a').getBoundingClientRect().width);
+
+test('mode: accessible two-state control, adjusted by default', async ({ page }) => {
+  await page.goto('/');
+  const group = page.getByRole('group', { name: 'Figures' });
+  await expect(group).toBeVisible();
+  await expect(group.getByRole('radio')).toHaveCount(2);
+  await expect(modeRadio(page, 'Encoding-adjusted')).toBeChecked();
+  await expect(modeRadio(page, 'Raw signaling')).not.toBeChecked();
+  // Keyboard: arrows move between the two states.
+  await modeRadio(page, 'Encoding-adjusted').focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(modeRadio(page, 'Raw signaling')).toBeChecked();
+  await expect(page).toHaveURL(/m=raw/);
+  await page.keyboard.press('ArrowRight');
+  await expect(modeRadio(page, 'Encoding-adjusted')).toBeChecked();
+  await expect(page).toHaveURL(/\?a=pcie4-x4&b=sata3$/);
+});
+
+test('mode: values, ratio, bars and screen-reader text; survives swap, unit and reload', async ({ page }) => {
+  await page.goto('/');
+  await pickMode(page, 'Raw signaling');
+  await expect(valueA(page)).toHaveText('8');
+  await expect(valueB(page)).toHaveText('0.75');
+  await expect(page.locator('#ratio-num')).toHaveText('10.7×');
+  await expect(page.locator('#ratio-text')).toHaveText('A lists 10.7× the figure of B');
+  await expect(page.locator('#side-a .badge-basis')).toContainText('Raw signaling');
+  await expect(page.locator('#side-b .badge-basis')).toContainText('Raw signaling');
+  await expect(page.locator('#notices')).not.toContainText('Mixed basis');
+  await expect(page.locator('#bar-val-a')).toHaveText('8 GB/s');
+  await expect.poll(() => barRatio(page)).toBeCloseTo(0.75 / 8, 2);
+  await expect(page.locator('#bars')).toHaveAttribute('aria-label', /^Bar comparison, raw signaling: PCIe 4.0 x4 8 GB\/s, SATA III \(6 Gb\/s\) 0.75 GB\/s\.$/);
+  await expect(page.locator('#ratio-mode')).toHaveText('Raw signaling figures:');
+  await expect(page.locator('#ratio-full')).toHaveText('PCIe 4.0 x4 lists 10.7× the figure of SATA III (6 Gb/s).');
+  await expect(page).toHaveURL(/\?a=pcie4-x4&b=sata3&m=raw$/);
+
+  await page.locator('#swap').click();
+  await expect(page).toHaveURL(/\?a=sata3&b=pcie4-x4&m=raw$/);
+  await expect(valueA(page)).toHaveText('0.75');
+  await page.locator('label:has(input[value="Gbps"])').click();
+  await expect(valueA(page)).toHaveText('6');
+  await expect(valueB(page)).toHaveText('64');
+  await expect(page).toHaveURL(/\?a=sata3&b=pcie4-x4&u=Gbps&m=raw$/);
+  await page.reload();
+  await expect(modeRadio(page, 'Raw signaling')).toBeChecked();
+  await expect(valueB(page)).toHaveText('64');
+
+  // Repeated toggles land on the same figures every time.
+  for (let k = 0; k < 3; k++) {
+    await pickMode(page, 'Encoding-adjusted');
+    await expect(valueA(page)).toHaveText('4.8');
+    await expect(valueB(page)).toHaveText('63.02');
+    await expect(page.locator('#ratio-num')).toHaveText('13.1×');
+    await pickMode(page, 'Raw signaling');
+    await expect(valueB(page)).toHaveText('64');
+    await expect(page.locator('#ratio-num')).toHaveText('10.7×');
+  }
+  await pickMode(page, 'Encoding-adjusted');
+  await expect(page).toHaveURL(/\?a=sata3&b=pcie4-x4&u=Gbps$/);
+  await expect(page.locator('#ratio-mode')).toHaveText('Encoding-adjusted figures:');
+  await expect(page.locator('#ratio-full')).toHaveText('PCIe 4.0 x4 lists 13.1× the figure of SATA III (6 Gb/s).');
+});
+
+test('mode: details formula, basis and notes follow; memory unchanged', async ({ page }) => {
+  await page.goto('/?a=pcie3-x4&b=ddr5-9200-16ch');
+  await page.locator('#cmp-details summary').click();
+  await expect(page.locator('#detail-a .formula')).toHaveText('8 GT/s × 4 lanes × 128/130 ÷ 8 = 3.938 GB/s');
+  await expect(page.locator('#detail-a')).toContainText('128b/130b line code subtracted');
+  await expect(page.locator('#detail-a')).toContainText('not usable throughput');
+  await expect(page.locator('#detail-b')).toContainText('same in both modes');
+  await expect(valueB(page)).toHaveText('1,177.6');
+  await pickMode(page, 'Raw signaling');
+  await expect(page.locator('#detail-a .formula')).toHaveText('8 GT/s × 4 lanes ÷ 8 (raw, 128b/130b not subtracted) = 4 GB/s');
+  await expect(page.locator('#detail-a')).toContainText('Value4 GB/s = 32 Gb/s');
+  await expect(page.locator('#detail-a')).toContainText('RAW Raw signaling');
+  await expect(page.locator('#detail-a')).toContainText('x4');
+  await expect(valueB(page)).toHaveText('1,177.6');
+  await expect(page.locator('#side-b .badge-basis')).toContainText('Theoretical memory peak');
+  await expect(page.locator('#detail-b')).toContainText('16 × 64-bit channels (1024-bit aggregate)');
+  await expect(page.locator('#detail-b .formula')).toHaveText('9200 MT/s × 64 bits × 16 channels ÷ 8 = 1,177.6 GB/s');
+});
+
+test('mode: unsupported figures stay as listed and say so', async ({ page }) => {
+  await page.goto('/?a=pcie6-x16&b=dp21-uhbr20');
+  await expect(valueA(page)).toHaveText('128');
+  await expect(valueB(page)).toHaveText('10');
+  await expect(page.locator('#notices')).toContainText('A, B: encoding adjustment unavailable');
+  await page.locator('#cmp-details summary').click();
+  await expect(page.locator('#detail-a')).toContainText('Encoding adjustment unavailable; Raw signaling shown. FLIT framing and FEC overhead are not subtracted');
+  await expect(page.locator('#detail-a')).toContainText('not an adjusted payload rate');
+  await expect(page.locator('#detail-b')).toContainText('Encoding adjustment unavailable; Raw signaling shown. No encoding factor is recorded');
+  await expect(page.locator('#notice-details')).toContainText('B: Encoding adjustment unavailable; Raw signaling shown.');
+  await pickMode(page, 'Raw signaling');
+  await expect(valueA(page)).toHaveText('128');
+  await expect(valueB(page)).toHaveText('10');
+  await expect(page.locator('#notices')).not.toContainText('unavailable');
+
+  // Advertised rates are not relabelled as raw.
+  await page.goto('/?a=usb-5g&b=eth-10g&m=raw');
+  await expect(valueA(page)).toHaveText('0.625');
+  await expect(page.locator('#side-a .badge-basis')).toContainText('Advertised link rate');
+  await expect(page.locator('#notices')).toContainText('A, B: raw signaling unavailable');
+  await page.locator('#cmp-details summary').click();
+  await expect(page.locator('#detail-a')).toContainText('Raw signaling unavailable; Advertised link rate shown.');
+
+  // Mixed basis already flags the comparison: no second compact flag, details still explain.
+  await page.goto('/?a=pcie6-x16&b=usb-5g');
+  await expect(page.locator('#notices')).toContainText('Mixed basis');
+  await expect(page.locator('#notices')).not.toContainText('unavailable');
+  await page.locator('#cmp-details summary').click();
+  await expect(page.locator('#notice-details')).toContainText('B: Encoding adjustment unavailable; Advertised link rate shown.');
+});
+
+test('mode: picker previews and catalog values, basis and sort follow', async ({ page }) => {
+  await page.goto('/?m=raw');
+  const sort = page.getByLabel('Sort by');
+  await page.locator('#catalog summary').click();
+  await page.locator('#cat-q').fill('pcie 3.0 x4');
+  const row = page.locator('#cat-body tr:not(.cat-fam)').first();
+  await expect(row.locator('td.num-col')).toHaveText('4');
+  await expect(row.locator('.cat-basis-inline')).toContainText('RAW');
+  await expect(page.locator('#cat-caption')).toContainText('raw signaling');
+  await pickMode(page, 'Encoding-adjusted');
+  await expect(row.locator('td.num-col')).toHaveText('3.938');
+  await expect(row.locator('.cat-basis-inline')).toContainText('ENC');
+  await expect(page.locator('#cat-caption')).toContainText('encoding-adjusted');
+
+  await page.locator('#cat-q').fill('');
+  await sort.selectOption('bandwidth-desc');
+  const pos = async () => { const ids = await catIds(page); return ids.indexOf('sd-uhs3-fd624') - ids.indexOf('usb-5g'); };
+  expect(await pos()).toBeGreaterThan(0); // 0.624 < 0.625
+  await pickMode(page, 'Raw signaling');
+  expect(await pos()).toBeLessThan(0); // 0.78 > 0.625
+  const nums = await catNums(page);
+  for (let k = 1; k < nums.length; k++) expect(nums[k - 1]).toBeGreaterThanOrEqual(nums[k]);
+
+  if (await sheetMode(page)) return; // phone previews: tests/e2e/layout.spec.mjs
+  await page.locator('#cb-a').fill('pcie 3.0 x4');
+  await expect(page.locator('#lb-a [role="option"]').first().locator('.cb-meta')).toHaveText('4 GB/s · RAW');
+  await page.keyboard.press('Escape');
+  await pickMode(page, 'Encoding-adjusted');
+  await page.locator('#cb-a').fill('pcie 3.0 x4');
+  await expect(page.locator('#lb-a [role="option"]').first().locator('.cb-meta')).toHaveText('3.938 GB/s · ENC');
+});
+
+test('mode: malformed m= falls back to encoding-adjusted with a notice', async ({ page }) => {
+  await page.goto('/?a=pcie3-x4&b=sata3&m=%3Cb%3Eraw%3C%2Fb%3E');
+  await expect(page.locator('#url-notice')).toContainText('Unknown mode “<b>raw</b>”, using Encoding-adjusted.');
+  await expect(page.locator('#url-notice b')).toHaveCount(0);
+  await expect(modeRadio(page, 'Encoding-adjusted')).toBeChecked();
+  await expect(valueA(page)).toHaveText('3.938');
+  await expect(page).toHaveURL(/\?a=pcie3-x4&b=sata3$/);
 });

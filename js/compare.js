@@ -1,5 +1,7 @@
 // Pure comparison logic: no DOM. Shared by the app and the node tests.
 
+import { MODES, DEFAULT_MODE } from './mode.js';
+
 export const UNITS = {
   GBps: { label: 'GB/s', long: 'gigabytes per second (decimal, 10^9 bytes)' },
   Gbps: { label: 'Gb/s', long: 'gigabits per second (10^9 bits)' },
@@ -87,8 +89,9 @@ export function ratioShort(cmp) {
 const ID_RE = /^[a-z0-9][a-z0-9-]{0,63}$/;
 
 /**
- * Parse ?a=&b=&u= into a valid state. Unknown IDs fall back to defaults and are
- * reported so the UI can tell the user.
+ * Parse ?a=&b=&u=&m= into a valid state. Unknown IDs, units and modes fall back to
+ * defaults and are reported so the UI can tell the user. A link without m= (every
+ * link made before the mode existed) keeps the encoding-adjusted default.
  */
 export function parseState(search, byId, defaults) {
   const params = new URLSearchParams(search);
@@ -109,12 +112,20 @@ export function parseState(search, byId, defaults) {
     if (rawUnit in UNITS) unit = rawUnit;
     else errors.push({ key: 'u', value: rawUnit.slice(0, 16) });
   }
-  return { a, b, unit, errors };
+  const rawMode = params.get('m');
+  let mode = DEFAULT_MODE;
+  if (rawMode !== null && rawMode !== '') {
+    const m = rawMode.trim().toLowerCase();
+    if (Object.hasOwn(MODES, m)) mode = m;
+    else errors.push({ key: 'm', value: rawMode.slice(0, 16) });
+  }
+  return { a, b, unit, mode, errors };
 }
 
-export function serializeState({ a, b, unit }) {
+export function serializeState({ a, b, unit, mode = DEFAULT_MODE }) {
   const p = new URLSearchParams({ a, b });
   if (unit !== DEFAULT_UNIT) p.set('u', unit);
+  if (mode !== DEFAULT_MODE) p.set('m', mode);
   return `?${p.toString()}`;
 }
 
@@ -132,13 +143,15 @@ export function buildIndex(items) {
 
 /**
  * Every query token must appear in either the spaced or the compacted haystack,
- * so "pcie4x4", "pcie 4 x4", "gen4 x4" and "u.2" all work.
+ * so "pcie4x4", "pcie 4 x4", "gen4 x4" and "u.2" all work. A count followed by
+ * a channel word ("8 channels", "8-channel", "8 ch") is one token, so it matches
+ * that channel count rather than any "8" in the row.
  * Results keep catalog order so family groups stay contiguous.
  */
 export function search(index, query) {
   const q = query.trim().toLowerCase();
   if (!q) return index.map((e) => e.item);
-  const tokens = words(q).split(/\s+/).filter(Boolean);
+  const tokens = words(q).replace(/\b(\d+) (?=ch)/g, '$1').split(/\s+/).filter(Boolean);
   const cq = compact(q);
   return index
     .filter(

@@ -1,0 +1,2973 @@
+{
+ "capturedFrom": "git 0dcc3c5 (178 rows, before DDR channel variants)",
+ "nonDdr": [
+  {
+   "id": "hbm1",
+   "name": "HBM1",
+   "family": "HBM",
+   "bitsPerSecond": 1024000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 128,
+   "width": {
+    "count": 1024,
+    "label": "1024-bit"
+   },
+   "formula": "1 Gb/s/pin × 1024 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "hbm2",
+   "name": "HBM2",
+   "family": "HBM",
+   "bitsPerSecond": 2457600000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 307.2,
+   "width": {
+    "count": 1024,
+    "label": "1024-bit"
+   },
+   "formula": "2.4 Gb/s/pin × 1024 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "hbm2e",
+   "name": "HBM2E",
+   "family": "HBM",
+   "bitsPerSecond": 3276800000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 409.6,
+   "width": {
+    "count": 1024,
+    "label": "1024-bit"
+   },
+   "formula": "3.2 Gb/s/pin × 1024 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "hbm2e-vendor-4-2",
+   "name": "HBM2E (vendor-tested 4.2 Gb/s)",
+   "family": "HBM",
+   "bitsPerSecond": 4300800000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 537.6,
+   "width": {
+    "count": 1024,
+    "label": "1024-bit"
+   },
+   "formula": "4.2 Gb/s/pin × 1024 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "unverified"
+  },
+  {
+   "id": "hbm3",
+   "name": "HBM3",
+   "family": "HBM",
+   "bitsPerSecond": 6553600000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 819.2,
+   "width": {
+    "count": 1024,
+    "label": "1024-bit"
+   },
+   "formula": "6.4 Gb/s/pin × 1024 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "hbm3e",
+   "name": "HBM3E",
+   "family": "HBM",
+   "bitsPerSecond": 9420800000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 1177.6,
+   "width": {
+    "count": 1024,
+    "label": "1024-bit"
+   },
+   "formula": "9.2 Gb/s/pin × 1024 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "sourced"
+  },
+  {
+   "id": "hbm4-jedec",
+   "name": "HBM4 (JEDEC JESD270-4)",
+   "family": "HBM",
+   "bitsPerSecond": 16384000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 2048,
+   "width": {
+    "count": 2048,
+    "label": "2048-bit"
+   },
+   "formula": "8 Gb/s/pin × 2048 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "hbm4-samsung-production",
+   "name": "HBM4 (Samsung production claim)",
+   "family": "HBM",
+   "bitsPerSecond": 23961600000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 2995.2,
+   "width": {
+    "count": 2048,
+    "label": "2048-bit"
+   },
+   "formula": "11.7 Gb/s/pin × 2048 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "sourced"
+  },
+  {
+   "id": "hbm4-samsung-max",
+   "name": "HBM4 (Samsung maximum)",
+   "family": "HBM",
+   "bitsPerSecond": 26624000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 3328,
+   "width": {
+    "count": 2048,
+    "label": "2048-bit"
+   },
+   "formula": "13 Gb/s/pin × 2048 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "sourced"
+  },
+  {
+   "id": "hbm4e-samsung-sample",
+   "name": "HBM4E (Samsung sample, 14 Gb/s)",
+   "family": "HBM",
+   "bitsPerSecond": 28672000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 3584,
+   "width": {
+    "count": 2048,
+    "label": "2048-bit"
+   },
+   "formula": "14 Gb/s/pin × 2048 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "sourced"
+  },
+  {
+   "id": "hbm4e-samsung-max",
+   "name": "HBM4E (Samsung maximum, 16 Gb/s)",
+   "family": "HBM",
+   "bitsPerSecond": 32768000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 4096,
+   "width": {
+    "count": 2048,
+    "label": "2048-bit"
+   },
+   "formula": "16 Gb/s/pin × 2048 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "sourced"
+  },
+  {
+   "id": "gddr1",
+   "name": "GDDR1 (graphics DDR, illustrative)",
+   "family": "GDDR",
+   "bitsPerSecond": 12800000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 1.6,
+   "width": {
+    "count": 32,
+    "label": "32-bit"
+   },
+   "formula": "0.4 Gb/s/pin × 32 bits ÷ 8",
+   "status": "illustrative",
+   "verification": "unverified"
+  },
+  {
+   "id": "gddr2",
+   "name": "GDDR2 (illustrative)",
+   "family": "GDDR",
+   "bitsPerSecond": 32000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 4,
+   "width": {
+    "count": 32,
+    "label": "32-bit"
+   },
+   "formula": "1 Gb/s/pin × 32 bits ÷ 8",
+   "status": "illustrative",
+   "verification": "unverified"
+  },
+  {
+   "id": "gddr3",
+   "name": "GDDR3 (historical)",
+   "family": "GDDR",
+   "bitsPerSecond": 64000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 8,
+   "width": {
+    "count": 32,
+    "label": "32-bit"
+   },
+   "formula": "2 Gb/s/pin × 32 bits ÷ 8",
+   "status": "historical",
+   "verification": "unverified"
+  },
+  {
+   "id": "gddr4",
+   "name": "GDDR4 (historical)",
+   "family": "GDDR",
+   "bitsPerSecond": 102400000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 12.8,
+   "width": {
+    "count": 32,
+    "label": "32-bit"
+   },
+   "formula": "3.2 Gb/s/pin × 32 bits ÷ 8",
+   "status": "historical",
+   "verification": "unverified"
+  },
+  {
+   "id": "gddr5",
+   "name": "GDDR5",
+   "family": "GDDR",
+   "bitsPerSecond": 256000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 32,
+   "width": {
+    "count": 32,
+    "label": "32-bit"
+   },
+   "formula": "8 Gb/s/pin × 32 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "gddr5x",
+   "name": "GDDR5X",
+   "family": "GDDR",
+   "bitsPerSecond": 384000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 48,
+   "width": {
+    "count": 32,
+    "label": "32-bit"
+   },
+   "formula": "12 Gb/s/pin × 32 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "gddr6",
+   "name": "GDDR6",
+   "family": "GDDR",
+   "bitsPerSecond": 768000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 96,
+   "width": {
+    "count": 32,
+    "label": "32-bit"
+   },
+   "formula": "24 Gb/s/pin × 32 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "gddr6x",
+   "name": "GDDR6X",
+   "family": "GDDR",
+   "bitsPerSecond": 768000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 96,
+   "width": {
+    "count": 32,
+    "label": "32-bit"
+   },
+   "formula": "24 Gb/s/pin × 32 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "sourced"
+  },
+  {
+   "id": "gddr6w",
+   "name": "GDDR6W (x64 package)",
+   "family": "GDDR",
+   "bitsPerSecond": 1408000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 176,
+   "width": {
+    "count": 64,
+    "label": "64-bit"
+   },
+   "formula": "22 Gb/s/pin × 64 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "sourced"
+  },
+  {
+   "id": "gddr7-jedec",
+   "name": "GDDR7 (JEDEC JESD239 headline)",
+   "family": "GDDR",
+   "bitsPerSecond": 1536000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 192,
+   "width": {
+    "count": 32,
+    "label": "32-bit"
+   },
+   "formula": "48 Gb/s/pin × 32 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "gddr7-micron-32",
+   "name": "GDDR7 (Micron 32 Gb/s)",
+   "family": "GDDR",
+   "bitsPerSecond": 1024000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 128,
+   "width": {
+    "count": 32,
+    "label": "32-bit"
+   },
+   "formula": "32 Gb/s/pin × 32 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "sourced"
+  },
+  {
+   "id": "gddr7-samsung-max",
+   "name": "GDDR7 (Samsung maximum)",
+   "family": "GDDR",
+   "bitsPerSecond": 1280000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 160,
+   "width": {
+    "count": 32,
+    "label": "32-bit"
+   },
+   "formula": "40 Gb/s/pin × 32 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "sourced"
+  },
+  {
+   "id": "ddr5-mrdimm-8000",
+   "name": "DDR5 MRDIMM-8000 (host channel)",
+   "family": "DDR5 MRDIMM",
+   "bitsPerSecond": 512000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 64,
+   "width": {
+    "count": 64,
+    "label": "64-bit"
+   },
+   "formula": "8000 MT/s × 64 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "unverified"
+  },
+  {
+   "id": "ddr5-mrdimm-8800",
+   "name": "DDR5 MRDIMM-8800 (host channel)",
+   "family": "DDR5 MRDIMM",
+   "bitsPerSecond": 563200000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 70.4,
+   "width": {
+    "count": 64,
+    "label": "64-bit"
+   },
+   "formula": "8800 MT/s × 64 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "ddr5-mrdimm-10400",
+   "name": "DDR5 MRDIMM-10400 (host channel)",
+   "family": "DDR5 MRDIMM",
+   "bitsPerSecond": 665600000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 83.2,
+   "width": {
+    "count": 64,
+    "label": "64-bit"
+   },
+   "formula": "10400 MT/s × 64 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "unverified"
+  },
+  {
+   "id": "ddr5-mrdimm-12800",
+   "name": "DDR5 MRDIMM-12800 (host channel)",
+   "family": "DDR5 MRDIMM",
+   "bitsPerSecond": 819200000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 102.4,
+   "width": {
+    "count": 64,
+    "label": "64-bit"
+   },
+   "formula": "12800 MT/s × 64 bits ÷ 8",
+   "status": "developing",
+   "verification": "unverified"
+  },
+  {
+   "id": "lpddr1-400",
+   "name": "LPDDR1-400 (64-bit normalized)",
+   "family": "LPDDR",
+   "bitsPerSecond": 25600000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 3.2,
+   "width": {
+    "count": 64,
+    "label": "64-bit"
+   },
+   "formula": "400 MT/s × 64 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "lpddr2-1066",
+   "name": "LPDDR2-1066 (64-bit normalized)",
+   "family": "LPDDR",
+   "bitsPerSecond": 68224000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 8.528,
+   "width": {
+    "count": 64,
+    "label": "64-bit"
+   },
+   "formula": "1066 MT/s × 64 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "lpddr3-2133",
+   "name": "LPDDR3-2133 (64-bit normalized)",
+   "family": "LPDDR",
+   "bitsPerSecond": 136512000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 17.064,
+   "width": {
+    "count": 64,
+    "label": "64-bit"
+   },
+   "formula": "2133 MT/s × 64 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "lpddr4-4266",
+   "name": "LPDDR4-4266 (64-bit normalized)",
+   "family": "LPDDR",
+   "bitsPerSecond": 273024000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 34.128,
+   "width": {
+    "count": 64,
+    "label": "64-bit"
+   },
+   "formula": "4266 MT/s × 64 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "lpddr4x-4266",
+   "name": "LPDDR4X-4266 (64-bit normalized)",
+   "family": "LPDDR",
+   "bitsPerSecond": 273024000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 34.128,
+   "width": {
+    "count": 64,
+    "label": "64-bit"
+   },
+   "formula": "4266 MT/s × 64 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "lpddr5-6400",
+   "name": "LPDDR5-6400 (64-bit normalized)",
+   "family": "LPDDR",
+   "bitsPerSecond": 409600000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 51.2,
+   "width": {
+    "count": 64,
+    "label": "64-bit"
+   },
+   "formula": "6400 MT/s × 64 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "lpddr5x-8533",
+   "name": "LPDDR5X-8533 (64-bit normalized)",
+   "family": "LPDDR",
+   "bitsPerSecond": 546112000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 68.264,
+   "width": {
+    "count": 64,
+    "label": "64-bit"
+   },
+   "formula": "8533 MT/s × 64 bits ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "lpddr5x-10700",
+   "name": "LPDDR5X (10.7 Gb/s)-10700 (64-bit normalized)",
+   "family": "LPDDR",
+   "bitsPerSecond": 684800000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 85.6,
+   "width": {
+    "count": 64,
+    "label": "64-bit"
+   },
+   "formula": "10700 MT/s × 64 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "sourced"
+  },
+  {
+   "id": "lpddr6-14400",
+   "name": "LPDDR6-14400 (24-bit channel)",
+   "family": "LPDDR",
+   "bitsPerSecond": 345600000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 43.2,
+   "width": {
+    "count": 24,
+    "label": "24-bit"
+   },
+   "formula": "14400 MT/s × 24 bits ÷ 8",
+   "status": "vendor-claim",
+   "verification": "unverified"
+  },
+  {
+   "id": "pcie1-x1",
+   "name": "PCIe 1.0 x1",
+   "family": "PCIe",
+   "bitsPerSecond": 2500000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 0.25,
+   "width": {
+    "count": 1,
+    "label": "x1"
+   },
+   "formula": "2.5 GT/s × 1 lane × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie1-x2",
+   "name": "PCIe 1.0 x2",
+   "family": "PCIe",
+   "bitsPerSecond": 5000000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 0.5,
+   "width": {
+    "count": 2,
+    "label": "x2"
+   },
+   "formula": "2.5 GT/s × 2 lanes × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie1-x4",
+   "name": "PCIe 1.0 x4",
+   "family": "PCIe",
+   "bitsPerSecond": 10000000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 1,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "2.5 GT/s × 4 lanes × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie1-x8",
+   "name": "PCIe 1.0 x8",
+   "family": "PCIe",
+   "bitsPerSecond": 20000000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 2,
+   "width": {
+    "count": 8,
+    "label": "x8"
+   },
+   "formula": "2.5 GT/s × 8 lanes × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie1-x16",
+   "name": "PCIe 1.0 x16",
+   "family": "PCIe",
+   "bitsPerSecond": 40000000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 4,
+   "width": {
+    "count": 16,
+    "label": "x16"
+   },
+   "formula": "2.5 GT/s × 16 lanes × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie2-x1",
+   "name": "PCIe 2.0 x1",
+   "family": "PCIe",
+   "bitsPerSecond": 5000000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 0.5,
+   "width": {
+    "count": 1,
+    "label": "x1"
+   },
+   "formula": "5 GT/s × 1 lane × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie2-x2",
+   "name": "PCIe 2.0 x2",
+   "family": "PCIe",
+   "bitsPerSecond": 10000000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 1,
+   "width": {
+    "count": 2,
+    "label": "x2"
+   },
+   "formula": "5 GT/s × 2 lanes × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie2-x4",
+   "name": "PCIe 2.0 x4",
+   "family": "PCIe",
+   "bitsPerSecond": 20000000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 2,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "5 GT/s × 4 lanes × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie2-x8",
+   "name": "PCIe 2.0 x8",
+   "family": "PCIe",
+   "bitsPerSecond": 40000000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 4,
+   "width": {
+    "count": 8,
+    "label": "x8"
+   },
+   "formula": "5 GT/s × 8 lanes × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie2-x16",
+   "name": "PCIe 2.0 x16",
+   "family": "PCIe",
+   "bitsPerSecond": 80000000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 8,
+   "width": {
+    "count": 16,
+    "label": "x16"
+   },
+   "formula": "5 GT/s × 16 lanes × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie3-x1",
+   "name": "PCIe 3.0 x1",
+   "family": "PCIe",
+   "bitsPerSecond": 8000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 0.9846153846153847,
+   "width": {
+    "count": 1,
+    "label": "x1"
+   },
+   "formula": "8 GT/s × 1 lane × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie3-x2",
+   "name": "PCIe 3.0 x2",
+   "family": "PCIe",
+   "bitsPerSecond": 16000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 1.9692307692307693,
+   "width": {
+    "count": 2,
+    "label": "x2"
+   },
+   "formula": "8 GT/s × 2 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie3-x4",
+   "name": "PCIe 3.0 x4",
+   "family": "PCIe",
+   "bitsPerSecond": 32000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 3.9384615384615387,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "8 GT/s × 4 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie3-x8",
+   "name": "PCIe 3.0 x8",
+   "family": "PCIe",
+   "bitsPerSecond": 64000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 7.876923076923077,
+   "width": {
+    "count": 8,
+    "label": "x8"
+   },
+   "formula": "8 GT/s × 8 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie3-x16",
+   "name": "PCIe 3.0 x16",
+   "family": "PCIe",
+   "bitsPerSecond": 128000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 15.753846153846155,
+   "width": {
+    "count": 16,
+    "label": "x16"
+   },
+   "formula": "8 GT/s × 16 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie4-x1",
+   "name": "PCIe 4.0 x1",
+   "family": "PCIe",
+   "bitsPerSecond": 16000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 1.9692307692307693,
+   "width": {
+    "count": 1,
+    "label": "x1"
+   },
+   "formula": "16 GT/s × 1 lane × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie4-x2",
+   "name": "PCIe 4.0 x2",
+   "family": "PCIe",
+   "bitsPerSecond": 32000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 3.9384615384615387,
+   "width": {
+    "count": 2,
+    "label": "x2"
+   },
+   "formula": "16 GT/s × 2 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie4-x4",
+   "name": "PCIe 4.0 x4",
+   "family": "PCIe",
+   "bitsPerSecond": 64000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 7.876923076923077,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "16 GT/s × 4 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie4-x8",
+   "name": "PCIe 4.0 x8",
+   "family": "PCIe",
+   "bitsPerSecond": 128000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 15.753846153846155,
+   "width": {
+    "count": 8,
+    "label": "x8"
+   },
+   "formula": "16 GT/s × 8 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie4-x16",
+   "name": "PCIe 4.0 x16",
+   "family": "PCIe",
+   "bitsPerSecond": 256000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 31.50769230769231,
+   "width": {
+    "count": 16,
+    "label": "x16"
+   },
+   "formula": "16 GT/s × 16 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie5-x1",
+   "name": "PCIe 5.0 x1",
+   "family": "PCIe",
+   "bitsPerSecond": 32000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 3.9384615384615387,
+   "width": {
+    "count": 1,
+    "label": "x1"
+   },
+   "formula": "32 GT/s × 1 lane × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie5-x2",
+   "name": "PCIe 5.0 x2",
+   "family": "PCIe",
+   "bitsPerSecond": 64000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 7.876923076923077,
+   "width": {
+    "count": 2,
+    "label": "x2"
+   },
+   "formula": "32 GT/s × 2 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie5-x4",
+   "name": "PCIe 5.0 x4",
+   "family": "PCIe",
+   "bitsPerSecond": 128000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 15.753846153846155,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "32 GT/s × 4 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie5-x8",
+   "name": "PCIe 5.0 x8",
+   "family": "PCIe",
+   "bitsPerSecond": 256000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 31.50769230769231,
+   "width": {
+    "count": 8,
+    "label": "x8"
+   },
+   "formula": "32 GT/s × 8 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie5-x16",
+   "name": "PCIe 5.0 x16",
+   "family": "PCIe",
+   "bitsPerSecond": 512000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 63.01538461538462,
+   "width": {
+    "count": 16,
+    "label": "x16"
+   },
+   "formula": "32 GT/s × 16 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie6-x1",
+   "name": "PCIe 6.0 x1",
+   "family": "PCIe",
+   "bitsPerSecond": 64000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 8,
+   "width": {
+    "count": 1,
+    "label": "x1"
+   },
+   "formula": "64 GT/s × 1 lane ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie6-x2",
+   "name": "PCIe 6.0 x2",
+   "family": "PCIe",
+   "bitsPerSecond": 128000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 16,
+   "width": {
+    "count": 2,
+    "label": "x2"
+   },
+   "formula": "64 GT/s × 2 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie6-x4",
+   "name": "PCIe 6.0 x4",
+   "family": "PCIe",
+   "bitsPerSecond": 256000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 32,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "64 GT/s × 4 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie6-x8",
+   "name": "PCIe 6.0 x8",
+   "family": "PCIe",
+   "bitsPerSecond": 512000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 64,
+   "width": {
+    "count": 8,
+    "label": "x8"
+   },
+   "formula": "64 GT/s × 8 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie6-x16",
+   "name": "PCIe 6.0 x16",
+   "family": "PCIe",
+   "bitsPerSecond": 1024000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 128,
+   "width": {
+    "count": 16,
+    "label": "x16"
+   },
+   "formula": "64 GT/s × 16 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie7-x1",
+   "name": "PCIe 7.0 x1",
+   "family": "PCIe",
+   "bitsPerSecond": 128000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 16,
+   "width": {
+    "count": 1,
+    "label": "x1"
+   },
+   "formula": "128 GT/s × 1 lane ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie7-x2",
+   "name": "PCIe 7.0 x2",
+   "family": "PCIe",
+   "bitsPerSecond": 256000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 32,
+   "width": {
+    "count": 2,
+    "label": "x2"
+   },
+   "formula": "128 GT/s × 2 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie7-x4",
+   "name": "PCIe 7.0 x4",
+   "family": "PCIe",
+   "bitsPerSecond": 512000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 64,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "128 GT/s × 4 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie7-x8",
+   "name": "PCIe 7.0 x8",
+   "family": "PCIe",
+   "bitsPerSecond": 1024000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 128,
+   "width": {
+    "count": 8,
+    "label": "x8"
+   },
+   "formula": "128 GT/s × 8 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie7-x16",
+   "name": "PCIe 7.0 x16",
+   "family": "PCIe",
+   "bitsPerSecond": 2048000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 256,
+   "width": {
+    "count": 16,
+    "label": "x16"
+   },
+   "formula": "128 GT/s × 16 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie8-x1",
+   "name": "PCIe 8.0 x1 (target)",
+   "family": "PCIe",
+   "bitsPerSecond": 256000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 32,
+   "width": {
+    "count": 1,
+    "label": "x1"
+   },
+   "formula": "256 GT/s × 1 lane ÷ 8 (raw)",
+   "status": "developing",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie8-x2",
+   "name": "PCIe 8.0 x2 (target)",
+   "family": "PCIe",
+   "bitsPerSecond": 512000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 64,
+   "width": {
+    "count": 2,
+    "label": "x2"
+   },
+   "formula": "256 GT/s × 2 lanes ÷ 8 (raw)",
+   "status": "developing",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie8-x4",
+   "name": "PCIe 8.0 x4 (target)",
+   "family": "PCIe",
+   "bitsPerSecond": 1024000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 128,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "256 GT/s × 4 lanes ÷ 8 (raw)",
+   "status": "developing",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie8-x8",
+   "name": "PCIe 8.0 x8 (target)",
+   "family": "PCIe",
+   "bitsPerSecond": 2048000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 256,
+   "width": {
+    "count": 8,
+    "label": "x8"
+   },
+   "formula": "256 GT/s × 8 lanes ÷ 8 (raw)",
+   "status": "developing",
+   "verification": "sourced"
+  },
+  {
+   "id": "pcie8-x16",
+   "name": "PCIe 8.0 x16 (target)",
+   "family": "PCIe",
+   "bitsPerSecond": 4096000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 512,
+   "width": {
+    "count": 16,
+    "label": "x16"
+   },
+   "formula": "256 GT/s × 16 lanes ÷ 8 (raw)",
+   "status": "developing",
+   "verification": "sourced"
+  },
+  {
+   "id": "sata1",
+   "name": "SATA I (1.5 Gb/s)",
+   "family": "SATA",
+   "bitsPerSecond": 1500000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 0.15,
+   "width": {
+    "count": 1,
+    "label": "1 lane"
+   },
+   "formula": "1.5 Gb/s × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sata2",
+   "name": "SATA II (3 Gb/s)",
+   "family": "SATA",
+   "bitsPerSecond": 3000000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 0.3,
+   "width": {
+    "count": 1,
+    "label": "1 lane"
+   },
+   "formula": "3 Gb/s × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sata3",
+   "name": "SATA III (6 Gb/s)",
+   "family": "SATA",
+   "bitsPerSecond": 6000000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 0.6,
+   "width": {
+    "count": 1,
+    "label": "1 lane"
+   },
+   "formula": "6 Gb/s × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sas1",
+   "name": "SAS-1 / 1.1 (3 Gb/s)",
+   "family": "SAS",
+   "bitsPerSecond": 3000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 0.375,
+   "width": {
+    "count": 1,
+    "label": "1 lane"
+   },
+   "formula": "3 Gb/s × 1 lane ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sas2",
+   "name": "SAS-2 / 2.1 (6 Gb/s)",
+   "family": "SAS",
+   "bitsPerSecond": 6000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 0.75,
+   "width": {
+    "count": 1,
+    "label": "1 lane"
+   },
+   "formula": "6 Gb/s × 1 lane ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sas3",
+   "name": "SAS-3 (12 Gb/s)",
+   "family": "SAS",
+   "bitsPerSecond": 12000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 1.5,
+   "width": {
+    "count": 1,
+    "label": "1 lane"
+   },
+   "formula": "12 Gb/s × 1 lane ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sas4",
+   "name": "SAS-4 \"24G\" (22.5 Gbaud)",
+   "family": "SAS",
+   "bitsPerSecond": 22500000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 2.8125,
+   "width": {
+    "count": 1,
+    "label": "1 lane"
+   },
+   "formula": "22.5 Gb/s × 1 lane ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sas4-1",
+   "name": "SAS-4.1 \"24G+\" (22.5 Gbaud)",
+   "family": "SAS",
+   "bitsPerSecond": 22500000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 2.8125,
+   "width": {
+    "count": 1,
+    "label": "1 lane"
+   },
+   "formula": "22.5 Gb/s × 1 lane ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "u2-nvme-pcie3-x4",
+   "name": "U.2 NVMe · PCIe 3.0 x4",
+   "family": "U.2",
+   "bitsPerSecond": 32000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 3.9384615384615387,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "8 GT/s × 4 lanes × 128/130 ÷ 8",
+   "status": "connector",
+   "verification": "sourced"
+  },
+  {
+   "id": "u2-nvme-pcie4-x4",
+   "name": "U.2 NVMe · PCIe 4.0 x4",
+   "family": "U.2",
+   "bitsPerSecond": 64000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 7.876923076923077,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "16 GT/s × 4 lanes × 128/130 ÷ 8",
+   "status": "connector",
+   "verification": "sourced"
+  },
+  {
+   "id": "u2-nvme-pcie5-x4",
+   "name": "U.2 NVMe · PCIe 5.0 x4",
+   "family": "U.2",
+   "bitsPerSecond": 128000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 15.753846153846155,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "32 GT/s × 4 lanes × 128/130 ÷ 8",
+   "status": "connector",
+   "verification": "sourced"
+  },
+  {
+   "id": "u3-nvme-pcie3-x4",
+   "name": "U.3 NVMe · PCIe 3.0 x4",
+   "family": "U.3",
+   "bitsPerSecond": 32000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 3.9384615384615387,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "8 GT/s × 4 lanes × 128/130 ÷ 8",
+   "status": "connector",
+   "verification": "sourced"
+  },
+  {
+   "id": "u3-nvme-pcie4-x4",
+   "name": "U.3 NVMe · PCIe 4.0 x4",
+   "family": "U.3",
+   "bitsPerSecond": 64000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 7.876923076923077,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "16 GT/s × 4 lanes × 128/130 ÷ 8",
+   "status": "connector",
+   "verification": "sourced"
+  },
+  {
+   "id": "u3-nvme-pcie5-x4",
+   "name": "U.3 NVMe · PCIe 5.0 x4",
+   "family": "U.3",
+   "bitsPerSecond": 128000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 15.753846153846155,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "32 GT/s × 4 lanes × 128/130 ÷ 8",
+   "status": "connector",
+   "verification": "sourced"
+  },
+  {
+   "id": "m2-nvme-pcie3-x4",
+   "name": "M.2 NVMe · PCIe 3.0 x4",
+   "family": "M.2",
+   "bitsPerSecond": 32000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 3.9384615384615387,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "8 GT/s × 4 lanes × 128/130 ÷ 8",
+   "status": "connector",
+   "verification": "sourced"
+  },
+  {
+   "id": "m2-nvme-pcie4-x4",
+   "name": "M.2 NVMe · PCIe 4.0 x4",
+   "family": "M.2",
+   "bitsPerSecond": 64000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 7.876923076923077,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "16 GT/s × 4 lanes × 128/130 ÷ 8",
+   "status": "connector",
+   "verification": "sourced"
+  },
+  {
+   "id": "m2-nvme-pcie5-x4",
+   "name": "M.2 NVMe · PCIe 5.0 x4",
+   "family": "M.2",
+   "bitsPerSecond": 128000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 15.753846153846155,
+   "width": {
+    "count": 4,
+    "label": "x4"
+   },
+   "formula": "32 GT/s × 4 lanes × 128/130 ÷ 8",
+   "status": "connector",
+   "verification": "sourced"
+  },
+  {
+   "id": "m2-sata",
+   "name": "M.2 SATA (SATA III)",
+   "family": "M.2",
+   "bitsPerSecond": 6000000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 0.6,
+   "width": {
+    "count": 1,
+    "label": "1 lane"
+   },
+   "formula": "6 Gb/s × 8/10 ÷ 8",
+   "status": "connector",
+   "verification": "sourced"
+  },
+  {
+   "id": "sd-uhs1",
+   "name": "SD UHS-I (SDR104)",
+   "family": "SD",
+   "bitsPerSecond": 832000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 0.104,
+   "width": {
+    "count": 1,
+    "label": "4-bit bus"
+   },
+   "formula": "208 MHz × 4 bits ÷ 8 = 104 MB/s",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sd-uhs2-fd156",
+   "name": "SD UHS-II FD156",
+   "family": "SD",
+   "bitsPerSecond": 1560000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 0.156,
+   "width": {
+    "count": 1,
+    "label": "1 lane"
+   },
+   "formula": "1.56 Gb/s × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sd-uhs2-hd312",
+   "name": "SD UHS-II HD312",
+   "family": "SD",
+   "bitsPerSecond": 3120000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 0.312,
+   "width": {
+    "count": 1,
+    "label": "2 lanes"
+   },
+   "formula": "3.12 Gb/s × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sd-uhs3-fd312",
+   "name": "SD UHS-III FD312",
+   "family": "SD",
+   "bitsPerSecond": 3120000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 0.312,
+   "width": {
+    "count": 1,
+    "label": "1 lane"
+   },
+   "formula": "3.12 Gb/s × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sd-uhs3-fd624",
+   "name": "SD UHS-III FD624",
+   "family": "SD",
+   "bitsPerSecond": 6240000000,
+   "efficiency": [
+    8,
+    10
+   ],
+   "GBps": 0.624,
+   "width": {
+    "count": 1,
+    "label": "2 lanes"
+   },
+   "formula": "6.24 Gb/s × 8/10 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sd-express-pcie3-x1",
+   "name": "SD Express · PCIe 3.0 x1 (SD 7.0)",
+   "family": "SD Express",
+   "bitsPerSecond": 8000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 0.9846153846153847,
+   "width": {
+    "count": 1,
+    "label": "x1"
+   },
+   "formula": "8 GT/s × 1 lane × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sd-express-pcie3-x2",
+   "name": "SD Express · PCIe 3.0 x2 (SD 8.0)",
+   "family": "SD Express",
+   "bitsPerSecond": 16000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 1.9692307692307693,
+   "width": {
+    "count": 2,
+    "label": "x2"
+   },
+   "formula": "8 GT/s × 2 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sd-express-pcie4-x1",
+   "name": "SD Express · PCIe 4.0 x1 (SD 8.0)",
+   "family": "SD Express",
+   "bitsPerSecond": 16000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 1.9692307692307693,
+   "width": {
+    "count": 1,
+    "label": "x1"
+   },
+   "formula": "16 GT/s × 1 lane × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "sd-express-pcie4-x2",
+   "name": "SD Express · PCIe 4.0 x2 (SD 8.0)",
+   "family": "SD Express",
+   "bitsPerSecond": 32000000000,
+   "efficiency": [
+    128,
+    130
+   ],
+   "GBps": 3.9384615384615387,
+   "width": {
+    "count": 2,
+    "label": "x2"
+   },
+   "formula": "16 GT/s × 2 lanes × 128/130 ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "usb1-low",
+   "name": "USB Low Speed (1.5 Mb/s)",
+   "family": "USB",
+   "bitsPerSecond": 1500000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 0.0001875,
+   "width": {
+    "count": 1,
+    "label": "1 pair"
+   },
+   "formula": "1.5 Mb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "usb1-full",
+   "name": "USB Full Speed (12 Mb/s)",
+   "family": "USB",
+   "bitsPerSecond": 12000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 0.0015,
+   "width": {
+    "count": 1,
+    "label": "1 pair"
+   },
+   "formula": "12 Mb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "usb2",
+   "name": "USB 2.0 Hi-Speed (480 Mb/s)",
+   "family": "USB",
+   "bitsPerSecond": 480000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 0.06,
+   "width": {
+    "count": 1,
+    "label": "1 pair"
+   },
+   "formula": "480 Mb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "usb-5g",
+   "name": "USB 5Gbps (3.0 / 3.1 Gen 1 / 3.2 Gen 1x1)",
+   "family": "USB",
+   "bitsPerSecond": 5000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 0.625,
+   "width": {
+    "count": 1,
+    "label": "1 lane"
+   },
+   "formula": "5 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "usb-10g",
+   "name": "USB 10Gbps (3.1 Gen 2 / 3.2 Gen 2x1)",
+   "family": "USB",
+   "bitsPerSecond": 10000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 1.25,
+   "width": {
+    "count": 1,
+    "label": "1 lane"
+   },
+   "formula": "10 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "usb32-gen1x2",
+   "name": "USB 3.2 Gen 1x2 (10 Gb/s)",
+   "family": "USB",
+   "bitsPerSecond": 10000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 1.25,
+   "width": {
+    "count": 2,
+    "label": "2 lanes"
+   },
+   "formula": "10 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "usb32-gen2x2",
+   "name": "USB 20Gbps (3.2 Gen 2x2)",
+   "family": "USB",
+   "bitsPerSecond": 20000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 2.5,
+   "width": {
+    "count": 2,
+    "label": "2 lanes"
+   },
+   "formula": "20 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "usb4-20",
+   "name": "USB4 20Gbps (v1.0)",
+   "family": "USB",
+   "bitsPerSecond": 20000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 2.5,
+   "width": {
+    "count": 2,
+    "label": "2 lanes"
+   },
+   "formula": "20 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "usb4-40",
+   "name": "USB4 40Gbps (v1.0)",
+   "family": "USB",
+   "bitsPerSecond": 40000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 5,
+   "width": {
+    "count": 2,
+    "label": "2 lanes"
+   },
+   "formula": "40 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "usb4v2-80",
+   "name": "USB4 80Gbps (v2.0, symmetric)",
+   "family": "USB",
+   "bitsPerSecond": 80000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 10,
+   "width": {
+    "count": 2,
+    "label": "2 lanes"
+   },
+   "formula": "80 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "usb4v2-120",
+   "name": "USB4 120Gbps (v2.0, asymmetric)",
+   "family": "USB",
+   "bitsPerSecond": 120000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 15,
+   "width": {
+    "count": 3,
+    "label": "3 lanes TX"
+   },
+   "formula": "120 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "tb1",
+   "name": "Thunderbolt 1 (10 Gb/s per channel)",
+   "family": "Thunderbolt",
+   "bitsPerSecond": 10000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 1.25,
+   "width": {
+    "count": 1,
+    "label": "1 channel"
+   },
+   "formula": "10 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "tb2",
+   "name": "Thunderbolt 2 (20 Gb/s)",
+   "family": "Thunderbolt",
+   "bitsPerSecond": 20000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 2.5,
+   "width": {
+    "count": 1,
+    "label": "2 channels bonded"
+   },
+   "formula": "20 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "tb3",
+   "name": "Thunderbolt 3 (40 Gb/s)",
+   "family": "Thunderbolt",
+   "bitsPerSecond": 40000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 5,
+   "width": {
+    "count": 1,
+    "label": "2 lanes"
+   },
+   "formula": "40 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "tb4",
+   "name": "Thunderbolt 4 (40 Gb/s)",
+   "family": "Thunderbolt",
+   "bitsPerSecond": 40000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 5,
+   "width": {
+    "count": 1,
+    "label": "2 lanes"
+   },
+   "formula": "40 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "tb5",
+   "name": "Thunderbolt 5 (80 Gb/s)",
+   "family": "Thunderbolt",
+   "bitsPerSecond": 80000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 10,
+   "width": {
+    "count": 1,
+    "label": "2 lanes"
+   },
+   "formula": "80 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "tb5-boost",
+   "name": "Thunderbolt 5 Bandwidth Boost (120 Gb/s)",
+   "family": "Thunderbolt",
+   "bitsPerSecond": 120000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 15,
+   "width": {
+    "count": 1,
+    "label": "3 lanes TX"
+   },
+   "formula": "120 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "dp11-hbr",
+   "name": "DisplayPort 1.1a HBR",
+   "family": "DisplayPort",
+   "bitsPerSecond": 10800000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 1.35,
+   "width": {
+    "count": 4,
+    "label": "4 lanes"
+   },
+   "formula": "2.7 Gb/s × 4 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "dp12-hbr2",
+   "name": "DisplayPort 1.2 HBR2",
+   "family": "DisplayPort",
+   "bitsPerSecond": 21600000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 2.7,
+   "width": {
+    "count": 4,
+    "label": "4 lanes"
+   },
+   "formula": "5.4 Gb/s × 4 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "dp14-hbr3",
+   "name": "DisplayPort 1.4 HBR3",
+   "family": "DisplayPort",
+   "bitsPerSecond": 32400000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 4.05,
+   "width": {
+    "count": 4,
+    "label": "4 lanes"
+   },
+   "formula": "8.1 Gb/s × 4 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "dp21-uhbr10",
+   "name": "DisplayPort 2.1 UHBR10",
+   "family": "DisplayPort",
+   "bitsPerSecond": 40000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 5,
+   "width": {
+    "count": 4,
+    "label": "4 lanes"
+   },
+   "formula": "10 Gb/s × 4 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "dp21-uhbr13-5",
+   "name": "DisplayPort 2.1 UHBR13.5",
+   "family": "DisplayPort",
+   "bitsPerSecond": 54000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 6.75,
+   "width": {
+    "count": 4,
+    "label": "4 lanes"
+   },
+   "formula": "13.5 Gb/s × 4 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "dp21-uhbr20",
+   "name": "DisplayPort 2.1 UHBR20",
+   "family": "DisplayPort",
+   "bitsPerSecond": 80000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 10,
+   "width": {
+    "count": 4,
+    "label": "4 lanes"
+   },
+   "formula": "20 Gb/s × 4 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "hdmi13-tmds",
+   "name": "HDMI 1.3 / 1.4 TMDS (10.2 Gb/s)",
+   "family": "HDMI",
+   "bitsPerSecond": 10200000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 1.275,
+   "width": {
+    "count": 1,
+    "label": "TMDS link"
+   },
+   "formula": "10.2 Gb/s link total ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "hdmi20-tmds",
+   "name": "HDMI 2.0 TMDS (18 Gb/s)",
+   "family": "HDMI",
+   "bitsPerSecond": 18000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 2.25,
+   "width": {
+    "count": 1,
+    "label": "TMDS link"
+   },
+   "formula": "18 Gb/s link total ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "hdmi21-frl",
+   "name": "HDMI 2.1 FRL (48 Gb/s)",
+   "family": "HDMI",
+   "bitsPerSecond": 48000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 6,
+   "width": {
+    "count": 4,
+    "label": "4 lanes"
+   },
+   "formula": "12 Gb/s × 4 lanes ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "hdmi22-frl",
+   "name": "HDMI 2.2 FRL (96 Gb/s)",
+   "family": "HDMI",
+   "bitsPerSecond": 96000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 12,
+   "width": {
+    "count": 1,
+    "label": "FRL link"
+   },
+   "formula": "96 Gb/s link total ÷ 8 (raw)",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-10m",
+   "name": "Ethernet 10 Mb/s",
+   "family": "Ethernet",
+   "bitsPerSecond": 10000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 0.00125,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "10 Mb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-100m",
+   "name": "Ethernet 100 Mb/s",
+   "family": "Ethernet",
+   "bitsPerSecond": 100000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 0.0125,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "100 Mb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-1g",
+   "name": "Ethernet 1 Gb/s",
+   "family": "Ethernet",
+   "bitsPerSecond": 1000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 0.125,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "1 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-2-5g",
+   "name": "Ethernet 2.5 Gb/s",
+   "family": "Ethernet",
+   "bitsPerSecond": 2500000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 0.3125,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "2.5 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-5g",
+   "name": "Ethernet 5 Gb/s",
+   "family": "Ethernet",
+   "bitsPerSecond": 5000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 0.625,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "5 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-10g",
+   "name": "Ethernet 10 Gb/s",
+   "family": "Ethernet",
+   "bitsPerSecond": 10000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 1.25,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "10 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-25g",
+   "name": "Ethernet 25 Gb/s",
+   "family": "Ethernet",
+   "bitsPerSecond": 25000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 3.125,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "25 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-40g",
+   "name": "Ethernet 40 Gb/s",
+   "family": "Ethernet",
+   "bitsPerSecond": 40000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 5,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "40 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-50g",
+   "name": "Ethernet 50 Gb/s",
+   "family": "Ethernet",
+   "bitsPerSecond": 50000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 6.25,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "50 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-100g",
+   "name": "Ethernet 100 Gb/s",
+   "family": "Ethernet",
+   "bitsPerSecond": 100000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 12.5,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "100 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-200g",
+   "name": "Ethernet 200 Gb/s",
+   "family": "Ethernet",
+   "bitsPerSecond": 200000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 25,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "200 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-400g",
+   "name": "Ethernet 400 Gb/s",
+   "family": "Ethernet",
+   "bitsPerSecond": 400000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 50,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "400 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-800g",
+   "name": "Ethernet 800 Gb/s",
+   "family": "Ethernet",
+   "bitsPerSecond": 800000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 100,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "800 Gb/s advertised ÷ 8",
+   "status": "standard",
+   "verification": "sourced"
+  },
+  {
+   "id": "eth-1600g",
+   "name": "Ethernet 1.6 Tb/s (in development)",
+   "family": "Ethernet",
+   "bitsPerSecond": 1600000000000,
+   "efficiency": [
+    1,
+    1
+   ],
+   "GBps": 200,
+   "width": {
+    "count": 1,
+    "label": "per port"
+   },
+   "formula": "1600 Gb/s advertised ÷ 8",
+   "status": "developing",
+   "verification": "unverified"
+  }
+ ],
+ "ddrSingleChannel": [
+  {
+   "id": "ddr-200",
+   "family": "DDR",
+   "bitsPerSecond": 12800000000,
+   "GBps": 1.6,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr-266",
+   "family": "DDR",
+   "bitsPerSecond": 17024000000,
+   "GBps": 2.128,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr-333",
+   "family": "DDR",
+   "bitsPerSecond": 21312000000,
+   "GBps": 2.664,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr-400",
+   "family": "DDR",
+   "bitsPerSecond": 25600000000,
+   "GBps": 3.2,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr2-400",
+   "family": "DDR2",
+   "bitsPerSecond": 25600000000,
+   "GBps": 3.2,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr2-533",
+   "family": "DDR2",
+   "bitsPerSecond": 34112000000,
+   "GBps": 4.264,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr2-667",
+   "family": "DDR2",
+   "bitsPerSecond": 42688000000,
+   "GBps": 5.336,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr2-800",
+   "family": "DDR2",
+   "bitsPerSecond": 51200000000,
+   "GBps": 6.4,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr2-1066",
+   "family": "DDR2",
+   "bitsPerSecond": 68224000000,
+   "GBps": 8.528,
+   "status": "vendor-bin",
+   "verification": "unverified",
+   "sources": [
+    "user-seed"
+   ]
+  },
+  {
+   "id": "ddr3-800",
+   "family": "DDR3",
+   "bitsPerSecond": 51200000000,
+   "GBps": 6.4,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr3-1066",
+   "family": "DDR3",
+   "bitsPerSecond": 68224000000,
+   "GBps": 8.528,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr3-1333",
+   "family": "DDR3",
+   "bitsPerSecond": 85312000000,
+   "GBps": 10.664,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr3-1600",
+   "family": "DDR3",
+   "bitsPerSecond": 102400000000,
+   "GBps": 12.8,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr3-1866",
+   "family": "DDR3",
+   "bitsPerSecond": 119424000000,
+   "GBps": 14.928,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr3-2133",
+   "family": "DDR3",
+   "bitsPerSecond": 136512000000,
+   "GBps": 17.064,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr4-1600",
+   "family": "DDR4",
+   "bitsPerSecond": 102400000000,
+   "GBps": 12.8,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr4-1866",
+   "family": "DDR4",
+   "bitsPerSecond": 119424000000,
+   "GBps": 14.928,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr4-2133",
+   "family": "DDR4",
+   "bitsPerSecond": 136512000000,
+   "GBps": 17.064,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr4-2400",
+   "family": "DDR4",
+   "bitsPerSecond": 153600000000,
+   "GBps": 19.2,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr4-2666",
+   "family": "DDR4",
+   "bitsPerSecond": 170624000000,
+   "GBps": 21.328,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr4-2933",
+   "family": "DDR4",
+   "bitsPerSecond": 187712000000,
+   "GBps": 23.464,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr4-3200",
+   "family": "DDR4",
+   "bitsPerSecond": 204800000000,
+   "GBps": 25.6,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr5-4800",
+   "family": "DDR5",
+   "bitsPerSecond": 307200000000,
+   "GBps": 38.4,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr5-5200",
+   "family": "DDR5",
+   "bitsPerSecond": 332800000000,
+   "GBps": 41.6,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr5-5600",
+   "family": "DDR5",
+   "bitsPerSecond": 358400000000,
+   "GBps": 44.8,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr5-6000",
+   "family": "DDR5",
+   "bitsPerSecond": 384000000000,
+   "GBps": 48,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr5-6400",
+   "family": "DDR5",
+   "bitsPerSecond": 409600000000,
+   "GBps": 51.2,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr5-6800",
+   "family": "DDR5",
+   "bitsPerSecond": 435200000000,
+   "GBps": 54.4,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr5-7200",
+   "family": "DDR5",
+   "bitsPerSecond": 460800000000,
+   "GBps": 57.6,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr5-7600",
+   "family": "DDR5",
+   "bitsPerSecond": 486400000000,
+   "GBps": 60.8,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr5-8000",
+   "family": "DDR5",
+   "bitsPerSecond": 512000000000,
+   "GBps": 64,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr5-8400",
+   "family": "DDR5",
+   "bitsPerSecond": 537600000000,
+   "GBps": 67.2,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr5-8800",
+   "family": "DDR5",
+   "bitsPerSecond": 563200000000,
+   "GBps": 70.4,
+   "status": "standard",
+   "verification": "sourced",
+   "sources": [
+    "jedec-ddr"
+   ]
+  },
+  {
+   "id": "ddr5-9200",
+   "family": "DDR5",
+   "bitsPerSecond": 588800000000,
+   "GBps": 73.6,
+   "status": "vendor-claim",
+   "verification": "unverified",
+   "sources": [
+    "user-seed"
+   ]
+  }
+ ]
+}

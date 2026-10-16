@@ -28,6 +28,7 @@ The E2E suite starts its own server on port 4179 and stops it afterwards. It cov
 - arrows, Enter, Escape and outside-click dismissal
 - the empty state
 - swap, the unit toggle and URL state round-trips
+- the Raw signaling / Encoding-adjusted switch: values, ratio, bars, picker previews, catalog values/basis/sort, details, screen-reader text, swap/unit/reload persistence, repeated toggles and malformed `m=`
 - copy link
 - invalid URL IDs
 - identical selections
@@ -40,9 +41,11 @@ The E2E suite starts its own server on port 4179 and stops it afterwards. It cov
 - zero console errors and zero remote requests
 - (`layout.spec.mjs`) the compact comparison ends inside the first viewport at 375×667, 390×844, 360×740, 1366×768 and 1440×900 for default, long-name, mixed-basis, asymmetric, unverified, connector and extreme-ratio pairs, with legible minimum type sizes and nothing clipped
 - (`layout.spec.mjs`) Comparison details: collapsed by default, holding the formulas, notes, full caveats and underlying link
+- (`layout.spec.mjs`) the mode switch: 44px phone targets with short visible labels, raw previews in the phone picker sheet, swap/link/reload, and first-viewport fit in both modes (long DDR, HBM4E, unavailable-mode flags)
+- (`layout.spec.mjs`) DDR channel configurations: phone-sheet search and pick, ratio, swap, share links (legacy and suffixed IDs), desktop combobox, the details Channels row and subchannel note, and catalog filter/sort
 - (`layout.spec.mjs`) the mobile picker sheet: tap to browse with no keyboard, deliberate search, tap to pick, Cancel/Escape restore, focus trap and restore, list scroll that doesn't move the page, visual-viewport resize, 44px targets, and normal scrolling on a short landscape phone
 
-It also writes `/tmp/bandwidth-desktop.png`, `/tmp/bandwidth-mobile.png`, `/tmp/bandwidth-sort-{desktop,mobile}.png`, `/tmp/bandwidth-fit-<WxH>-<case>.png`, `/tmp/bandwidth-sheet-375x667.png`, `/tmp/bandwidth-details-375x667.png` and `/tmp/bandwidth-landscape-740x360.png`.
+It also writes `/tmp/bandwidth-desktop.png`, `/tmp/bandwidth-mobile.png`, `/tmp/bandwidth-sort-{desktop,mobile}.png`, `/tmp/bandwidth-fit-<WxH>-<case>.png`, `/tmp/bandwidth-sheet-375x667.png`, `/tmp/bandwidth-ddr-channels-375x667.png`, `/tmp/bandwidth-details-375x667.png` and `/tmp/bandwidth-landscape-740x360.png`, plus `/tmp/bandwidth-mode-{375x667,1366x768}.png`.
 
 ## Layout and mobile use
 
@@ -82,13 +85,58 @@ The catalog has a **Sort by** select. The options are original order, bandwidth 
 | `index.html` | Markup, CSP, ARIA combobox shells |
 | `styles.css` | Dark theme, responsive layout |
 | `js/data.js` | Catalog, sources, basis/status/verification enums. All values computed here |
+| `js/mode.js` | Pure display views per mode (`viewOf`, `modeSupport`); never changes the catalog |
 | `js/compare.js` | Pure logic: formatting, ratio, bar widths, URL state, search, catalog sort (shared with tests) |
 | `js/combobox.js` | Accessible type-to-filter combobox; full-screen picker sheet on narrow/touch screens |
 | `js/app.js` | Rendering and events |
 | `scripts/serve.mjs` | Zero-dependency static server (serves only site files) |
-| `tests/unit/*.test.mjs` | `node --test` suites (`sort.test.mjs` covers catalog sorting; `additions.test.mjs` covers the 2026-10-16 audit rows and keeps `docs/catalog-audit.md` in sync) |
+| `tests/unit/*.test.mjs` | `node --test` suites (`sort.test.mjs` covers catalog sorting; `additions.test.mjs` covers the 2026-10-16 audit rows and keeps `docs/catalog-audit.md` in sync; `channels.test.mjs` covers DDR channel configurations) |
+| `tests/unit/mode.test.mjs` | Mode views, ratio/bars/sort per mode, memory invariance, unsupported rows, URL `m=` |
 | `tests/e2e/app.spec.mjs` | Playwright suite |
 | `tests/e2e/layout.spec.mjs` | Viewport-fit, Comparison details and mobile picker sheet tests (fixed-size contexts, run once) |
+
+## Raw signaling / Encoding-adjusted
+
+A two-state **Figures** switch in the header (radio group: *Raw signaling* / *Encoding-adjusted*, default Encoding-adjusted) applies to every number on the page: both values, the ratio and bars, picker previews, catalog values, basis badges and bandwidth sort, the details Value/Formula/Basis/Figures rows, notices and the screen-reader text (bar label, catalog caption, "… figures:" lead-in). On phones the visible labels shorten to "Raw" / "Enc-adj"; the full names stay the accessible names.
+
+The catalog (`js/data.js`) is unchanged. `viewOf(item, mode)` in `js/mode.js` derives a frozen, cached display view:
+
+| Rows | Encoding-adjusted | Raw signaling |
+|---|---|---|
+| `encoding-adjusted` rows with a documented line code: PCIe 1.0–2.0 (8b/10b), PCIe 3.0–5.0 (128b/130b), SATA I–III, M.2 SATA, U.2/U.3/M.2 NVMe, SD UHS-II/III, SD Express | as listed (× 8/10 or × 128/130) | `bitsPerSecond ÷ 8`: the factor is removed, basis becomes Raw signaling, formula reads e.g. `8 GT/s × 4 lanes ÷ 8 (raw, 128b/130b not subtracted)` |
+| Memory (HBM, GDDR, DDR incl. channel rows, LPDDR) | unchanged, Theoretical memory peak | unchanged; never relabelled as raw |
+| Raw rows: PCIe 6.0–8.0, SAS, DisplayPort, HDMI | unchanged; "Encoding adjustment unavailable; Raw signaling shown." PCIe 6.0+ adds that FLIT framing/FEC overhead is not subtracted and this is not an adjusted payload rate | unchanged (already raw) |
+| Advertised rows: USB, Thunderbolt, USB4, Ethernet, SD UHS-I | unchanged; "Encoding adjustment unavailable; Advertised link rate shown." | unchanged; "Raw signaling unavailable; Advertised link rate shown." |
+
+Rules:
+
+- Only rows whose basis is `encoding-adjusted` **and** whose `efficiency` is not 1/1 are converted. A 1/1 efficiency means "no factor recorded", not "no overhead", so nothing is invented for raw or advertised rows, and advertised throughput is never adjusted twice.
+- No new line-code factors were added for SAS, DisplayPort, HDMI or USB 5/10 Gbps. Their notes mention an encoding, but the cited sources were not re-checked for an explicit factor in this change, so they stay as listed. Ethernet, Thunderbolt and USB4 marketing rates are never mapped to a physical encoding.
+- Encoding-adjusted is still not usable throughput: packet, framing and protocol overhead remain.
+- The mode only reverses the line-code factor. Lane widths, DDR channels and asymmetric reverse rates are untouched.
+- A short flag ("A, B: encoding adjustment unavailable" / "…: raw signaling unavailable") appears when a non-memory side can't follow the mode, unless the Mixed basis flag already covers that comparison. Details always carry the full explanation.
+
+URL: `m=raw` selects raw signaling. Encoding-adjusted is the default and is omitted from the URL, so every older link (no `m=`) keeps its original figures. `m=adjusted` is accepted, matching is case-insensitive, and any other value falls back to Encoding-adjusted with a notice (`Unknown mode “…”, using Encoding-adjusted.`). Examples:
+
+- `/?a=pcie3-x4&b=sata3`: 3.938 vs 0.6 GB/s (adjusted, 6.56×)
+- `/?a=pcie3-x4&b=sata3&m=raw`: 4 vs 0.75 GB/s (5.33×)
+- `/?a=pcie4-x4&b=sata3&u=Gbps&m=raw`: 64 vs 6 Gb/s
+- `/?a=ddr5-9200-16ch&b=hbm4e-samsung-max&m=raw`: memory, identical in both modes
+- `/?a=pcie6-x16&b=dp21-uhbr20`: both raw; encoding adjustment unavailable
+
+## DDR channel configurations
+
+In this catalog a **channel** is one 64-bit data bus (payload bits only, no ECC), which is one conventional DIMM channel. Every DDR, DDR2, DDR3, DDR4 and DDR5 rate is listed in 1, 2, 4, 8, 12 and 16 channel configurations:
+
+- **Aggregate peak scales exactly by N.** `bitsPerSecond = MT/s × 64 × N`, width is `64 × N` bits, and the formula names the count, e.g. `6400 MT/s × 64 bits × 8 channels ÷ 8 = 409.6 GB/s`. The per-pin rate does not change.
+- **DDR5 subchannels are counted once.** A DDR5 DIMM splits its 64 bits into two 32-bit subchannels. Here those two subchannels together are one 64-bit channel (2 × 32 = 64), so "8 channels" of DDR5-6400 is 8 × 64 bits, not 16 × 64 bits. Some vendors count each subchannel as a channel; this catalog doesn't, and the row notes say so.
+- **Names state the count, singular or plural:** `DDR5-6400 · 1 channel`, `DDR5-6400 · 2 channels`. The same name appears in both selectors (desktop and the mobile sheet), the value cards, bars, details and catalog. There is no separate channel dropdown.
+- **IDs.** The 1-channel row keeps the original id (`ddr5-6400`), so existing share links still work. Other counts add a stable suffix: `ddr5-6400-2ch`, `-4ch`, `-8ch`, `-12ch`, `-16ch`.
+- **Search** understands `ddr5-6400 8 channels`, `8-channel`, `8ch`, `single`/`dual`/`quad`/`octa channel`, `twelve channel` and `sixteen channel`. A count followed by a channel word is one search token, so `8 channels` doesn't match unrelated 8s.
+- **These are theoretical configurations.** They are not a claim that any processor supports every channel count with every generation. Each configuration inherits its rate's status, verification and sources. For example, every DDR5-9200 configuration stays unverified.
+- **Not changed:** LPDDR rows (still normalized to 64 bits, LPDDR6 at 24), DDR5 MRDIMM (one host channel) and every non-DDR row. `tests/unit/channels.test.mjs` checks them against `tests/unit/fixtures/catalog-baseline.json`, which was captured before this change.
+
+The catalog has 348 entries: 144 non-DDR rows plus 34 DDR rates × 6 channel counts.
 
 ## Data schema
 
@@ -110,6 +158,7 @@ Each interface (`INTERFACES` in `js/data.js`, frozen objects):
 | `sources` | Keys into `SOURCES` (title, publisher, url, kind: primary/secondary/user) |
 | `asymmetric` | `{forwardMbps, reverseMbps}` for USB4 v2 120/40 and TB5 Bandwidth Boost |
 | `connectorOf` | For U.2/U.3/M.2/SD Express rows: the id of the underlying link |
+| `channels`, `channelBits` | DDR–DDR5 rows only: channel count N (1, 2, 4, 8, 12, 16) and payload bits per channel (64) |
 
 Integers in, one division out: every GB/s value is the correctly rounded result of a single integer division. Tests can therefore assert exact equality, e.g. `HBM3 === 819.2` and `SAS-4 === 2.8125`.
 
@@ -118,7 +167,8 @@ Integers in, one division out: every GB/s value is the correctly rounded result 
 | Family | Formula | Basis |
 |---|---|---|
 | HBM, GDDR | Gb/s per pin × width ÷ 8 (HBM per stack 1024-bit, HBM4 2048-bit; GDDR x32 device, GDDR6W x64) | memory-theoretical |
-| DDR–DDR5, MRDIMM | MT/s × 64 ÷ 8000 | memory-theoretical |
+| DDR–DDR5 | MT/s × 64 × N channels ÷ 8000 | memory-theoretical |
+| DDR5 MRDIMM | MT/s × 64 ÷ 8000 (one host channel) | memory-theoretical |
 | LPDDR1–5X | MT/s × 64 ÷ 8000 (normalized 64-bit) | memory-theoretical |
 | LPDDR6 | 14400 × 24 ÷ 8000 = 43.2 | memory-theoretical |
 | PCIe 1–2 | GT/s × lanes × 8/10 ÷ 8 | encoding-adjusted |
@@ -140,7 +190,7 @@ Rules the UI enforces:
 - **Ratio** is larger ÷ smaller on GB/s, so it doesn't change with the unit.
 - **Bars** are exact linear percentages with no minimum width. Below 1 px nothing is drawn, and the UI says so with the exact percentage.
 - A **mixed-basis warning** appears whenever the two sides have different `basis` values.
-- The **Gb/s** view is the post-encoding bit rate for encoding-adjusted rows. SATA III therefore shows 4.8 Gb/s, while the formula line keeps the 6 Gb/s line rate visible.
+- The **Gb/s** view is the post-encoding bit rate for encoding-adjusted rows in Encoding-adjusted mode (the default). SATA III therefore shows 4.8 Gb/s, while the formula line keeps the 6 Gb/s line rate visible.
 - **Decimal units throughout.** 1 GB/s = 10⁹ B/s.
 
 ## User-supplied vs sourced data
@@ -156,7 +206,7 @@ The seed list was supplied by the site owner. I checked figures against primary 
 - **SNIA:** U.3 as SFF-TA-1001.
 - **IEEE:** 802.3df (800G) approved; P802.3dj (1.6T) not yet ratified (still "Active PAR" on 2026-10-16).
 
-The 2026-10-16 audit added 16 rows: JEDEC HBM4 baseline, Samsung HBM4E, JEDEC/Micron GDDR7, LPDDR5X-8533, PCIe 8.0 roadmap targets, DisplayPort HBR/HBR2, and HDMI 1.3/1.4, 2.0 and 2.2. [docs/catalog-audit.md](docs/catalog-audit.md) lists the dated sources, evidence quotes, deliberate exclusions and blocked sources.
+The 2026-10-16 audit added 16 rows: JEDEC HBM4 baseline, Samsung HBM4E, JEDEC/Micron GDDR7, LPDDR5X-8533, PCIe 8.0 roadmap targets, DisplayPort HBR/HBR2, and HDMI 1.3/1.4, 2.0 and 2.2. [docs/catalog-audit.md](docs/catalog-audit.md) lists the dated sources, evidence quotes, deliberate exclusions and blocked sources. That audit is a dated snapshot: its 162 → 178 count predates the DDR channel configurations, which later brought the catalog to 348.
 
 Several primary sites (pcisig.com, jedec.org, sdcard.org, intel.com) returned HTTP 403 to automated fetches. Their links point to the canonical pages, but those pages weren't machine-verified for this build.
 

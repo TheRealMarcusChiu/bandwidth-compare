@@ -95,8 +95,8 @@ test('units', () => {
 });
 
 test('URL state parsing', () => {
-  assert.deepEqual(parseState('', BY_ID, D), { a: 'pcie4-x4', b: 'sata3', unit: 'GBps', errors: [] });
-  assert.deepEqual(parseState('?a=hbm3&b=ddr5-6400&u=Gbps', BY_ID, D), { a: 'hbm3', b: 'ddr5-6400', unit: 'Gbps', errors: [] });
+  assert.deepEqual(parseState('', BY_ID, D), { a: 'pcie4-x4', b: 'sata3', unit: 'GBps', mode: 'adjusted', errors: [] });
+  assert.deepEqual(parseState('?a=hbm3&b=ddr5-6400&u=Gbps', BY_ID, D), { a: 'hbm3', b: 'ddr5-6400', unit: 'Gbps', mode: 'adjusted', errors: [] });
   const bad = parseState('?a=nope&b=%3Cscript%3E&u=bogus', BY_ID, D);
   assert.equal(bad.a, 'pcie4-x4');
   assert.equal(bad.b, 'sata3');

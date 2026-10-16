@@ -21,6 +21,13 @@ const CASES = {
   'hbm4e-long-labels': '/?a=hbm4e-samsung-max&b=hbm4e-samsung-sample',
   'hbm4e-extreme': '/?a=hbm4e-samsung-max&b=usb1-low',
   'roadmap-vs-hdmi22': '/?a=pcie8-x16&b=hdmi22-frl&u=Gbps',
+  'ddr-channels-unverified': '/?a=ddr5-9200-16ch&b=ddr3-1600-12ch',
+  'raw-ddr-hbm4e': '/?a=ddr5-9200-16ch&b=hbm4e-samsung-max&m=raw',
+  'raw-long-mixed-asym': '/?a=lpddr5x-10700&b=tb5-boost&m=raw&u=Gbps',
+  'adjusted-unavailable-flag': '/?a=pcie8-x16&b=dp21-uhbr13-5',
+  'raw-unavailable-flag-unverified': '/?a=eth-1600g&b=usb4v2-120&m=raw',
+  'raw-long-ddr-extreme': '/?a=ddr5-9200-16ch&b=usb1-low&m=raw',
+  'adjusted-long-ddr-three-flags': '/?a=ddr5-9200-16ch&b=sata3',
 };
 
 test.beforeEach(({}, info) => { test.skip(info.project.name !== 'desktop', 'fixed-size contexts; run once'); });
@@ -60,7 +67,7 @@ async function expectFits(page, label) {
   expect(m.ratio, `${label}: ratio legible`).toBeGreaterThanOrEqual(28);
   expect(m.badge, `${label}: badges legible`).toBeGreaterThanOrEqual(11);
   expect(m.clipped, `${label}: nothing clipped`).toEqual([]);
-  for (const sel of ['#cb-a', '#cb-b', '#swap', '#ratio-num', '#bar-a', '#side-a .num', '#side-b .num', '#side-a .badge-basis', '#side-b .badge-basis']) {
+  for (const sel of ['#cb-a', '#cb-b', '#swap', '.seg-mode', '#ratio-num', '#bar-a', '#side-a .num', '#side-b .num', '#side-a .badge-basis', '#side-b .badge-basis']) {
     await expect(page.locator(sel).first(), `${label}: ${sel}`).toBeVisible();
   }
 }
@@ -349,6 +356,201 @@ test('short landscape phone: normal page scroll, picker sheet still fits', async
   await page.locator('.picker[data-side="b"] .cb-cancel').tap();
   await expectSheetClosed(page, 'b', 'Thunderbolt 5 Bandwidth Boost (120 Gb/s)');
   await page.screenshot({ path: '/tmp/bandwidth-landscape-740x360.png' });
+  expect(errors).toEqual([]);
+  await ctx.close();
+});
+
+// ------------------------------------------------------------ DDR channel configurations
+
+test('DDR channels: phone picker finds, picks and compares channel variants; swap and link', async ({ browser, baseURL }) => {
+  const { ctx, page, errors } = await open(browser, baseURL, PHONE);
+  await trigger(page, 'a').tap();
+  await expectSheetOpen(page, 'a');
+  await page.locator('#cb-a').tap();
+  await page.keyboard.type('DDR5-6400 8 channels');
+  const optsA = page.locator('#lb-a [role="option"]');
+  await expect(optsA).toHaveCount(1);
+  await expect(optsA.first().locator('.cb-name')).toHaveText('DDR5-6400 · 8 channels');
+  await optsA.first().tap();
+  await expectSheetClosed(page, 'a', 'DDR5-6400 · 8 channels');
+  await expect(page.locator('#side-a .side-name')).toHaveText('DDR5-6400 · 8 channels');
+  await expect(page.locator('#side-a .num')).toHaveText('409.6');
+  await expect(page.locator('#side-a .badges')).toContainText('512-bit (8 × 64)');
+
+  await trigger(page, 'b').tap();
+  await page.locator('#cb-b').tap();
+  await page.keyboard.type('ddr5 6400 dual channel');
+  await expect(page.locator('#lb-b [role="option"]')).toHaveCount(1);
+  await page.locator('#lb-b [role="option"]').first().tap();
+  await expectSheetClosed(page, 'b', 'DDR5-6400 · 2 channels');
+  await expect(page.locator('#side-b .num')).toHaveText('102.4');
+  await expect(page.locator('#ratio-num')).toHaveText('4×');
+  await expect(page.locator('#ratio-text')).toHaveText('A lists 4× the figure of B');
+  await expect(page.locator('#notices')).not.toContainText('Mixed basis');
+  await expect(page).toHaveURL(/\?a=ddr5-6400-8ch&b=ddr5-6400-2ch$/);
+  await page.waitForTimeout(550);
+  await expectFits(page, 'ddr channels picked');
+
+  await page.locator('#swap').tap();
+  await expect(page).toHaveURL(/\?a=ddr5-6400-2ch&b=ddr5-6400-8ch$/);
+  await expect(trigger(page, 'a')).toContainText('DDR5-6400 · 2 channels');
+  await expect(page.locator('#ratio-text')).toHaveText('B lists 4× the figure of A');
+
+  // The shared URL reproduces the comparison.
+  await page.goto(page.url());
+  await expect(page.locator('#cb-a')).toHaveValue('DDR5-6400 · 2 channels');
+  await expect(page.locator('#cb-b')).toHaveValue('DDR5-6400 · 8 channels');
+  await expect(page.locator('#url-notice')).toBeHidden();
+  await page.screenshot({ path: '/tmp/bandwidth-ddr-channels-375x667.png' });
+  expect(errors).toEqual([]);
+  await ctx.close();
+});
+
+test('DDR channels: legacy share links still resolve to the 1-channel row', async ({ browser, baseURL }) => {
+  const { ctx, page, errors } = await open(browser, baseURL, { viewport: { width: 1366, height: 768 } }, '/?a=ddr5-6400&b=ddr4-3200');
+  await expect(page.locator('#url-notice')).toBeHidden();
+  await expect(page.locator('#cb-a')).toHaveValue('DDR5-6400 · 1 channel');
+  await expect(page.locator('#cb-b')).toHaveValue('DDR4-3200 · 1 channel');
+  await expect(page.locator('#side-a .num')).toHaveText('51.2');
+  await expect(page.locator('#side-b .num')).toHaveText('25.6');
+  await expect(page).toHaveURL(/\?a=ddr5-6400&b=ddr4-3200$/);
+  // An id that never existed is still rejected.
+  await page.goto('/?a=ddr5-6400-3ch&b=sata3');
+  await expect(page.locator('#url-notice')).toContainText('ddr5-6400-3ch');
+  expect(errors).toEqual([]);
+  await ctx.close();
+});
+
+test('DDR channels: desktop combobox, details explain channels and the DDR5 subchannel convention', async ({ browser, baseURL }) => {
+  const { ctx, page, errors } = await open(browser, baseURL, { viewport: { width: 1366, height: 768 } });
+  const input = page.locator('#cb-a');
+  await input.click();
+  await input.fill('quad channel ddr4 3200');
+  await expect(page.locator('#lb-a [role="option"]')).toHaveCount(1);
+  await expect(page.locator('#lb-a [role="option"]').first()).toContainText('DDR4-3200 · 4 channels');
+  await page.keyboard.press('Enter');
+  await expect(input).toHaveValue('DDR4-3200 · 4 channels');
+  await expect(page.locator('#side-a .num')).toHaveText('102.4');
+  await expect(page).toHaveURL(/a=ddr4-3200-4ch/);
+
+  await page.goto('/?a=ddr5-6400-8ch&b=ddr5-6400');
+  await page.locator('#cmp-details summary').click();
+  await expect(page.locator('#detail-a')).toContainText('8 × 64-bit channels (512-bit aggregate)');
+  await expect(page.locator('#detail-b')).toContainText('1 × 64-bit channel (64-bit aggregate)');
+  await expect(page.locator('#detail-a .formula')).toHaveText('6400 MT/s × 64 bits × 8 channels ÷ 8 = 409.6 GB/s');
+  await expect(page.locator('#detail-a')).toContainText('two 32-bit subchannels, counted once');
+  await expect(page.locator('#detail-a')).toContainText('Theoretical 8-channel configuration');
+  await expect(page.locator('#detail-a')).toContainText('Not a claim that any processor supports 8 channels');
+  await expect(page.locator('#ratio-full')).toHaveText('DDR5-6400 · 8 channels lists 8× the figure of DDR5-6400 · 1 channel.');
+  // Non-DDR rows get no channel row.
+  await page.goto('/?a=lpddr5-6400&b=hbm3');
+  await page.locator('#cmp-details summary').click();
+  await expect(page.locator('#detail-a')).not.toContainText('Channels');
+  expect(errors).toEqual([]);
+  await ctx.close();
+});
+
+test('DDR channels: catalog filter and sort show every configuration with explicit names', async ({ browser, baseURL }) => {
+  for (const vp of [{ width: 1366, height: 768 }, { width: 375, height: 667 }]) {
+    const { ctx, page, errors } = await open(browser, baseURL, { viewport: vp, phone: vp.width < 760 });
+    await page.locator('#catalog summary').click();
+    await page.locator('#cat-q').fill('ddr5-6400');
+    const names = page.locator('#cat-body .cat-name');
+    await expect(names).toHaveText([
+      'DDR5-6400 · 1 channel', 'DDR5-6400 · 2 channels', 'DDR5-6400 · 4 channels',
+      'DDR5-6400 · 8 channels', 'DDR5-6400 · 12 channels', 'DDR5-6400 · 16 channels',
+      'LPDDR5-6400 (64-bit normalized)',
+    ]);
+    await page.getByLabel('Sort by').selectOption('bandwidth-desc');
+    await expect(names.first()).toHaveText('DDR5-6400 · 16 channels');
+    const nums = (await page.locator('#cat-body .num-col').allTextContents()).map((t) => Number(t.replace(/,/g, '')));
+    expect(nums).toEqual([819.2, 614.4, 409.6, 204.8, 102.4, 51.2, 51.2]);
+    // Tie: LPDDR5-6400 (normalized) vs DDR5-6400 · 1 channel break by name.
+    await page.getByLabel('Sort by').selectOption('name-asc');
+    await expect(names.nth(1)).toHaveText('DDR5-6400 · 2 channels');
+    await expect(names.nth(4)).toHaveText('DDR5-6400 · 12 channels');
+    await page.locator('#cat-body .mini[data-set="b"][data-id="ddr5-6400-12ch"]').click();
+    await expect(page.locator('#cb-b')).toHaveValue('DDR5-6400 · 12 channels');
+    await expect(page).toHaveURL(/b=ddr5-6400-12ch/);
+    await page.locator('#cat-q').fill('dual channel');
+    await page.locator('.chip[data-cat="memory"]').click();
+    expect(await page.locator('#cat-body tr:not(.cat-fam)').count()).toBe(34);
+    await expect(page.locator('#catalog-count')).toHaveText('34 of 348');
+    const [sw, iw] = await page.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
+    expect(sw).toBeLessThanOrEqual(iw);
+    expect(errors).toEqual([]);
+    await ctx.close();
+  }
+});
+
+// ------------------------------------------------------------ raw signaling / encoding-adjusted mode
+
+test('mode: phone workflow, touch-friendly switch, sheet previews, swap and link', async ({ browser, baseURL }) => {
+  const { ctx, page, errors } = await open(browser, baseURL, PHONE, '/?a=pcie3-x4&b=ddr5-9200-16ch');
+  const raw = page.locator('label:has(input[value="raw"])');
+  const adj = page.locator('label:has(input[value="adjusted"])');
+  for (const l of [raw, adj]) {
+    const box = await l.boundingBox();
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.width).toBeGreaterThanOrEqual(44);
+  }
+  // Short visible labels; the full names stay the accessible names.
+  await expect(raw).toHaveText('Raw signalingRaw');
+  await expect(page.locator('.seg-mode .seg-short').first()).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Raw signaling', exact: true })).toHaveCount(1);
+  await expect(page.getByRole('radio', { name: 'Encoding-adjusted', exact: true })).toBeChecked();
+  await expect(page.locator('#side-a .num')).toHaveText('3.938');
+
+  await raw.tap();
+  await expect(page.locator('#side-a .num')).toHaveText('4');
+  await expect(page.locator('#side-b .num')).toHaveText('1,177.6'); // memory unchanged
+  await expect(page.locator('#side-a .badge-basis')).toContainText('Raw signaling');
+  await expect(page).toHaveURL(/\?a=pcie3-x4&b=ddr5-9200-16ch&m=raw$/);
+  await page.waitForTimeout(550);
+  await expectFits(page, 'raw pcie vs long ddr');
+
+  // The full-screen picker previews raw figures, and picking keeps the mode.
+  await trigger(page, 'a').tap();
+  await expectSheetOpen(page, 'a');
+  await page.locator('#cb-a').tap();
+  await page.keyboard.type('sata iii');
+  const opt = page.locator('#lb-a [role="option"]').filter({ hasText: 'SATA III (6 Gb/s)' }).first();
+  await expect(opt.locator('.cb-meta')).toHaveText('0.75 GB/s · RAW');
+  await opt.tap();
+  await expectSheetClosed(page, 'a', 'SATA III (6 Gb/s)');
+  await expect(page.locator('#side-a .num')).toHaveText('0.75');
+  await expect(page).toHaveURL(/\?a=sata3&b=ddr5-9200-16ch&m=raw$/);
+
+  await page.locator('#swap').tap();
+  await expect(page).toHaveURL(/\?a=ddr5-9200-16ch&b=sata3&m=raw$/);
+  await expect(page.locator('#side-b .num')).toHaveText('0.75');
+  await page.goto(page.url());
+  await expect(page.getByRole('radio', { name: 'Raw signaling', exact: true })).toBeChecked();
+  await expect(page.locator('#side-b .num')).toHaveText('0.75');
+
+  await adj.tap();
+  await expect(page.locator('#side-b .num')).toHaveText('0.6');
+  await expect(page).toHaveURL(/\?a=ddr5-9200-16ch&b=sata3$/);
+  await page.waitForTimeout(550);
+  await expectFits(page, 'adjusted after toggles');
+  await page.screenshot({ path: '/tmp/bandwidth-mode-375x667.png' });
+  expect(errors).toEqual([]);
+  await ctx.close();
+});
+
+test('mode: desktop shows full labels in the header and fits with HBM4E', async ({ browser, baseURL }) => {
+  const { ctx, page, errors } = await open(browser, baseURL, { viewport: { width: 1366, height: 768 } }, '/?a=hbm4e-samsung-max&b=pcie5-x16');
+  await expect(page.locator('.seg-mode .seg-long').first()).toBeVisible();
+  await expect(page.locator('.seg-mode .seg-short').first()).toBeHidden();
+  const [top, controls] = await page.evaluate(() => ['.top', '.controls'].map((s) => document.querySelector(s).getBoundingClientRect().height));
+  expect(top).toBeLessThanOrEqual(controls + 20); // one header row on desktop
+  await page.locator('label:has(input[value="raw"])').click();
+  await expect(page.locator('#side-b .num')).toHaveText('64');
+  await expect(page.locator('#side-a .num')).toHaveText('4,096');
+  await expect(page.locator('#ratio-num')).toHaveText('64×');
+  await page.waitForTimeout(550);
+  await expectFits(page, 'desktop raw hbm4e');
+  await page.screenshot({ path: '/tmp/bandwidth-mode-1366x768.png' });
   expect(errors).toEqual([]);
   await ctx.close();
 });

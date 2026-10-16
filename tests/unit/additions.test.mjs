@@ -240,7 +240,11 @@ const ADDED = [
 test('catalog grows by exactly the audited additions (162 → 178)', () => {
   assert.equal(ADDED.length, 16);
   for (const id of ADDED) get(id);
-  assert.equal(INTERFACES.length, 162 + ADDED.length);
+  // The audit predates DDR channel variants (tests/unit/channels.test.mjs): its
+  // 178 counts the 1-channel DDR rows only, so the extra configurations are excluded here.
+  const audited = INTERFACES.filter((i) => !(i.channels > 1));
+  assert.equal(audited.length, 162 + ADDED.length);
+  assert.equal(INTERFACES.length - audited.length, 34 * 5);
 });
 
 test('docs/catalog-audit.md documents every addition, its sources and the exclusions', async () => {
