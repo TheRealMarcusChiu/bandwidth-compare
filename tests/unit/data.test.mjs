@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  INTERFACES, BY_ID, BASES, STATUSES, VERIFICATION, CATEGORIES, SOURCES, DEFAULT_A, DEFAULT_B, computeGBps,
+  INTERFACES, BY_ID, BASES, STATUSES, STATUS_SHORT, VERIFICATION, CATEGORIES, SOURCES, DEFAULT_A, DEFAULT_B, computeGBps,
 } from '../../js/data.js';
 
 const get = (id) => {
@@ -250,4 +250,15 @@ test('display links are raw lane sums', () => {
   assert.equal(get('dp14-hbr3').Gbps, 32.4);
   assert.equal(get('dp21-uhbr20').Gbps, 80);
   assert.equal(get('hdmi21-frl').Gbps, 48);
+});
+
+test('every status has a short compact label (null only for the plain standard case)', () => {
+  for (const key of Object.keys(STATUSES)) assert.ok(key in STATUS_SHORT, `${key} short label`);
+  assert.equal(STATUS_SHORT.standard, null);
+  for (const [key, label] of Object.entries(STATUS_SHORT)) {
+    if (key === 'standard') continue;
+    assert.ok(label.length <= 14, `${key} short label is compact`);
+  }
+  assert.equal(STATUS_SHORT.developing, 'Not ratified');
+  assert.equal(STATUS_SHORT.connector, 'Connector');
 });

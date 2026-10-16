@@ -44,6 +44,17 @@ export const STATUSES = {
   connector: 'Connector / form factor',
 };
 
+/** Compact status flag shown next to the value; the full label lives in Comparison details. */
+export const STATUS_SHORT = {
+  standard: null,
+  'vendor-bin': 'Vendor bin',
+  'vendor-claim': 'Vendor claim',
+  historical: 'Historical',
+  illustrative: 'Illustrative',
+  developing: 'Not ratified',
+  connector: 'Connector',
+};
+
 /** Whether we checked the figure against a cited source. */
 export const VERIFICATION = {
   sourced: 'Cited source',

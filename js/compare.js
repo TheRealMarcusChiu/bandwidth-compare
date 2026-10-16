@@ -74,6 +74,14 @@ export function ratioSentence(a, b, cmp) {
   return `${hi.name} lists ${formatRatio(cmp.ratio)} the figure of ${lo.name}.`;
 }
 
+/** Compact one-line ratio using side letters, so long names can't grow the layout. */
+export function ratioShort(cmp) {
+  if (cmp.same) return 'Same interface on both sides';
+  if (cmp.equalValue) return 'A and B list the same figure';
+  const [hi, lo] = cmp.faster === 'a' ? ['A', 'B'] : ['B', 'A'];
+  return `${hi} lists ${formatRatio(cmp.ratio)} the figure of ${lo}`;
+}
+
 // ------------------------------------------------------------ URL state
 
 const ID_RE = /^[a-z0-9][a-z0-9-]{0,63}$/;
@@ -139,4 +147,40 @@ export function search(index, query) {
         tokens.every((t) => e.words.includes(t) || e.compact.includes(compact(t))),
     )
     .map((e) => e.item);
+}
+
+// ------------------------------------------------------------ catalog sort
+
+export const SORTS = {
+  original: 'Original order',
+  'bandwidth-desc': 'Bandwidth: highest first',
+  'bandwidth-asc': 'Bandwidth: lowest first',
+  'name-asc': 'Name: A–Z',
+  'name-desc': 'Name: Z–A',
+  'family-asc': 'Family: A–Z',
+  'family-desc': 'Family: Z–A',
+};
+export const DEFAULT_SORT = 'original';
+
+const COLLATOR = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+const byName = (x, y) => COLLATOR.compare(x.name, y.name) || (x.id < y.id ? -1 : x.id > y.id ? 1 : 0);
+
+const PRIMARY = {
+  'bandwidth-desc': (x, y) => y.GBps - x.GBps,
+  'bandwidth-asc': (x, y) => x.GBps - y.GBps,
+  'name-asc': () => 0,
+  'name-desc': (x, y) => -byName(x, y),
+  'family-asc': (x, y) => COLLATOR.compare(x.family, y.family),
+  'family-desc': (x, y) => COLLATOR.compare(y.family, x.family),
+};
+
+/**
+ * Sorted copy of `items`; the input is never mutated. Bandwidth uses the
+ * underlying GB/s number, so the order is the same in either unit. Ties always
+ * break by natural name A–Z, then id, so the result never depends on input order.
+ */
+export function sortItems(items, key) {
+  const primary = PRIMARY[key];
+  if (!primary) return [...items];
+  return [...items].sort((x, y) => primary(x, y) || byName(x, y));
 }

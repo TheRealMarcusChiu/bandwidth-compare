@@ -16,10 +16,10 @@ ES modules don't load over `file://`, so use a server. For GitHub Pages, publish
 ## Tests
 
 ```sh
-npm test             # node --test: data validity, arithmetic, ratio/URL/search logic (no deps)
+npm test             # node --test: data validity, arithmetic, ratio/URL/search/sort logic (no deps)
 npm i                # installs @playwright/test (dev only)
 npx playwright install chromium
-npm run test:e2e     # Playwright, desktop 1440×1000 + Pixel 7 mobile
+npm run test:e2e     # Playwright, desktop 1440×1000 + Pixel 7 mobile (+ fixed-size contexts in layout.spec)
 ```
 
 The E2E suite starts its own server on port 4179 and stops it afterwards. It covers:
@@ -34,11 +34,46 @@ The E2E suite starts its own server on port 4179 and stops it afterwards. It cov
 - the extreme ratio with a sub-pixel bar
 - mixed-basis and unverified notices
 - catalog filtering
+- catalog sorting combined with filters, unit toggles and selections
 - source links
 - horizontal overflow and touch-target size
 - zero console errors and zero remote requests
+- (`layout.spec.mjs`) the compact comparison ends inside the first viewport at 375×667, 390×844, 360×740, 1366×768 and 1440×900 for default, long-name, mixed-basis, asymmetric, unverified, connector and extreme-ratio pairs, with legible minimum type sizes and nothing clipped
+- (`layout.spec.mjs`) Comparison details: collapsed by default, holding the formulas, notes, full caveats and underlying link
+- (`layout.spec.mjs`) the mobile picker sheet: tap to browse with no keyboard, deliberate search, tap to pick, Cancel/Escape restore, focus trap and restore, list scroll that doesn't move the page, visual-viewport resize, 44px targets, and normal scrolling on a short landscape phone
 
-It also writes `/tmp/bandwidth-desktop.png` and `/tmp/bandwidth-mobile.png`.
+It also writes `/tmp/bandwidth-desktop.png`, `/tmp/bandwidth-mobile.png`, `/tmp/bandwidth-sort-{desktop,mobile}.png`, `/tmp/bandwidth-fit-<WxH>-<case>.png`, `/tmp/bandwidth-sheet-375x667.png`, `/tmp/bandwidth-details-375x667.png` and `/tmp/bandwidth-landscape-740x360.png`.
+
+## Layout and mobile use
+
+The page header, both selectors, the two values, the ratio, the bars and short warning flags form the compact comparison (`<section id="compare">`). It is sized to fit the first screen on common laptops (1366×768 and up) and portrait phones (360–390 px wide). The catalog and methodology sit below the fold.
+
+- Spacing and the big numbers scale with viewport height and column width (`svh`, container `cqi` units and character count). Long values shrink instead of overflowing, down to a 26 px minimum. Nothing uses a fixed height or clipping. When the comparison can't fit (zoom, short landscape), the page simply scrolls.
+- On phones, A and B values sit side by side. The picker buttons show the full interface names, wrapping if needed. The compact ratio line says "A lists 13.1× the figure of B", so long names can't grow it.
+- Each side shows its basis and width badges. A status flag appears only when it is a caveat (Unverified, Not ratified, Vendor claim, Connector…), with the full wording in its `title` attribute. Short notice flags (Mixed basis, Unverified figure, Asymmetric link, Extreme difference, Identical selection) stay visible.
+- **Comparison details** (a `<details>`, collapsed by default, between the comparison and the catalog) holds the full ratio sentence, each side's value in both units, formula, basis description, encoding, reverse direction, status, verification, notes, the connector's underlying link, the full notice explanations and the linear-scale note.
+
+### Picker sheet (narrow or short touch screens)
+
+At widths ≤ 760 px, or on coarse-pointer screens ≤ 500 px tall, each selector is a full-width button showing the current name. The mode is set as `html.is-sheet-mode` by `js/combobox.js`.
+
+- Tapping the button opens the same combobox (same `#cb-a`/`#lb-a` IDs and ARIA) as a full-screen `role="dialog"` `aria-modal` sheet. It has a title, a Cancel button, a 16 px+ search field and a scrollable, family-grouped list. Names are never truncated, and rows are at least 52 px tall.
+- Browsing doesn't focus the search field, so no keyboard appears. Tapping the field is a deliberate search.
+- Picking an option or Cancel closes the sheet. After touch, focus returns to the picker button, so the on-screen keyboard is dismissed and the comparison is visible. Cancel and Escape restore the previous name.
+- While open, page scroll is locked (`html.cb-lock`) and the list uses `overscroll-behavior: contain`. The sheet is sized to `visualViewport`, so it shrinks above the on-screen keyboard.
+- Keyboard: focusing the combobox opens the sheet for search. Arrows, Enter and Escape work as on desktop. Tab is trapped between the search field and Cancel, and focus returns to the combobox on close.
+
+Wider screens keep the inline type-to-filter combobox unchanged.
+
+## Catalog sorting
+
+The catalog has a **Sort by** select. The options are original order, bandwidth highest or lowest first, name A–Z or Z–A, and family A–Z or Z–A. It reorders only the catalog table. The A/B comparator dropdowns always keep catalog order.
+
+- Bandwidth sorts use the underlying `GBps` number, never the formatted string, so the order is the same in GB/s and Gb/s.
+- Ties always break by natural, case-insensitive name A–Z (`x4` before `x16`), then by `id`. The result does not depend on input order.
+- `sortItems()` (in `js/compare.js`) returns a copy and never mutates `INTERFACES`.
+- The sort applies after search and category filtering. It persists while filters, units or A/B selections change. It is not saved in the URL and resets on reload.
+- Family header rows show only in original and family orders. In other orders the family appears inline next to each name. `aria-sort` is set on the Interface or value column when a sort applies.
 
 ## Files
 
@@ -47,12 +82,13 @@ It also writes `/tmp/bandwidth-desktop.png` and `/tmp/bandwidth-mobile.png`.
 | `index.html` | Markup, CSP, ARIA combobox shells |
 | `styles.css` | Dark theme, responsive layout |
 | `js/data.js` | Catalog, sources, basis/status/verification enums. All values computed here |
-| `js/compare.js` | Pure logic: formatting, ratio, bar widths, URL state, search (shared with tests) |
-| `js/combobox.js` | Accessible type-to-filter combobox |
+| `js/compare.js` | Pure logic: formatting, ratio, bar widths, URL state, search, catalog sort (shared with tests) |
+| `js/combobox.js` | Accessible type-to-filter combobox; full-screen picker sheet on narrow/touch screens |
 | `js/app.js` | Rendering and events |
 | `scripts/serve.mjs` | Zero-dependency static server (serves only site files) |
-| `tests/unit/*.test.mjs` | `node --test` suites |
+| `tests/unit/*.test.mjs` | `node --test` suites (`sort.test.mjs` covers catalog sorting) |
 | `tests/e2e/app.spec.mjs` | Playwright suite |
+| `tests/e2e/layout.spec.mjs` | Viewport-fit, Comparison details and mobile picker sheet tests (fixed-size contexts, run once) |
 
 ## Data schema
 

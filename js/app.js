@@ -1,9 +1,9 @@
 import {
-  INTERFACES, BY_ID, BASES, STATUSES, VERIFICATION, CATEGORIES, SOURCES, DEFAULT_A, DEFAULT_B,
+  INTERFACES, BY_ID, BASES, STATUSES, STATUS_SHORT, VERIFICATION, CATEGORIES, SOURCES, DEFAULT_A, DEFAULT_B,
 } from './data.js';
 import {
-  UNITS, valueIn, formatValue, humanScale, formatRatio, compare, ratioSentence,
-  parseState, serializeState, buildIndex, search,
+  UNITS, valueIn, formatValue, humanScale, formatRatio, compare, ratioSentence, ratioShort,
+  parseState, serializeState, buildIndex, search, SORTS, DEFAULT_SORT, sortItems,
 } from './compare.js';
 import { Combobox } from './combobox.js';
 
@@ -42,44 +42,60 @@ function set(patch) {
 
 // ------------------------------------------------------------ render
 
+// Compact flags only: basis + width always, status/verification only when they are a caveat.
+// Full wording lives in Comparison details.
 function badges(item) {
   const basis = BASES[item.basis];
-  const list = el('ul', { class: 'badges', 'aria-label': 'Attributes' },
+  const status = STATUS_SHORT[item.status];
+  return el('ul', { class: 'badges', 'aria-label': 'Attributes' },
     el('li', { class: `badge badge-basis basis-${item.basis}`, title: basis.description }, el('b', { text: basis.short }), ` ${basis.label}`),
     el('li', { class: 'badge', title: 'Width' }, item.width.label),
-    el('li', { class: `badge status-${item.status}` }, STATUSES[item.status]),
-    el('li', { class: `badge ${item.verification === 'unverified' ? 'badge-warn' : 'badge-ok'}` }, VERIFICATION[item.verification]),
+    status ? el('li', { class: `badge status-${item.status}`, title: STATUSES[item.status] }, status) : null,
+    item.verification === 'unverified' ? el('li', { class: 'badge badge-warn', title: VERIFICATION.unverified }, 'Unverified') : null,
   );
-  return list;
 }
 
+const reverseText = (item) =>
+  `${formatValue(state.unit === 'Gbps' ? item.asymmetric.reverseMbps / 1000 : item.asymmetric.reverseMbps / 8000)} ${unitLabel()}`;
+
 function renderSide(node, item, side) {
-  const v = valueIn(item, state.unit);
+  const v = formatValue(valueIn(item, state.unit));
   const hs = humanScale(item.GBps);
-  const asym = item.asymmetric
-    ? el('p', { class: 'asym' }, `Reverse direction: ${formatValue(state.unit === 'Gbps' ? item.asymmetric.reverseMbps / 1000 : item.asymmetric.reverseMbps / 8000)} ${unitLabel()}`)
-    : null;
-  const via = item.connectorOf && BY_ID.get(item.connectorOf)
-    ? el('p', { class: 'via' }, 'Underlying link: ', el('button', { type: 'button', class: 'link', 'data-goto': item.connectorOf, 'data-side': side, text: BY_ID.get(item.connectorOf).name }))
-    : null;
+  const num = el('span', { class: 'num', text: v });
+  num.style.setProperty('--chars', String(Math.max(v.length, 4)));
   node.replaceChildren(...[
     el('p', { class: 'side-tag' }, el('span', { class: `dot dot-${side}`, 'aria-hidden': 'true' }), `${side.toUpperCase()} · ${item.family}`),
-    el('h2', { class: 'side-name', text: item.name }),
-    el('p', { class: 'value' },
-      el('span', { class: 'num', text: formatValue(v) }),
-      el('span', { class: 'unit', text: unitLabel() })),
+    el('h3', { class: 'side-name', text: item.name }),
+    el('p', { class: 'value' }, num, el('span', { class: 'unit', text: unitLabel() })),
     hs ? el('p', { class: 'human', text: `= ${hs}` }) : null,
-    asym,
+    item.asymmetric ? el('p', { class: 'asym' }, `Reverse direction: ${reverseText(item)}`) : null,
     badges(item),
-    el('p', { class: 'formula' }, el('code', { text: `${item.formula} = ${formatValue(item.GBps)} GB/s` })),
-    item.encoding ? el('p', { class: 'enc' }, `Encoding: ${item.encoding}`) : null,
-    item.notes ? el('p', { class: 'note', text: item.notes }) : null,
-    via,
   ].filter(Boolean));
 }
 
+function renderDetail(node, item, side) {
+  const basis = BASES[item.basis];
+  const row = (term, ...desc) => [el('dt', { text: term }), el('dd', {}, ...desc)];
+  const via = item.connectorOf && BY_ID.get(item.connectorOf);
+  node.replaceChildren(
+    el('h3', { class: 'detail-name' }, el('span', { class: `dot dot-${side}`, 'aria-hidden': 'true' }), `${side.toUpperCase()} · ${item.name}`),
+    el('dl', { class: 'detail-list' }, ...[
+      row('Value', `${formatValue(item.GBps)} GB/s = ${formatValue(item.Gbps)} Gb/s`),
+      row('Formula', el('code', { class: 'formula', text: `${item.formula} = ${formatValue(item.GBps)} GB/s` })),
+      row('Basis', el('span', { class: `badge badge-basis basis-${item.basis}`, text: basis.short }), ` ${basis.label}. ${basis.description}`),
+      row('Width', item.width.label),
+      item.encoding ? row('Encoding', item.encoding) : null,
+      item.asymmetric ? row('Reverse direction', reverseText(item)) : null,
+      row('Status', STATUSES[item.status]),
+      row('Verification', el('span', { class: `badge ${item.verification === 'unverified' ? 'badge-warn' : 'badge-ok'}`, text: VERIFICATION[item.verification] })),
+      item.notes ? row('Notes', item.notes) : null,
+      via ? row('Underlying link', el('button', { type: 'button', class: 'link', 'data-goto': via.id, 'data-side': side, text: `${via.name} → set as ${side.toUpperCase()}` })) : null,
+    ].filter(Boolean).flat()),
+  );
+}
+
 function renderBar(side, item, pct) {
-  $(`#bar-name-${side}`).textContent = item.name;
+  $(`#bar-name-${side}`).textContent = `: ${item.name}`;
   $(`#bar-val-${side}`).textContent = `${formatValue(valueIn(item, state.unit))} ${unitLabel()}`;
   const bar = $(`#bar-${side}`);
   bar.style.width = `${pct}%`;
@@ -88,7 +104,7 @@ function renderBar(side, item, pct) {
   const px = (trackW * pct) / 100;
   if (px < 1) {
     tiny.hidden = false;
-    tiny.textContent = `${formatPct(pct)} of the longer bar: under one pixel at linear scale, so nothing is drawn.`;
+    tiny.textContent = `${formatPct(pct)} of ${side === 'a' ? 'B' : 'A'}: under one pixel, not drawn`;
   } else {
     tiny.hidden = true;
   }
@@ -97,12 +113,6 @@ function renderBar(side, item, pct) {
 const PCT = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 2, maximumFractionDigits: 20 });
 function formatPct(p) {
   return `${PCT.format(p)}%`;
-}
-
-function notice(kind, title, body) {
-  return el('div', { class: `notice notice-${kind}`, role: 'note' },
-    el('p', { class: 'notice-title', text: title }),
-    body ? el('p', { class: 'notice-body', text: body }) : null);
 }
 
 function render() {
@@ -117,29 +127,34 @@ function render() {
 
   renderSide($('#side-a'), a, 'a');
   renderSide($('#side-b'), b, 'b');
+  renderDetail($('#detail-a'), a, 'a');
+  renderDetail($('#detail-b'), b, 'b');
 
   const rn = $('#ratio-num');
   rn.textContent = cmp.same || cmp.equalValue ? '1×' : formatRatio(cmp.ratio);
   rn.classList.toggle('is-even', cmp.same || cmp.equalValue);
-  const len = rn.textContent.length;
-  $('.ratio').dataset.size = len > 9 ? 'xl' : len > 6 ? 'l' : 'm';
-  $('#ratio-text').textContent = ratioSentence(a, b, cmp);
+  rn.style.setProperty('--chars', String(Math.max(rn.textContent.length, 4)));
+  $('#ratio-text').textContent = ratioShort(cmp);
+  $('#ratio-full').textContent = ratioSentence(a, b, cmp);
 
   renderBar('a', a, cmp.widthA);
   renderBar('b', b, cmp.widthB);
   $('#bars').setAttribute('aria-label',
     `Bar comparison: ${a.name} ${formatValue(valueIn(a, state.unit))} ${unitLabel()}, ${b.name} ${formatValue(valueIn(b, state.unit))} ${unitLabel()}.`);
 
+  // Each notice: a short visible flag in the comparison, the full explanation in details.
   const notes = [];
-  if (cmp.same) notes.push(notice('info', 'Identical selection.', 'Pick a different interface on either side to compare.'));
+  if (cmp.same) notes.push(['info', 'Identical selection', 'Pick a different interface on either side to compare.']);
   if (cmp.mixedBasis) {
-    notes.push(notice('warn', 'Mixed basis: not like for like.',
-      `A is ${BASES[a.basis].label.toLowerCase()}; B is ${BASES[b.basis].label.toLowerCase()}. The ratio compares different kinds of number.`));
+    notes.push(['warn', 'Mixed basis: not like for like',
+      `A is ${BASES[a.basis].label.toLowerCase()}; B is ${BASES[b.basis].label.toLowerCase()}. The ratio compares different kinds of number.`]);
   }
-  if (cmp.anyAsymmetric) notes.push(notice('info', 'Asymmetric link.', 'Only the faster direction is compared. Directions are never added together.'));
-  if (cmp.anyUnverified) notes.push(notice('warn', 'Unverified figure.', 'At least one side is user-supplied seed data that has not been checked against a source.'));
-  if (!cmp.same && cmp.ratio >= 1000) notes.push(notice('info', 'Extreme difference.', 'At linear scale the smaller bar may be too short to see. The numbers above are exact.'));
-  $('#notices').replaceChildren(...notes);
+  if (cmp.anyAsymmetric) notes.push(['info', 'Asymmetric link', 'Only the faster direction is compared. Directions are never added together.']);
+  if (cmp.anyUnverified) notes.push(['warn', 'Unverified figure', 'At least one side is user-supplied seed data that has not been checked against a source.']);
+  if (!cmp.same && cmp.ratio >= 1000) notes.push(['info', 'Extreme difference', 'At linear scale the smaller bar may be too short to see. The numbers above are exact.']);
+  $('#notices').replaceChildren(...notes.map(([kind, title]) => el('p', { class: `flag flag-${kind}`, role: 'note', text: title })));
+  $('#notice-details').replaceChildren(...notes.map(([kind, title, body]) =>
+    el('div', { class: `notice notice-${kind}` }, el('p', { class: 'notice-title', text: `${title}.` }), el('p', { class: 'notice-body', text: body }))));
 
   document.querySelectorAll('input[name="unit"]').forEach((r) => { r.checked = r.value === state.unit; });
   $('#cat-unit').textContent = unitLabel();
@@ -149,7 +164,10 @@ function render() {
 
 // ------------------------------------------------------------ catalog
 
-const catState = { q: '', cat: 'all' };
+const catState = { q: '', cat: 'all', sort: DEFAULT_SORT };
+// Only these orders keep families contiguous, so only they get family header rows.
+const GROUPED_SORTS = new Set(['original', 'family-asc', 'family-desc']);
+const SORT_COLUMN = { bandwidth: '#cat-unit', name: '.cat thead th:first-child' };
 
 function renderChips() {
   const chips = $('#cat-chips');
@@ -159,13 +177,14 @@ function renderChips() {
 }
 
 function renderCatalog() {
-  const rows = search(index, catState.q).filter((i) => catState.cat === 'all' || i.category === catState.cat);
+  const rows = sortItems(search(index, catState.q).filter((i) => catState.cat === 'all' || i.category === catState.cat), catState.sort);
+  const grouped = GROUPED_SORTS.has(catState.sort);
   $('#cat-empty').hidden = rows.length > 0;
   const body = $('#cat-body');
   let fam = null;
   const trs = [];
   for (const item of rows) {
-    if (item.family !== fam) {
+    if (grouped && item.family !== fam) {
       fam = item.family;
       trs.push(el('tr', { class: 'cat-fam' }, el('th', { scope: 'rowgroup', colSpan: 5, text: fam })));
     }
@@ -173,6 +192,7 @@ function renderCatalog() {
     const isB = item.id === state.b;
     trs.push(el('tr', { class: isA || isB ? 'is-picked' : '' },
       el('th', { scope: 'row' }, el('span', { class: 'cat-name', text: item.name }),
+        grouped ? null : el('span', { class: 'cat-fam-inline', text: item.family }),
         item.verification === 'unverified' ? el('span', { class: 'cat-flag', title: VERIFICATION.unverified, text: 'unverified' }) : null,
         el('span', { class: `cat-basis-inline badge badge-basis basis-${item.basis}`, title: BASES[item.basis].label, text: `${BASES[item.basis].short} · ${item.width.label}` })),
       el('td', { text: item.width.label }),
@@ -184,6 +204,10 @@ function renderCatalog() {
     ));
   }
   body.replaceChildren(...trs);
+  const [col, dir] = catState.sort.split('-');
+  document.querySelectorAll('.cat thead th[aria-sort]').forEach((th) => th.removeAttribute('aria-sort'));
+  if (SORT_COLUMN[col]) $(SORT_COLUMN[col]).setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
+  $('#cat-caption').textContent = `All interfaces, values in the selected unit, ${catState.sort === DEFAULT_SORT ? 'in catalog order' : `sorted by ${SORTS[catState.sort].toLowerCase()}`}`;
   $('#catalog-count').textContent = rows.length === INTERFACES.length ? `${INTERFACES.length} interfaces` : `${rows.length} of ${INTERFACES.length}`;
 }
 
@@ -254,6 +278,7 @@ document.addEventListener('click', (e) => {
 });
 
 $('#cat-q').addEventListener('input', (e) => { catState.q = e.target.value; renderCatalog(); });
+$('#cat-sort').addEventListener('change', (e) => { catState.sort = e.target.value; renderCatalog(); });
 $('#cat-chips').addEventListener('click', (e) => {
   const c = e.target.closest('[data-cat]');
   if (!c) return;
@@ -283,6 +308,8 @@ if (parsed.errors.length) {
 }
 $('#count').textContent = String(INTERFACES.length);
 renderChips();
+$('#cat-sort').replaceChildren(...Object.entries(SORTS).map(([value, label]) => el('option', { value, text: label })));
+$('#cat-sort').value = catState.sort;
 renderMethod();
 render();
 history.replaceState(null, '', serializeState(state) + location.hash);

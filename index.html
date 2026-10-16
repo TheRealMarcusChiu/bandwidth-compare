@@ -23,64 +23,90 @@
         <label><input type="radio" name="unit" value="GBps" checked><span>GB/s</span></label>
         <label><input type="radio" name="unit" value="Gbps"><span>Gb/s</span></label>
       </fieldset>
-      <button type="button" class="btn" id="share"><svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Copy link</span></button>
+      <button type="button" class="btn" id="share"><svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="btn-label">Copy link</span></button>
     </div>
   </header>
 
   <main id="main">
-    <section class="pickers" aria-label="Choose interfaces">
-      <div class="picker" data-side="a">
-        <label class="picker-label" for="cb-a"><span class="dot dot-a" aria-hidden="true"></span>A</label>
-        <div class="cb">
-          <input id="cb-a" class="cb-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="lb-a" aria-describedby="cb-a-status" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Search interfaces">
-          <button type="button" class="cb-toggle" tabindex="-1" aria-label="Show all interfaces for A"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-          <ul id="lb-a" class="cb-list" role="listbox" aria-label="Interfaces for A" hidden></ul>
-          <span id="cb-a-status" class="cb-status vh" aria-live="polite"></span>
+    <section class="compare" id="compare" aria-labelledby="compare-title">
+      <h2 class="vh" id="compare-title">Comparison</h2>
+      <div class="pickers" role="group" aria-label="Choose interfaces">
+        <div class="picker" data-side="a">
+          <label class="picker-label" for="cb-a"><span class="dot dot-a" aria-hidden="true"></span>A</label>
+          <div class="cb">
+            <div class="cb-head">
+              <p class="cb-title" id="cb-a-title"><span class="dot dot-a" aria-hidden="true"></span>Choose interface A</p>
+              <button type="button" class="cb-cancel">Cancel</button>
+            </div>
+            <input id="cb-a" class="cb-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="lb-a" aria-describedby="cb-a-status" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="Search interfaces">
+            <button type="button" class="cb-toggle" tabindex="-1" aria-label="Show all interfaces for A"><span class="cb-trigger-text" aria-hidden="true"></span><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <ul id="lb-a" class="cb-list" role="listbox" aria-label="Interfaces for A" hidden></ul>
+            <span id="cb-a-status" class="cb-status vh" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <button type="button" class="swap" id="swap" aria-label="Swap A and B" title="Swap A and B">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M7 4v14M7 18l-3-3M7 18l3-3M17 20V6M17 6l-3 3M17 6l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="picker" data-side="b">
+          <label class="picker-label" for="cb-b"><span class="dot dot-b" aria-hidden="true"></span>B</label>
+          <div class="cb">
+            <div class="cb-head">
+              <p class="cb-title" id="cb-b-title"><span class="dot dot-b" aria-hidden="true"></span>Choose interface B</p>
+              <button type="button" class="cb-cancel">Cancel</button>
+            </div>
+            <input id="cb-b" class="cb-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="lb-b" aria-describedby="cb-b-status" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="Search interfaces">
+            <button type="button" class="cb-toggle" tabindex="-1" aria-label="Show all interfaces for B"><span class="cb-trigger-text" aria-hidden="true"></span><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <ul id="lb-b" class="cb-list" role="listbox" aria-label="Interfaces for B" hidden></ul>
+            <span id="cb-b-status" class="cb-status vh" aria-live="polite"></span>
+          </div>
         </div>
       </div>
 
-      <button type="button" class="swap" id="swap" aria-label="Swap A and B" title="Swap A and B">
-        <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M7 4v14M7 18l-3-3M7 18l3-3M17 20V6M17 6l-3 3M17 6l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
+      <div id="url-notice" class="notice notice-error" role="alert" hidden></div>
 
-      <div class="picker" data-side="b">
-        <label class="picker-label" for="cb-b"><span class="dot dot-b" aria-hidden="true"></span>B</label>
-        <div class="cb">
-          <input id="cb-b" class="cb-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="lb-b" aria-describedby="cb-b-status" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Search interfaces">
-          <button type="button" class="cb-toggle" tabindex="-1" aria-label="Show all interfaces for B"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-          <ul id="lb-b" class="cb-list" role="listbox" aria-label="Interfaces for B" hidden></ul>
-          <span id="cb-b-status" class="cb-status vh" aria-live="polite"></span>
+      <div class="readout" role="group" aria-label="Values" aria-live="polite">
+        <article class="side" id="side-a"></article>
+        <article class="side" id="side-b"></article>
+      </div>
+
+      <div class="result">
+        <div class="ratio" role="group" aria-label="Ratio">
+          <p class="ratio-num" id="ratio-num"></p>
+          <p class="ratio-text" id="ratio-text"></p>
         </div>
+
+        <figure class="bars" id="bars">
+          <div class="bar-row" data-side="a">
+            <span class="bar-name"><span class="dot dot-a" aria-hidden="true"></span>A<span class="vh" id="bar-name-a"></span></span>
+            <div class="track"><div class="bar bar-a" id="bar-a"></div><p class="bar-tiny" id="bar-tiny-a" hidden></p></div>
+            <span class="bar-val" id="bar-val-a"></span>
+          </div>
+          <div class="bar-row" data-side="b">
+            <span class="bar-name"><span class="dot dot-b" aria-hidden="true"></span>B<span class="vh" id="bar-name-b"></span></span>
+            <div class="track"><div class="bar bar-b" id="bar-b"></div><p class="bar-tiny" id="bar-tiny-b" hidden></p></div>
+            <span class="bar-val" id="bar-val-b"></span>
+          </div>
+          <figcaption>Linear scale</figcaption>
+        </figure>
       </div>
+
+      <div class="notices" id="notices"></div>
     </section>
 
-    <div id="url-notice" class="notice notice-error" role="alert" hidden></div>
-
-    <section class="readout" aria-label="Values" aria-live="polite">
-      <article class="side" id="side-a"></article>
-      <article class="side" id="side-b"></article>
-    </section>
-
-    <section class="ratio" aria-label="Ratio">
-      <p class="ratio-num" id="ratio-num"></p>
-      <p class="ratio-text" id="ratio-text"></p>
-    </section>
-
-    <figure class="bars" id="bars">
-      <div class="bar-row" data-side="a">
-        <div class="bar-head"><span class="bar-name" id="bar-name-a"></span><span class="bar-val" id="bar-val-a"></span></div>
-        <div class="track"><div class="bar bar-a" id="bar-a"></div></div>
-        <p class="bar-tiny" id="bar-tiny-a" hidden></p>
+    <details class="drawer cmp-details" id="cmp-details">
+      <summary><span class="drawer-title">Comparison details</span><span class="drawer-meta">Formulas, notes, caveats</span></summary>
+      <div class="drawer-body">
+        <p class="ratio-full" id="ratio-full"></p>
+        <div class="detail-sides">
+          <article class="detail" id="detail-a"></article>
+          <article class="detail" id="detail-b"></article>
+        </div>
+        <div class="notice-details" id="notice-details"></div>
+        <p class="detail-scale">Linear scale. Bar length is exactly proportional to the listed figure; nothing is padded to a minimum width. A bar shorter than one pixel is not drawn and is labelled instead.</p>
       </div>
-      <div class="bar-row" data-side="b">
-        <div class="bar-head"><span class="bar-name" id="bar-name-b"></span><span class="bar-val" id="bar-val-b"></span></div>
-        <div class="track"><div class="bar bar-b" id="bar-b"></div></div>
-        <p class="bar-tiny" id="bar-tiny-b" hidden></p>
-      </div>
-      <figcaption>Linear scale. Bar length is exactly proportional to the listed figure; nothing is padded to a minimum width.</figcaption>
-    </figure>
-
-    <div class="notices" id="notices"></div>
+    </details>
 
     <section class="drawers">
       <details class="drawer" id="catalog">
@@ -89,12 +115,13 @@
           <div class="cat-tools">
             <label class="vh" for="cat-q">Filter catalog</label>
             <input id="cat-q" class="cat-q" type="search" placeholder="Filter: ddr5, x16, usb4, u.2…" autocomplete="off" spellcheck="false">
+            <label class="cat-sort"><span class="cat-sort-label">Sort by</span><select id="cat-sort"></select></label>
             <div class="chips" id="cat-chips" role="group" aria-label="Category"></div>
           </div>
           <p class="cat-empty" id="cat-empty" hidden>No interfaces match this filter.</p>
           <div class="cat-wrap">
             <table class="cat">
-              <caption class="vh">All interfaces, values in the selected unit</caption>
+              <caption class="vh" id="cat-caption">All interfaces, values in the selected unit</caption>
               <thead><tr><th scope="col">Interface</th><th scope="col">Width</th><th scope="col">Basis</th><th scope="col" class="num-col" id="cat-unit">GB/s</th><th scope="col"><span class="vh">Set as</span></th></tr></thead>
               <tbody id="cat-body"></tbody>
             </table>

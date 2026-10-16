@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { INTERFACES, BY_ID, DEFAULT_A, DEFAULT_B } from '../../js/data.js';
 import {
-  compare, formatValue, formatRatio, humanScale, parseState, serializeState, buildIndex, search, valueIn, ratioSentence,
+  compare, formatValue, formatRatio, humanScale, parseState, serializeState, buildIndex, search, valueIn, ratioSentence, ratioShort,
 } from '../../js/compare.js';
 
 const g = (id) => BY_ID.get(id);
@@ -135,4 +135,15 @@ test('search', () => {
   for (const f of fams) {
     if (f !== prev) { assert.ok(!seen.has(f), `family ${f} split`); seen.add(f); prev = f; }
   }
+});
+
+test('compact ratio line names sides by letter, never by (possibly long) name', () => {
+  const ab = compare(g('pcie4-x4'), g('sata3'));
+  assert.equal(ratioShort(ab), 'A lists 13.1× the figure of B');
+  assert.equal(ratioShort(compare(g('sata3'), g('pcie4-x4'))), 'B lists 13.1× the figure of A');
+  assert.equal(ratioShort(compare(g('tb3'), g('tb4'))), 'A and B list the same figure');
+  assert.equal(ratioShort(compare(g('sata3'), g('sata3'))), 'Same interface on both sides');
+  const ext = ratioShort(compare(g('lpddr5x-10700'), g('usb1-low')));
+  assert.match(ext, /^A lists [\d,]+× the figure of B$/);
+  assert.doesNotMatch(ext, /LPDDR|USB/);
 });
