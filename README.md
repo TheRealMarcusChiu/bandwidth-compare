@@ -86,7 +86,7 @@ The catalog has a **Sort by** select. The options are original order, bandwidth 
 | `js/combobox.js` | Accessible type-to-filter combobox; full-screen picker sheet on narrow/touch screens |
 | `js/app.js` | Rendering and events |
 | `scripts/serve.mjs` | Zero-dependency static server (serves only site files) |
-| `tests/unit/*.test.mjs` | `node --test` suites (`sort.test.mjs` covers catalog sorting) |
+| `tests/unit/*.test.mjs` | `node --test` suites (`sort.test.mjs` covers catalog sorting; `additions.test.mjs` covers the 2026-10-16 audit rows and keeps `docs/catalog-audit.md` in sync) |
 | `tests/e2e/app.spec.mjs` | Playwright suite |
 | `tests/e2e/layout.spec.mjs` | Viewport-fit, Comparison details and mobile picker sheet tests (fixed-size contexts, run once) |
 
@@ -154,7 +154,9 @@ The seed list was supplied by the site owner. I checked figures against primary 
 - **PCI-SIG PCIe 7.0:** 128 GT/s, Business Wire, Jun 2025.
 - **SD 8.0:** SD Express over PCIe 4.0 x2, about 3.94 GB/s.
 - **SNIA:** U.3 as SFF-TA-1001.
-- **IEEE:** 802.3df (800G) approved; P802.3dj (1.6T) not yet ratified.
+- **IEEE:** 802.3df (800G) approved; P802.3dj (1.6T) not yet ratified (still "Active PAR" on 2026-10-16).
+
+The 2026-10-16 audit added 16 rows: JEDEC HBM4 baseline, Samsung HBM4E, JEDEC/Micron GDDR7, LPDDR5X-8533, PCIe 8.0 roadmap targets, DisplayPort HBR/HBR2, and HDMI 1.3/1.4, 2.0 and 2.2. [docs/catalog-audit.md](docs/catalog-audit.md) lists the dated sources, evidence quotes, deliberate exclusions and blocked sources.
 
 Several primary sites (pcisig.com, jedec.org, sdcard.org, intel.com) returned HTTP 403 to automated fetches. Their links point to the canonical pages, but those pages weren't machine-verified for this build.
 
@@ -171,7 +173,8 @@ These entries are marked **`unverified`** (badge "User-supplied, unverified"; so
 Other notes:
 
 - No PCIe "6.5" or "7.1" revisions are presented. A unit test asserts this.
-- Status labels separate vendor claims (HBM3E 9.2, HBM4 Samsung, GDDR6X, GDDR6W, GDDR7 40 Gb/s, LPDDR5X 10.7) from JEDEC base grades.
+- Status labels separate vendor claims (HBM3E 9.2, HBM4 Samsung, HBM4E Samsung, GDDR6X, GDDR6W, GDDR7 Micron 32 / Samsung 40 Gb/s, LPDDR5X 10.7) from JEDEC base grades.
+- PCIe 8.0 rows are PCI-SIG roadmap targets (draft 0.5; release planned by 2028), labeled "Not ratified".
 - `sourced` means the number matches a linked source. It does not mean the site independently measured anything.
 
 ## Caveats
@@ -179,4 +182,4 @@ Other notes:
 - All figures are ceilings. Protocol, packet, refresh and controller overhead are not modeled.
 - USB/Thunderbolt/Ethernet "advertised" rates include line-code overhead that differs by generation.
 - LPDDR rows (except LPDDR6) are normalized to 64 bits for comparison. Real devices use 16/32-bit channels in various counts.
-- HDMI/DisplayPort are included only where the lane count and raw rate are unambiguous.
+- HDMI/DisplayPort are included only where the raw rate is unambiguous. HDMI 1.3/1.4, 2.0 and 2.2 rows show the official link total without a per-lane split, because the cited sources don't state one.

@@ -40,7 +40,7 @@ test('never mutates the base catalog or the input array', () => {
 test('bandwidth highest first is monotonic on underlying GB/s', () => {
   const out = sortItems(INTERFACES, 'bandwidth-desc');
   for (let k = 1; k < out.length; k++) assert.ok(out[k - 1].GBps >= out[k].GBps, `${out[k - 1].id} before ${out[k].id}`);
-  assert.equal(out[0].id, 'hbm4-samsung-max');
+  assert.equal(out[0].id, 'hbm4e-samsung-max');
   assert.equal(out.at(-1).id, 'usb1-low');
 });
 
@@ -48,7 +48,7 @@ test('bandwidth lowest first is monotonic on underlying GB/s', () => {
   const out = sortItems(INTERFACES, 'bandwidth-asc');
   for (let k = 1; k < out.length; k++) assert.ok(out[k - 1].GBps <= out[k].GBps, `${out[k - 1].id} before ${out[k].id}`);
   assert.equal(out[0].id, 'usb1-low');
-  assert.equal(out.at(-1).id, 'hbm4-samsung-max');
+  assert.equal(out.at(-1).id, 'hbm4e-samsung-max');
 });
 
 test('bandwidth is numeric, not formatted-string order', () => {
@@ -122,7 +122,7 @@ test('sorting combines with search: same set, sorted order', () => {
   assert.ok(hits.length > 3);
   const out = sortItems(hits, 'bandwidth-desc');
   assert.deepEqual(new Set(ids(out)), new Set(ids(hits)));
-  assert.equal(out[0].id, 'pcie7-x16');
+  assert.equal(out[0].id, 'pcie8-x16');
   for (let k = 1; k < out.length; k++) assert.ok(out[k - 1].GBps >= out[k].GBps);
   // PCIe 3.0 x16 and 4.0 x8 tie on 15.75 GB/s, but x8 isn't in this result set; search stays intact.
   assert.ok(out.every((i) => /x16/.test(i.width.label) || /x16/i.test(i.name)));

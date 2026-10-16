@@ -96,6 +96,30 @@ export const SOURCES = {
     url: 'https://www.trendforce.com/news/2026/02/12/news-samsung-delivers-first-ever-commercial-hbm4-boosting-speeds-from-11-7%E2%80%AFgbps-to-13%E2%80%AFgbps/',
     kind: 'secondary',
   },
+  'jedec-hbm4': {
+    title: 'JEDEC releases JESD270-4 HBM4 (up to 8 Gb/s, 2048-bit, 2 TB/s)',
+    publisher: 'JEDEC press release via Design & Reuse (Apr 16, 2025)',
+    url: 'https://us.design-reuse.com/news/57708/jedec-hbm4.html',
+    kind: 'secondary',
+  },
+  'samsung-hbm4e-samples': {
+    title: 'Samsung begins shipment of industry-first HBM4E samples (14 Gb/s, up to 16 Gb/s, 3.6 TB/s)',
+    publisher: 'Samsung Semiconductor Newsroom (May 29, 2026)',
+    url: 'https://semiconductor.samsung.com/news-events/news/samsung-electronics-begins-shipment-of-industry-first-hbm4e-samples/',
+    kind: 'primary',
+  },
+  'samsung-hbm-product': {
+    title: 'Samsung HBM product page, HBM4E specs (Speed up to 16.0 Gbps, Organization 2048)',
+    publisher: 'Samsung Semiconductor product page (undated; accessed Oct 16, 2026)',
+    url: 'https://semiconductor.samsung.com/dram/hbm/',
+    kind: 'primary',
+  },
+  'samsung-hbm4e-gtc': {
+    title: 'Samsung unveils HBM4E at NVIDIA GTC 2026 (16 Gb/s per pin, 4.0 TB/s)',
+    publisher: 'Samsung Semiconductor Newsroom (Mar 16, 2026)',
+    url: 'https://semiconductor.samsung.com/news-events/news/samsung-unveils-hbm4e-showcasing-comprehensive-ai-solutions-nvidia-partnership-and-vision-at-nvidia-gtc-2026/',
+    kind: 'primary',
+  },
   'jedec-gddr': {
     title: 'JEDEC GDDR5 / GDDR6 / GDDR7 standards (JESD212, JESD250, JESD239)',
     publisher: 'JEDEC',
@@ -118,6 +142,18 @@ export const SOURCES = {
     title: 'Samsung 24Gb GDDR7 (40 Gb/s per pin)',
     publisher: 'Samsung Newsroom (Oct 2024)',
     url: 'https://news.samsung.com/global/samsung-develops-industrys-first-24gb-gddr7-dram-for-next-generation-ai-computing',
+    kind: 'primary',
+  },
+  'jedec-gddr7': {
+    title: 'JEDEC publishes JESD239 GDDR7 (up to 192 GB/s per device, PAM3)',
+    publisher: 'JEDEC press release via Design & Reuse (Mar 5, 2024)',
+    url: 'https://us.design-reuse.com/news/55819/jedec-gddr7-graphics-memory-standard.html',
+    kind: 'secondary',
+  },
+  'micron-gddr7': {
+    title: 'Micron GDDR7 ("speeds up to 32 Gb/s")',
+    publisher: 'Micron product page (undated; accessed Oct 16, 2026)',
+    url: 'https://www.micron.com/products/memory/graphics-memory/gddr7',
     kind: 'primary',
   },
   'jedec-ddr': {
@@ -144,6 +180,12 @@ export const SOURCES = {
     url: 'https://news.samsung.com/global/samsung-develops-industrys-fastest-10-7gbps-lpddr5x-dram-optimized-for-ai-applications',
     kind: 'primary',
   },
+  'jedec-lpddr5x': {
+    title: 'JEDEC JESD209-5B: LPDDR5X speed extension up to 8533 Mbps',
+    publisher: 'JEDEC press release, reproduced by jpralves.net (Jul 28, 2021; repost Aug 12, 2021)',
+    url: 'https://jpralves.net/post/2021/08/12/jedec-publishes-new-and-updated-standards-for-low-power-memory-devices-used-in-5g-and-ai-applications.html',
+    kind: 'secondary',
+  },
   'pcisig-faq': {
     title: 'PCI Express specifications and FAQ (per-lane rates, encoding)',
     publisher: 'PCI-SIG',
@@ -155,6 +197,18 @@ export const SOURCES = {
     publisher: 'PCI-SIG via Business Wire (Jun 2025)',
     url: 'https://www.businesswire.com/news/home/20250611299049/en',
     kind: 'primary',
+  },
+  'pcisig-8': {
+    title: 'PCI-SIG announces PCIe 8.0 specification to reach 256.0 GT/s (release to members planned by 2028)',
+    publisher: 'PCI-SIG press release via Design & Reuse (Aug 5, 2025)',
+    url: 'https://www.design-reuse.com/news/202529150-pci-sig-reg-announces-pci-express-reg-8-0-specification-to-reach-256-0-gt-s/',
+    kind: 'secondary',
+  },
+  'pcisig-8-draft05': {
+    title: 'PCIe 8.0 specification draft 0.5 available to members; on track for 2028',
+    publisher: 'Signal Integrity Journal, reporting PCI-SIG (May 6, 2026)',
+    url: 'https://www.signalintegrityjournal.com/articles/4313-pcie-80-specification-draft-05-now-available-on-track-for-2560-gt-s-transfer-speeds-by-2028',
+    kind: 'secondary',
   },
   'sta-sas': {
     title: 'SAS roadmap and 24G SAS (22.5 Gbaud)',
@@ -252,6 +306,54 @@ export const SOURCES = {
     url: 'https://www.hdmi.org/spec/hdmi2_1',
     kind: 'primary',
   },
+  'vesa-dp12': {
+    title: 'VESA introduces DisplayPort v1.2 (10.8 → 21.6 Gbps; 2.7 → 5.4 Gbps per lane, four lanes)',
+    publisher: 'VESA / displayport.org press release (Jan 7, 2010)',
+    url: 'https://www.displayport.org/pr/vesa-introduces-displayport-v1-2-the-most-comprehensive-and-innovative-display-interface-available/',
+    kind: 'primary',
+  },
+  'vesa-hbr3': {
+    title: 'VESA HBR3 certification: 8.1 Gbps per lane, 32.4 Gbps; HBR3 released with DisplayPort 1.3 (Sept 2014)',
+    publisher: 'VESA / displayport.org press release (Jan 4, 2017)',
+    url: 'https://www.displayport.org/pr/vesa-rolls-early-certification-program-video-source-display-products-using-hbr3-high-bandwidth-link-rate/',
+    kind: 'primary',
+  },
+  'vesa-uhbr': {
+    title: 'VESA UHBR certification: UHBR10/13.5/20 link rates "defined by DisplayPort 2.0"',
+    publisher: 'VESA / displayport.org press release (Feb 28, 2022)',
+    url: 'https://www.displayport.org/pr/vesa-readies-displayport-uhbr-ultra-high-bit-rate-device-certification-and-begins-certification-of-uhbr-cables/',
+    kind: 'primary',
+  },
+  'hdmi-13': {
+    title: 'HDMI 1.3 doubles bandwidth: single link 165 MHz (4.95 Gbps) → 340 MHz (10.2 Gbps)',
+    publisher: 'HDMI Licensing press release (Jun 22, 2006)',
+    url: 'https://www.hdmi.org/press/bodydetails/68',
+    kind: 'primary',
+  },
+  'hdmi-14b': {
+    title: 'HDMI Specification 1.4b ("All resolutions and refresh rates can be support with the High Speed HDMI Cable")',
+    publisher: 'HDMI Licensing Administrator (undated page; accessed Oct 16, 2026)',
+    url: 'https://www.hdmi.org/spec/hdmi1_4b',
+    kind: 'primary',
+  },
+  'hdmi-20': {
+    title: 'HDMI Forum releases version 2.0 of the HDMI specification (up to 18Gbps)',
+    publisher: 'HDMI Forum press release (Sep 4, 2013)',
+    url: 'https://www.hdmi.org/press/bodydetails/24',
+    kind: 'primary',
+  },
+  'hdmi-22': {
+    title: 'HDMI Forum releases version 2.2 of the HDMI specification (96Gbps, next-gen FRL, Ultra96)',
+    publisher: 'HDMI Forum press release (Jun 25, 2025)',
+    url: 'https://hdmiforum.org/hdmi-forum-releases-version-2-2-of-the-hdmi-specification',
+    kind: 'primary',
+  },
+  'hdmi-cables': {
+    title: 'HDMI cable types: High Speed 10.2Gbps, Premium High Speed 18Gbps, Ultra High Speed 48Gbps, Ultra96 96Gbps',
+    publisher: 'HDMI Licensing Administrator (undated page; accessed Oct 16, 2026)',
+    url: 'https://www.hdmi.org/resource/cables',
+    kind: 'primary',
+  },
   'user-seed': {
     title: 'Seed data supplied by the site owner (not independently checked)',
     publisher: 'User supplied',
@@ -315,13 +417,19 @@ const hbm = [
   ['hbm2e-vendor-4-2', 'HBM2E (vendor-tested 4.2 Gb/s)', 4200, 1024, 'vendor-claim', 'unverified', ['user-seed', 'samsung-hbm2e'], ['Flashbolt']],
   ['hbm3', 'HBM3', 6400, 1024, 'standard', 'sourced', ['jedec-hbm'], []],
   ['hbm3e', 'HBM3E', 9200, 1024, 'vendor-claim', 'sourced', ['micron-hbm3e'], []],
+  ['hbm4-jedec', 'HBM4 (JEDEC JESD270-4)', 8000, 2048, 'standard', 'sourced', ['jedec-hbm4'], ['HBM4', 'JESD270-4', 'JESD270'],
+    'Per stack. JEDEC JESD270-4 (Apr 2025): "transfer speeds up to 8 Gb/s across a 2048-bit interface", up to 2 TB/s.'],
   ['hbm4-samsung-production', 'HBM4 (Samsung production claim)', 11700, 2048, 'vendor-claim', 'sourced', ['samsung-hbm4'], ['HBM4']],
   ['hbm4-samsung-max', 'HBM4 (Samsung maximum)', 13000, 2048, 'vendor-claim', 'sourced', ['samsung-hbm4'], []],
-].map(([id, name, perPinMbps, widthBits, status, verification, sources, aliases]) =>
+  ['hbm4e-samsung-sample', 'HBM4E (Samsung sample, 14 Gb/s)', 14000, 2048, 'vendor-claim', 'sourced', ['samsung-hbm4e-samples', 'samsung-hbm-product'], ['HBM4E', 'HBM 4E'],
+    'Per stack. Vendor figures, not JEDEC standard rates. Samsung\'s May 29, 2026 announcement described sample shipments of 12-high HBM4E at a "stable pin speed of 14 Gbps", up to 3.6 TB/s per stack, and planned mass production "aligned with customer schedules"; later production availability is not established here. Width per Samsung\'s HBM4E product page: Organization 2048 (14 × 2048 ÷ 8 = 3,584 GB/s, matching 3.6 TB/s).'],
+  ['hbm4e-samsung-max', 'HBM4E (Samsung maximum, 16 Gb/s)', 16000, 2048, 'vendor-claim', 'sourced', ['samsung-hbm-product', 'samsung-hbm4e-gtc', 'samsung-hbm4e-samples'], ['HBM4E', 'HBM 4E'],
+    'Per stack. Vendor figures, not JEDEC standard rates. Samsung\'s HBM4E product page: Speed "Up to 16.0 Gbps", Organization 2048; GTC (Mar 2026): "16Gbps per pin and 4.0 TB/s". Samsung\'s May 29, 2026 announcement described sample shipments "scalable up to 16Gbps" and planned mass production; later production availability is not established here. 16 × 2048 ÷ 8 = 4,096 GB/s, matching 4.0 TB/s.'],
+].map(([id, name, perPinMbps, widthBits, status, verification, sources, aliases, notes = 'Per stack.']) =>
   memory({
     id, name, family: 'HBM', perPinMbps, widthBits, status, verification, sources,
     aliases: [...aliases, 'high bandwidth memory', 'stack'],
-    notes: 'Per stack.',
+    notes,
   }),
 );
 
@@ -335,12 +443,16 @@ const gddr = [
   ['gddr6', 'GDDR6', 24000, 32, 'standard', 'sourced', ['jedec-gddr'], []],
   ['gddr6x', 'GDDR6X', 24000, 32, 'vendor-claim', 'sourced', ['micron-gddr6x'], ['Micron PAM4']],
   ['gddr6w', 'GDDR6W (x64 package)', 22000, 64, 'vendor-claim', 'sourced', ['samsung-gddr6w'], ['Samsung']],
+  ['gddr7-jedec', 'GDDR7 (JEDEC JESD239 headline)', 48000, 32, 'standard', 'sourced', ['jedec-gddr7'], ['GDDR7', 'JESD239', 'PAM3'],
+    'Per x32 device. JEDEC JESD239 (Mar 2024): "up to 192 GB/s per device". Per-pin rate derived: 192 GB/s × 8 ÷ 32 bits = 48 Gb/s. A ceiling the standard allows, not a shipping speed.'],
+  ['gddr7-micron-32', 'GDDR7 (Micron 32 Gb/s)', 32000, 32, 'vendor-claim', 'sourced', ['micron-gddr7'], ['GDDR7', 'Micron'],
+    'Per x32 device. Micron product page: "GDDR7 achieves speeds up to 32 Gb/s". Vendor figure; shipping cards often use lower bins.'],
   ['gddr7-samsung-max', 'GDDR7 (Samsung maximum)', 40000, 32, 'vendor-claim', 'sourced', ['samsung-gddr7', 'jedec-gddr'], ['GDDR7']],
-].map(([id, name, perPinMbps, widthBits, status, verification, sources, aliases]) =>
+].map(([id, name, perPinMbps, widthBits, status, verification, sources, aliases, notes]) =>
   memory({
     id, name, family: 'GDDR', perPinMbps, widthBits, status, verification, sources,
     aliases: [...aliases, 'graphics memory', 'vram'],
-    notes: widthBits === 64 ? 'Per x64 package (two dies).' : 'Per x32 device.',
+    notes: notes ?? (widthBits === 64 ? 'Per x64 package (two dies).' : 'Per x32 device.'),
   }),
 );
 
@@ -400,6 +512,7 @@ const lp = [
   ['lpddr4', 'LPDDR4', 4266, 'standard', 'sourced', ['jedec-lpddr']],
   ['lpddr4x', 'LPDDR4X', 4266, 'standard', 'sourced', ['jedec-lpddr']],
   ['lpddr5', 'LPDDR5', 6400, 'standard', 'sourced', ['jedec-lpddr']],
+  ['lpddr5x', 'LPDDR5X', 8533, 'standard', 'sourced', ['jedec-lpddr5x']],
   ['lpddr5x', 'LPDDR5X (10.7 Gb/s)', 10700, 'vendor-claim', 'sourced', ['samsung-lpddr5x']],
 ];
 const lpddr = [
@@ -441,6 +554,8 @@ const PCIE_GENS = [
   { gen: 5, label: '5.0', revs: ['5.0'], gtMbps: 32000, enc: ENC_128B130B, encLabel: '128b/130b' },
   { gen: 6, label: '6.0', revs: ['6.0'], gtMbps: 64000, enc: NONE, encLabel: 'PAM4 FLIT (raw, FLIT/FEC overhead excluded)' },
   { gen: 7, label: '7.0', revs: ['7.0'], gtMbps: 128000, enc: NONE, encLabel: 'PAM4 FLIT (raw, FLIT/FEC overhead excluded)' },
+  // Roadmap only: PCI-SIG announced the 256 GT/s target (Aug 2025) and draft 0.5 (May 2026); release planned by 2028.
+  { gen: 8, label: '8.0', revs: ['8.0'], gtMbps: 256000, enc: NONE, encLabel: 'PAM4 FLIT (raw, FLIT/FEC overhead excluded)', target: true },
 ];
 const LANES = [1, 2, 4, 8, 16];
 
@@ -466,9 +581,9 @@ function pcieLink(g, lanes, extra = {}) {
     perLane: { value: g.gtMbps / 1000, unit: 'GT/s per lane' },
     width: { count: lanes, label: `x${lanes}` },
     formula: pcieFormula(g, lanes),
-    status: 'standard',
+    status: g.target ? 'developing' : 'standard',
     verification: 'sourced',
-    sources: g.gen === 7 ? ['pcisig-7', 'pcisig-faq'] : ['pcisig-faq'],
+    sources: g.gen === 8 ? ['pcisig-8', 'pcisig-8-draft05'] : g.gen === 7 ? ['pcisig-7', 'pcisig-faq'] : ['pcisig-faq'],
     ...extra,
   });
 }
@@ -477,14 +592,15 @@ const pcie = PCIE_GENS.flatMap((g) =>
   LANES.map((lanes) =>
     pcieLink(g, lanes, {
       id: `pcie${g.gen}-x${lanes}`,
-      name: `PCIe ${g.label} x${lanes}`,
+      name: `PCIe ${g.label} x${lanes}${g.target ? ' (target)' : ''}`,
       aliases: [
         `PCIe ${g.gen} x${lanes}`, `PCIe${g.gen}x${lanes}`, `Gen${g.gen} x${lanes}`, `Gen ${g.gen}`,
         ...g.revs.map((r) => `PCIe ${r}`), 'PCI Express',
       ],
-      notes:
-        `Per direction. Covers revisions ${g.revs.join(', ')}.` +
-        (g.gen >= 6 ? ' FLIT mode adds framing/FEC overhead not subtracted here.' : ''),
+      notes: g.target
+        ? 'Per direction. PCI-SIG roadmap target, not a released specification: 256.0 GT/s raw, "up to 1 TB/s bi-directionally via x16" (512 GB/s each way), release to members planned by 2028; draft 0.5 only (May 2026). FLIT/FEC overhead not subtracted.'
+        : `Per direction. Covers revisions ${g.revs.join(', ')}.` +
+          (g.gen >= 6 ? ' FLIT mode adds framing/FEC overhead not subtracted here.' : ''),
     }),
   ),
 );
@@ -678,12 +794,28 @@ function rawLanes({ id, name, family, laneMbps, lanes, sources, aliases, notes }
   });
 }
 
+/** HDMI generations whose official sources state only the link total, not a per-lane rate. */
+function hdmiTotal({ id, name, mbps, widthLabel, sources, aliases, notes }) {
+  return linkEntry({
+    id, name, family: 'HDMI', category: 'display', basis: 'raw-signaling', gbpsMbps: mbps,
+    perLane: null,
+    width: { count: 1, label: widthLabel },
+    formula: `${fmtNum(mbps / 1000)} Gb/s link total ÷ 8 (raw)`,
+    status: 'standard', verification: 'sourced', sources, aliases, notes,
+  });
+}
+
 const display = [
-  rawLanes({ id: 'dp14-hbr3', name: 'DisplayPort 1.4 HBR3', family: 'DisplayPort', laneMbps: 8100, lanes: 4, sources: ['vesa-dp'], aliases: ['DP 1.4', 'DP1.4', 'HBR3'], notes: 'Main link, one direction. 8b/10b not subtracted.' }),
-  rawLanes({ id: 'dp21-uhbr10', name: 'DisplayPort 2.1 UHBR10', family: 'DisplayPort', laneMbps: 10000, lanes: 4, sources: ['vesa-dp'], aliases: ['DP 2.1', 'DP2.1', 'UHBR10'], notes: 'Main link, one direction. 128b/132b not subtracted.' }),
-  rawLanes({ id: 'dp21-uhbr13-5', name: 'DisplayPort 2.1 UHBR13.5', family: 'DisplayPort', laneMbps: 13500, lanes: 4, sources: ['vesa-dp'], aliases: ['DP 2.1', 'UHBR13.5'], notes: 'Main link, one direction. 128b/132b not subtracted.' }),
-  rawLanes({ id: 'dp21-uhbr20', name: 'DisplayPort 2.1 UHBR20', family: 'DisplayPort', laneMbps: 20000, lanes: 4, sources: ['vesa-dp'], aliases: ['DP 2.1', 'UHBR20'], notes: 'Main link, one direction. 128b/132b not subtracted.' }),
+  rawLanes({ id: 'dp11-hbr', name: 'DisplayPort 1.1a HBR', family: 'DisplayPort', laneMbps: 2700, lanes: 4, sources: ['vesa-dp12'], aliases: ['DP 1.1a', 'DP1.1a', 'HBR'], notes: 'Main link, one direction. VESA: DisplayPort 1.1a maximum is 10.8 Gbps (2.7 Gbps per lane × 4). 8b/10b not subtracted.' }),
+  rawLanes({ id: 'dp12-hbr2', name: 'DisplayPort 1.2 HBR2', family: 'DisplayPort', laneMbps: 5400, lanes: 4, sources: ['vesa-dp12'], aliases: ['DP 1.2', 'DP1.2', 'HBR2'], notes: 'Main link, one direction. VESA (Jan 2010): per-lane rate "doubled from 2.7 Gbps to 5.4 Gbps", 21.6 Gbps over four lanes. 8b/10b not subtracted.' }),
+  rawLanes({ id: 'dp14-hbr3', name: 'DisplayPort 1.4 HBR3', family: 'DisplayPort', laneMbps: 8100, lanes: 4, sources: ['vesa-dp', 'vesa-hbr3'], aliases: ['DP 1.4', 'DP1.4', 'HBR3', 'DP 1.3', 'DP1.3'], notes: 'Main link, one direction. HBR3 was introduced in DisplayPort 1.3 (Sept 2014) and kept in 1.4. 8b/10b not subtracted.' }),
+  rawLanes({ id: 'dp21-uhbr10', name: 'DisplayPort 2.1 UHBR10', family: 'DisplayPort', laneMbps: 10000, lanes: 4, sources: ['vesa-dp', 'vesa-uhbr'], aliases: ['DP 2.1', 'DP2.1', 'UHBR10', 'DP 2.0', 'DP40'], notes: 'Main link, one direction. UHBR rates were defined in DisplayPort 2.0 and kept in 2.1. 128b/132b not subtracted.' }),
+  rawLanes({ id: 'dp21-uhbr13-5', name: 'DisplayPort 2.1 UHBR13.5', family: 'DisplayPort', laneMbps: 13500, lanes: 4, sources: ['vesa-dp', 'vesa-uhbr'], aliases: ['DP 2.1', 'UHBR13.5', 'DP 2.0'], notes: 'Main link, one direction. UHBR rates were defined in DisplayPort 2.0 and kept in 2.1. 128b/132b not subtracted.' }),
+  rawLanes({ id: 'dp21-uhbr20', name: 'DisplayPort 2.1 UHBR20', family: 'DisplayPort', laneMbps: 20000, lanes: 4, sources: ['vesa-dp', 'vesa-uhbr'], aliases: ['DP 2.1', 'UHBR20', 'DP 2.0', 'DP80'], notes: 'Main link, one direction. UHBR rates were defined in DisplayPort 2.0 and kept in 2.1. 128b/132b not subtracted.' }),
+  hdmiTotal({ id: 'hdmi13-tmds', name: 'HDMI 1.3 / 1.4 TMDS (10.2 Gb/s)', mbps: 10200, widthLabel: 'TMDS link', sources: ['hdmi-13', 'hdmi-14b', 'hdmi-cables'], aliases: ['HDMI 1.3', 'HDMI 1.4', 'HDMI 1.4b', 'HDMI1.4', 'TMDS', 'High Speed'], notes: 'TMDS link total, one direction. HDMI 1.3 (2006) raised single-link bandwidth to 340 MHz (10.2 Gbps); HDMI 1.4b formats all run on the High Speed cable, rated to 10.2 Gbps. 8b/10b not subtracted.' }),
+  hdmiTotal({ id: 'hdmi20-tmds', name: 'HDMI 2.0 TMDS (18 Gb/s)', mbps: 18000, widthLabel: 'TMDS link', sources: ['hdmi-20', 'hdmi-cables'], aliases: ['HDMI 2.0', 'HDMI2.0', 'TMDS', 'Premium High Speed'], notes: 'TMDS link total, one direction. HDMI Forum (Sept 2013): "up to 18Gbps". 8b/10b not subtracted.' }),
   rawLanes({ id: 'hdmi21-frl', name: 'HDMI 2.1 FRL (48 Gb/s)', family: 'HDMI', laneMbps: 12000, lanes: 4, sources: ['hdmi-21'], aliases: ['HDMI 2.1', 'HDMI2.1', 'FRL'], notes: 'Fixed Rate Link, one direction. 16b/18b not subtracted.' }),
+  hdmiTotal({ id: 'hdmi22-frl', name: 'HDMI 2.2 FRL (96 Gb/s)', mbps: 96000, widthLabel: 'FRL link', sources: ['hdmi-22', 'hdmi-cables'], aliases: ['HDMI 2.2', 'HDMI2.2', 'Ultra96', 'FRL'], notes: 'Fixed Rate Link total, one direction. HDMI Forum (Jun 2025): "96Gbps bandwidth and next-gen HDMI Fixed Rate Link". The public material gives no per-lane rate or lane count, so none is shown. Ultra96 products may support 64, 80 or 96 Gbps; requires the Ultra96 cable.' }),
 ];
 
 // ---------------------------------------------------------------- network

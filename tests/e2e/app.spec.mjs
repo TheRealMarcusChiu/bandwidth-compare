@@ -175,6 +175,28 @@ test('extreme difference: exact ratio, sub-pixel bar not padded', async ({ page 
   await expect(page.locator('#side-b .human')).toHaveText('= 187.5 kB/s');
 });
 
+test('HBM4E: searchable, exact per-stack figure, long name not clipped', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#cb-a').focus();
+  await page.keyboard.type('hbm4e 16');
+  await expect(page.locator('#lb-a [role="option"]')).toHaveCount(1);
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#cb-a')).toHaveValue('HBM4E (Samsung maximum, 16 Gb/s)');
+  await expect(page).toHaveURL(/a=hbm4e-samsung-max/);
+  await expect(page.locator('#side-a .num')).toHaveText('4,096');
+  await expect(page.locator('#side-a .badges')).toContainText('Vendor claim');
+  // The visible control is the input on desktop and the trigger button in sheet mode.
+  const visible = (await sheetMode(page)) ? page.locator('.picker[data-side="a"] .cb-toggle') : page.locator('#cb-a');
+  await expect(visible).toBeVisible();
+  if (await sheetMode(page)) await expect(visible).toContainText('HBM4E (Samsung maximum, 16 Gb/s)');
+  const clipped = await visible.evaluate((e) => e.scrollWidth > e.clientWidth + 1);
+  expect(clipped).toBe(false);
+  await page.goto('/?a=hbm4e-samsung-max&b=hbm4-jedec');
+  await expect(page.locator('#ratio-num')).toHaveText('2×');
+  await page.goto('/?a=hbm4e-samsung-max&b=usb1-low');
+  await expect(page.locator('#ratio-num')).toHaveText('21,845,333×');
+});
+
 test('unverified data is labeled', async ({ page }) => {
   await page.goto('/?a=ddr5-9200&b=eth-1600g');
   // Compact flags next to the values…
@@ -281,7 +303,7 @@ test('catalog sort: bandwidth numeric in both directions, unit toggle keeps orde
   const sort = await openCatalog(page);
   await sort.selectOption('bandwidth-desc');
   const desc = await catIds(page);
-  expect(desc[0]).toBe('hbm4-samsung-max');
+  expect(desc[0]).toBe('hbm4e-samsung-max');
   expect(desc.at(-1)).toBe('usb1-low');
   const nums = await catNums(page);
   for (let k = 1; k < nums.length; k++) expect(nums[k - 1]).toBeGreaterThanOrEqual(nums[k]);
@@ -333,18 +355,18 @@ test('catalog sort: combines with search and chips, persists across selections',
   await sort.selectOption('bandwidth-desc');
   await page.locator('#cat-q').fill('pcie x16');
   const hits = await catIds(page);
-  expect(hits[0]).toBe('pcie7-x16');
+  expect(hits[0]).toBe('pcie8-x16');
   const nums = await catNums(page);
   for (let k = 1; k < nums.length; k++) expect(nums[k - 1]).toBeGreaterThanOrEqual(nums[k]);
 
   // Setting A and B from the catalog keeps sort and filter.
   await page.locator(`#cat-body .mini[data-set="a"][data-id="${hits.at(-1)}"]`).click();
   await page.locator(`#cat-body .mini[data-set="b"][data-id="${hits[0]}"]`).click();
-  await expect(page.locator('#cb-b')).toHaveValue('PCIe 7.0 x16');
+  await expect(page.locator('#cb-b')).toHaveValue('PCIe 8.0 x16 (target)');
   await expect(sort).toHaveValue('bandwidth-desc');
   await expect(page.locator('#cat-q')).toHaveValue('pcie x16');
   expect(await catIds(page)).toEqual(hits);
-  await expect(page.locator(`#cat-body .mini[data-set="b"][data-id="pcie7-x16"]`)).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator(`#cat-body .mini[data-set="b"][data-id="pcie8-x16"]`)).toHaveAttribute('aria-pressed', 'true');
 
   // Swap and chip changes keep the sort.
   await page.locator('#swap').click();

@@ -18,6 +18,9 @@ const CASES = {
   'unverified-connector-gbps': '/?a=ddr5-mrdimm-12800&b=m2-nvme-pcie5-x4&u=Gbps',
   extreme: '/?a=hbm4-samsung-max&b=usb1-low',
   'long-usb-vs-unverified': '/?a=usb-5g&b=eth-1600g',
+  'hbm4e-long-labels': '/?a=hbm4e-samsung-max&b=hbm4e-samsung-sample',
+  'hbm4e-extreme': '/?a=hbm4e-samsung-max&b=usb1-low',
+  'roadmap-vs-hdmi22': '/?a=pcie8-x16&b=hdmi22-frl&u=Gbps',
 };
 
 test.beforeEach(({}, info) => { test.skip(info.project.name !== 'desktop', 'fixed-size contexts; run once'); });
@@ -70,7 +73,7 @@ for (const [group, sizes, phone] of [['phone', PHONES, true], ['desktop', DESKTO
         await page.goto(url);
         await page.waitForTimeout(550);
         await expectFits(page, `${size.name} ${name}`);
-        if (name !== 'extreme') await page.screenshot({ path: `/tmp/bandwidth-fit-${size.name}-${name}.png` });
+        if (!name.endsWith('extreme')) await page.screenshot({ path: `/tmp/bandwidth-fit-${size.name}-${name}.png` });
       }
       expect(errors).toEqual([]);
       await ctx.close();
@@ -210,6 +213,28 @@ test('mobile picker: tap browses in a full-screen sheet without the keyboard, ta
   // Back on the comparison, which is fully visible.
   const bottom = await page.locator('#compare').evaluate((e) => e.getBoundingClientRect().bottom);
   expect(bottom).toBeLessThanOrEqual(667);
+  expect(errors).toEqual([]);
+  await ctx.close();
+});
+
+test('mobile picker: HBM4E search shows full long labels and picks', async ({ browser, baseURL }) => {
+  const { ctx, page, errors } = await open(browser, baseURL, PHONE);
+  await trigger(page, 'a').tap();
+  await page.locator('#cb-a').tap();
+  await page.keyboard.type('hbm4e');
+  const opts = page.locator('#lb-a [role="option"]');
+  await expect(opts).toHaveCount(2);
+  const cut = await opts.evaluateAll((os) => os.map((o) => {
+    const n = o.querySelector('.cb-name');
+    return n.scrollWidth > n.clientWidth + 1 || getComputedStyle(n).textOverflow === 'ellipsis' || o.getBoundingClientRect().right > innerWidth;
+  }));
+  expect(cut).toEqual([false, false]);
+  await opts.filter({ hasText: 'HBM4E (Samsung maximum, 16 Gb/s)' }).tap();
+  await expectSheetClosed(page, 'a', 'HBM4E (Samsung maximum, 16 Gb/s)');
+  await expect(page.locator('#side-a .num')).toHaveText('4,096');
+  await expect(page.locator('#side-a .badges')).toContainText('Vendor claim');
+  await page.waitForTimeout(550);
+  await expectFits(page, 'hbm4e picked');
   expect(errors).toEqual([]);
   await ctx.close();
 });
