@@ -54,7 +54,7 @@ The page header, both selectors, the two values, the ratio, the bars and short w
 - Spacing and the big numbers scale with viewport height and column width (`svh`, container `cqi` units and character count). Long values shrink instead of overflowing, down to a 26 px minimum. Nothing uses a fixed height or clipping. When the comparison can't fit (zoom, short landscape), the page simply scrolls.
 - On phones, A and B values sit side by side. The picker buttons show the full interface names, wrapping if needed. The compact ratio line says "A lists 13.1× the figure of B", so long names can't grow it.
 - Each side shows its basis and width badges. A status flag appears only when it is a caveat (Unverified, Not ratified, Vendor claim, Connector…), with the full wording in its `title` attribute. Short notice flags (Mixed basis, Unverified figure, Asymmetric link, Extreme difference, Identical selection) stay visible.
-- **Comparison details** (a `<details>`, collapsed by default, between the comparison and the catalog) holds the full ratio sentence, each side's value in both units, formula, basis description, encoding, reverse direction, status, verification, notes, the connector's underlying link, the full notice explanations and the linear-scale note.
+- **Comparison details** (a `<details>`, collapsed by default, between the comparison and the catalog) holds the full ratio sentence, each side's value in both units, formula, basis description, encoding, reverse direction, status, verification, notes, the connector's underlying link, the row's sources (title, publisher, kind), the full notice explanations and the linear-scale note.
 
 ### Picker sheet (narrow or short touch screens)
 
@@ -89,18 +89,18 @@ The catalog has a **Sort by** select. The options are original order, bandwidth 
 | `js/compare.js` | Pure logic: formatting, ratio, bar widths, URL state, search, catalog sort (shared with tests) |
 | `js/combobox.js` | Accessible type-to-filter combobox; full-screen picker sheet on narrow/touch screens |
 | `js/app.js` | Rendering and events |
-| `form-factors.html`, `js/form-factors-page.js` | Ethernet transceiver form-factor guide page (separate from the comparator) |
-| `js/form-factors.js` | Guide data, sources and pure search. Not imported by the comparator |
+| `form-factors.html`, `js/form-factors-page.js` | Ethernet transceiver form-factor guide page (separate from the comparator; only its MSA-verified OSFP capacities also have catalog rows) |
+| `js/form-factors.js` | Guide data, sources and pure search. Not imported by the comparator (the six OSFP catalog rows live in `js/data.js`) |
 | `scripts/serve.mjs` | Zero-dependency static server (serves only site files) |
 | `tests/unit/*.test.mjs` | `node --test` suites (`sort.test.mjs` covers catalog sorting; `additions.test.mjs` covers the 2026-10-16 audit rows and keeps `docs/catalog-audit.md` in sync; `channels.test.mjs` covers DDR channel configurations) |
 | `tests/unit/mode.test.mjs` | Mode views, ratio/bars/sort per mode, memory invariance, unsupported rows, URL `m=` |
 | `tests/e2e/app.spec.mjs` | Playwright suite |
 | `tests/e2e/layout.spec.mjs` | Viewport-fit, Comparison details and mobile picker sheet tests (fixed-size contexts, run once) |
-| `tests/unit/form-factors.test.mjs`, `tests/e2e/form-factors.spec.mjs` | Guide rows, search, OSFP mappings, isolation from `INTERFACES`, audit-doc sync; page search, no-results, keyboard, phone overflow |
+| `tests/unit/form-factors.test.mjs`, `tests/e2e/form-factors.spec.mjs` | Guide rows, search, OSFP mappings, only-OSFP promotion into `INTERFACES`, audit-doc sync; page search, no-results, keyboard, phone overflow, OSFP-XD 3.2T selectable with its source while QSFP-DD1600 is not |
 
 ## Ethernet transceiver form factors
 
-`form-factors.html` is a separate guide, linked from the comparator footer. It covers 30 form factors (SFP, SFP-DD/DSFP, QSFP, QSFP-DD, OSFP and legacy modules) in six columns: form factor, Ethernet data rate, fiber/medium, representative reach, module-dependent details and typical connector. A form factor is a shape, not a link rate, so none of these rows are in `INTERFACES`, the selectors, the catalog or any ratio.
+`form-factors.html` is a separate guide, linked from the comparator footer. It covers 30 form factors (SFP, SFP-DD/DSFP, QSFP, QSFP-DD, OSFP and legacy modules) in six columns: form factor, Ethernet data rate, fiber/medium, representative reach, module-dependent details and typical connector. A form factor is a shape, not a link rate. Only the MSA-verified OSFP subset is in the comparator: the four OSFP/OSFP-XD guide rows whose rate and electrical-lane mapping match the OSFP MSA FAQ become six catalog entries, one per mapping (`osfp-400g` 8×50G, `osfp-800g` 8×100G, `osfp-1-6t` 8×200G, `osfp-xd-800g` 16×50G, `osfp-xd-1-6t` 16×100G, `osfp-xd-3-2t` 8×200G, never 16×200G). They are advertised-link rows with status *Connector / form factor*, cite the OSFP MSA as a primary source and are labelled as aggregate module capacity, not usable payload; the MSA does not specify the Ethernet PHY, medium, reach or production availability, and the generic IEEE Ethernet rows (including the in-development 1.6 Tb/s row) are unchanged. The other guide rows (SFP, SFP-DD/DSFP, QSFP, QSFP-DD and legacy) remain out of `INTERFACES`, the selectors, the catalog and every ratio. `tests/unit/osfp.test.mjs` pins all of this.
 
 - Search is case-insensitive across every cell. Tokens are ANDed and must start a word, so `SFP112` doesn't match QSFP112. The result count is announced, a no-results message replaces the table, and Escape clears the field.
 - On phones the table scrolls sideways inside a focusable, labelled region, with form-factor names pinned. The page itself never scrolls horizontally.
@@ -148,7 +148,7 @@ In this catalog a **channel** is one 64-bit data bus (payload bits only, no ECC)
 - **These are theoretical configurations.** They are not a claim that any processor supports every channel count with every generation. Each configuration inherits its rate's status, verification and sources. For example, every DDR5-9200 configuration stays unverified.
 - **Not changed:** LPDDR rows (still normalized to 64 bits, LPDDR6 at 24), DDR5 MRDIMM (one host channel) and every non-DDR row. `tests/unit/channels.test.mjs` checks them against `tests/unit/fixtures/catalog-baseline.json`, which was captured before this change.
 
-The catalog has 348 entries: 144 non-DDR rows plus 34 DDR rates × 6 channel counts.
+The catalog has 354 entries: 150 non-DDR rows (the 144 baseline rows plus the six OSFP MSA rows) plus 34 DDR rates × 6 channel counts.
 
 ## Data schema
 
@@ -218,7 +218,7 @@ The seed list was supplied by the site owner. I checked figures against primary 
 - **SNIA:** U.3 as SFF-TA-1001.
 - **IEEE:** 802.3df (800G) approved; P802.3dj (1.6T) not yet ratified (still "Active PAR" on 2026-10-16).
 
-The 2026-10-16 audit added 16 rows: JEDEC HBM4 baseline, Samsung HBM4E, JEDEC/Micron GDDR7, LPDDR5X-8533, PCIe 8.0 roadmap targets, DisplayPort HBR/HBR2, and HDMI 1.3/1.4, 2.0 and 2.2. [docs/catalog-audit.md](docs/catalog-audit.md) lists the dated sources, evidence quotes, deliberate exclusions and blocked sources. That audit is a dated snapshot: its 162 → 178 count predates the DDR channel configurations, which later brought the catalog to 348.
+The 2026-10-16 audit added 16 rows: JEDEC HBM4 baseline, Samsung HBM4E, JEDEC/Micron GDDR7, LPDDR5X-8533, PCIe 8.0 roadmap targets, DisplayPort HBR/HBR2, and HDMI 1.3/1.4, 2.0 and 2.2. [docs/catalog-audit.md](docs/catalog-audit.md) lists the dated sources, evidence quotes, deliberate exclusions and blocked sources. That audit is a dated snapshot: its 162 → 178 count predates the DDR channel configurations, which later brought the catalog to 348; the six OSFP MSA rows (2026-10-18, [docs/transceiver-form-factors-audit.md](docs/transceiver-form-factors-audit.md)) bring it to 354.
 
 Several primary sites (pcisig.com, jedec.org, sdcard.org, intel.com) returned HTTP 403 to automated fetches. Their links point to the canonical pages, but those pages weren't machine-verified for this build.
 

@@ -1,6 +1,6 @@
 # Transceiver form-factor guide audit: 2026-10-18
 
-Scope: add a separate, searchable guide to Ethernet transceiver form factors (`form-factors.html`, data in `js/form-factors.js`). A form factor is a module and cage shape, not a link standard or rate. The guide therefore stays out of the bandwidth catalog: nothing was added to `INTERFACES`, the comparator search index, the A/B selectors, the catalog count (still 348), totals or ratios. `tests/unit/form-factors.test.mjs` asserts this separation and keeps this document in sync with the data.
+Scope: add a separate, searchable guide to Ethernet transceiver form factors (`form-factors.html`, data in `js/form-factors.js`). A form factor is a module and cage shape, not a link standard or rate, so the guide is kept apart from the bandwidth catalog. Only the MSA-verified OSFP subset is in the comparator catalog (see "Comparator entries" below); the other guide rows remain out of `INTERFACES`, the comparator search index, the A/B selectors, totals and ratios. `tests/unit/form-factors.test.mjs` and `tests/unit/osfp.test.mjs` assert this split and keep this document in sync with the data.
 
 Method: the only primary source that was fetched and read is the OSFP MSA site. Every other value is user-supplied and is labelled that way on the page and below. A value that the supplied notes don't give is shown as "Not source-verified in this update; consult the exact MSA or module datasheet." It is never inferred. The guide has six columns: Form factor | Ethernet data rate | Fiber/medium | Representative reach | Module-dependent details | Typical connector.
 
@@ -48,6 +48,27 @@ The OSFP verification covers rate and lane mapping only. Medium, reach and conne
 **Correction, OSFP-XD 3.2T lane mapping.** The MSA FAQ gives 3.2 Tb/s as 8×200G. The guide reproduces that mapping as published, not 16×200G, even though OSFP-XD is described as a 16-lane form factor. A unit test fails if "16×200G" appears anywhere except in that explicit "not 16×200G" caveat.
 
 The "112" and "224" class names refer roughly to 100G- and 200G-class electrical-lane signaling generations, not to aggregate module capacity. The guide never conflates the two.
+
+## Comparator entries (OSFP MSA subset only)
+
+Follow-up on 2026-10-18: the four guide rows marked `msa-verified` (OSFP56 / OSFP400, OSFP112 / OSFP800, OSFP224 / OSFP1600, OSFP-XD) were promoted into the comparator catalog in `js/data.js`. OSFP-XD's three rates are split, so there are six entries, one per MSA rate/lane mapping. The catalog grows from 348 to 354 entries (150 non-DDR rows: the 144 baseline rows plus these six, and 34 DDR rates × 6 channel counts).
+
+| ID | Name | Width | GB/s | MSA claim |
+|---|---|---|---|---|
+| `osfp-400g` | OSFP56 / OSFP400 module (400 Gb/s, 8×50G) | 8 × 50G lanes | 50 | "400 Gb/s (8×50G)" |
+| `osfp-800g` | OSFP112 / OSFP800 module (800 Gb/s, 8×100G) | 8 × 100G lanes | 100 | "800 Gb/s (8×100G)" |
+| `osfp-1-6t` | OSFP224 / OSFP1600 module (1.6 Tb/s, 8×200G) | 8 × 200G lanes | 200 | "1.6 Tb/s (8×200G)" |
+| `osfp-xd-800g` | OSFP-XD module (800 Gb/s, 16×50G) | 16 × 50G lanes | 100 | "800 Gb/s (16×50G)" |
+| `osfp-xd-1-6t` | OSFP-XD module (1.6 Tb/s, 16×100G) | 16 × 100G lanes | 200 | "1.6 Tb/s (16×100G)" |
+| `osfp-xd-3-2t` | OSFP-XD module (3.2 Tb/s, 8×200G) | 8 × 200G lanes | 400 | "3.2 Tb/s (8×200G)", not 16×200G |
+
+How they are labelled:
+
+- Basis *Advertised link rate*, status *Connector / form factor*, verification *Cited source*, category Network. Source `osfp-msa` (https://www.osfpmsa.org/, primary), shown in each row's comparison details and in the methodology source list.
+- Notes call the figure the OSFP MSA aggregate module capacity, not usable payload throughput. The MSA publishes the rate and electrical-lane mapping; it does not specify the Ethernet PHY, optical medium or reach, and the rows make no production availability claim.
+- MSA module capacity is not IEEE PHY status. The generic IEEE Ethernet rows are unchanged, including the in-development, unratified 1.6 Tb/s row (`eth-1600g`); the two 1.6 Tb/s OSFP rows point to it rather than implying a ratified 1.6 Tb/s Ethernet PHY.
+
+Not promoted: every other guide row (SFP, SFP-DD / DSFP, QSFP, QSFP-DD and legacy). Their values are user-supplied or not verified, so they stay out of the comparator. Because comparator search matches substrings, "sfp" also finds the OSFP entries; a unit test checks that no unverified family name returns anything other than those six rows.
 
 ## User-supplied values (unverified)
 

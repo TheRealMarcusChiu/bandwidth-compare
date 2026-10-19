@@ -6,9 +6,9 @@
   <title>BANDWIDTH / compare</title>
   <meta name="description" content="Compare the peak bandwidth of any two interfaces: memory, PCIe, storage, USB, Thunderbolt, display and Ethernet, with the basis of every number stated.">
   <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#0c0d0c">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230c0d0c'/%3E%3Crect x='6' y='10' width='20' height='4' rx='1' fill='%23c4d97f'/%3E%3Crect x='6' y='18' width='9' height='4' rx='1' fill='%235b8cc8'/%3E%3C/svg%3E">
+  <meta name="theme-color" content="#0f0c09">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230f0c09'/%3E%3Crect x='6' y='10' width='20' height='4' rx='1' fill='%23d8a942'/%3E%3Crect x='6' y='18' width='9' height='4' rx='1' fill='%237fa8c9'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="js/app.js"></script>
 </head>
@@ -143,7 +143,7 @@
             <li><strong>Raw signaling or encoding-adjusted.</strong> The <em>Figures</em> switch applies to every number on the page. Encoding-adjusted (default) subtracts a documented line code (8b/10b, 128b/130b) from PCIe 1.0–5.0, SATA, SD UHS-II/III and the connectors that carry them; raw signaling shows their line rate. It is still not usable throughput: packet and protocol overhead remain. Memory is the same in both. Rows with no recorded line-code factor (PCIe 6.0+, SAS, DisplayPort, HDMI, USB, Thunderbolt, Ethernet) stay as listed, and their details say so.</li>
             <li><strong>Decimal units.</strong> 1 GB/s = 10<sup>9</sup> bytes/s. 1 Gb/s = 10<sup>9</sup> bits/s. GB/s = Gb/s ÷ 8.</li>
             <li><strong>Memory.</strong> Data rate per pin × bus width ÷ 8. DDR and LPDDR use a 64-bit channel (LPDDR normalized), except LPDDR6 at 24 bits. HBM is per stack.</li>
-            <li><strong>Connectors are not speeds.</strong> U.2, U.3 and M.2 are form factors and NVMe is a protocol; their rows repeat the underlying PCIe or SATA link. Ethernet transceiver form factors (SFP, QSFP, OSFP…) are shapes, not rates, and have their own guide, outside this catalog.</li>
+            <li><strong>Connectors are not speeds.</strong> U.2, U.3 and M.2 are form factors and NVMe is a protocol; their rows repeat the underlying PCIe or SATA link. Ethernet transceiver form factors (SFP, QSFP, OSFP…) are shapes, not rates, and have their own guide. Only the MSA-verified OSFP and OSFP-XD module capacities are in this catalog, one row per OSFP MSA rate/lane mapping, marked <em>Connector / form factor</em>: they are aggregate module capacity, not usable payload, and not an IEEE Ethernet PHY status (see the Ethernet rows for that). The other guide rows remain out of the catalog.</li>
           </ul>
           <h3>Basis</h3>
           <dl class="bases" id="bases"></dl>

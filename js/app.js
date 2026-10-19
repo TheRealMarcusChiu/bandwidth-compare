@@ -98,6 +98,13 @@ function renderDetail(node, item, side) {
       row('Status', STATUSES[item.status]),
       row('Verification', el('span', { class: `badge ${item.verification === 'unverified' ? 'badge-warn' : 'badge-ok'}`, text: VERIFICATION[item.verification] })),
       item.notes ? row('Notes', item.notes) : null,
+      row(item.sources.length === 1 ? 'Source' : 'Sources', ...item.sources.flatMap((id, k) => {
+        const s = SOURCES[id];
+        const title = s.url
+          ? el('a', { href: s.url, rel: 'noopener noreferrer', target: '_blank', text: s.title })
+          : el('span', { text: s.title });
+        return [k ? '; ' : null, el('span', { class: 'detail-src' }, title, el('span', { class: 'src-meta', text: ` ${s.publisher} · ${s.kind}` }))].filter(Boolean);
+      })),
       via ? row('Underlying link', el('button', { type: 'button', class: 'link', 'data-goto': via.id, 'data-side': side, text: `${via.name} → set as ${side.toUpperCase()}` })) : null,
     ].filter(Boolean).flat()),
   );

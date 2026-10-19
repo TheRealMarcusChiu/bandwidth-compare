@@ -237,14 +237,21 @@ const ADDED = [
   'dp11-hbr', 'dp12-hbr2', 'hdmi13-tmds', 'hdmi20-tmds', 'hdmi22-frl',
 ];
 
+// Separately audited on 2026-10-18 (docs/transceiver-form-factors-audit.md, tests/unit/osfp.test.mjs).
+const OSFP_ADDED = ['osfp-400g', 'osfp-800g', 'osfp-1-6t', 'osfp-xd-800g', 'osfp-xd-1-6t', 'osfp-xd-3-2t'];
+
 test('catalog grows by exactly the audited additions (162 → 178)', () => {
   assert.equal(ADDED.length, 16);
   for (const id of ADDED) get(id);
   // The audit predates DDR channel variants (tests/unit/channels.test.mjs): its
   // 178 counts the 1-channel DDR rows only, so the extra configurations are excluded here.
-  const audited = INTERFACES.filter((i) => !(i.channels > 1));
+  // The OSFP rows came from a later, separate audit and are counted on their own.
+  const audited = INTERFACES.filter((i) => !(i.channels > 1) && !OSFP_ADDED.includes(i.id));
   assert.equal(audited.length, 162 + ADDED.length);
-  assert.equal(INTERFACES.length - audited.length, 34 * 5);
+  assert.ok(!OSFP_ADDED.some((id) => ADDED.includes(id)));
+  for (const id of OSFP_ADDED) assert.deepEqual(get(id).sources, ['osfp-msa'], id);
+  assert.equal(INTERFACES.length - audited.length, 34 * 5 + OSFP_ADDED.length);
+  assert.equal(INTERFACES.length, 178 + 34 * 5 + 6);
 });
 
 test('docs/catalog-audit.md documents every addition, its sources and the exclusions', async () => {

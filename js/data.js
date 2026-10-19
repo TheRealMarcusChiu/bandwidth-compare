@@ -258,6 +258,12 @@ export const SOURCES = {
     url: 'https://www.ieee802.org/3/dj/',
     kind: 'primary',
   },
+  'osfp-msa': {
+    title: 'OSFP MSA, official site and FAQ (OSFP and OSFP-XD rate and electrical-lane mappings)',
+    publisher: 'OSFP MSA (accessed Oct 18, 2026)',
+    url: 'https://www.osfpmsa.org/',
+    kind: 'primary',
+  },
   'snia-sff8639': {
     title: 'SFF-8639 multifunction 6X unshielded connector (U.2)',
     publisher: 'SNIA SFF TA TWG',
@@ -778,12 +784,12 @@ const sdExpress = [
 
 // ---------------------------------------------------------------- peripheral
 
-function adv({ id, name, family, mbps, width, sources, aliases = [], notes = '', status = 'standard', verification = 'sourced', asymmetric = null, category = 'peripheral' }) {
+function adv({ id, name, family, mbps, width, sources, aliases = [], notes = '', status = 'standard', verification = 'sourced', asymmetric = null, category = 'peripheral', formula }) {
   return linkEntry({
     id, name, family, category, basis: 'advertised-link', gbpsMbps: mbps,
     perLane: null,
     width: { count: width.count ?? 1, label: width.label ?? width },
-    formula: mbps < 1000 ? `${fmtNum(mbps)} Mb/s advertised ÷ 8` : `${fmtNum(mbps / 1000)} Gb/s advertised ÷ 8`,
+    formula: formula ?? (mbps < 1000 ? `${fmtNum(mbps)} Mb/s advertised ÷ 8` : `${fmtNum(mbps / 1000)} Gb/s advertised ÷ 8`),
     status, verification, sources, aliases, notes, asymmetric,
   });
 }
@@ -881,6 +887,41 @@ const eth = [
   });
 });
 
+// ---------------------------------------------------------------- OSFP module capacity
+
+/**
+ * OSFP / OSFP-XD aggregate module capacity as published by the OSFP MSA FAQ: one row
+ * per rate/lane mapping. Only these MSA-verified rows of the transceiver guide are in
+ * the catalog; every other guide row (SFP, SFP-DD, QSFP, QSFP-DD, legacy) stays out.
+ */
+const OSFP_NOTE = 'OSFP MSA aggregate module capacity (form-factor/connector entry), not usable payload throughput. ' +
+  'The MSA publishes the module rate and electrical-lane mapping; it does not specify the Ethernet PHY, ' +
+  'optical medium or reach, and this is not a production availability claim.';
+const IEEE_NOTE = ' IEEE Ethernet PHY status is separate: see the Ethernet rows (1.6 Tb/s is in development there).';
+
+const osfp = [
+  ['osfp-400g', 'OSFP', 'OSFP56 / OSFP400', 400, 8, 50, ['OSFP56', 'OSFP400', '8x50G']],
+  ['osfp-800g', 'OSFP', 'OSFP112 / OSFP800', 800, 8, 100, ['OSFP112', 'OSFP800', '8x100G']],
+  ['osfp-1-6t', 'OSFP', 'OSFP224 / OSFP1600', 1600, 8, 200, ['OSFP224', 'OSFP1600', 'OSFP 1.6T', '8x200G']],
+  ['osfp-xd-800g', 'OSFP-XD', 'OSFP-XD', 800, 16, 50, ['OSFP XD 800G', '16x50G']],
+  ['osfp-xd-1-6t', 'OSFP-XD', 'OSFP-XD', 1600, 16, 100, ['OSFP XD 1.6T', '16x100G']],
+  ['osfp-xd-3-2t', 'OSFP-XD', 'OSFP-XD', 3200, 8, 200, ['OSFP XD 3.2T', '8x200G']],
+].map(([id, family, label, gbps, lanes, laneG, aliases]) => {
+  const rate = gbps < 1000 ? `${gbps} Gb/s` : `${fmtNum(gbps / 1000)} Tb/s`;
+  const mapping = `${lanes} × ${laneG}G`;
+  return adv({
+    id, family, category: 'network', mbps: gbps * 1000,
+    name: `${label} module (${rate}, ${lanes}×${laneG}G)`,
+    width: { count: lanes, label: `${mapping} lanes` },
+    formula: `${mapping} electrical lanes = ${fmtNum(gbps)} Gb/s module capacity ÷ 8`,
+    status: 'connector', verification: 'sourced', sources: ['osfp-msa'],
+    aliases: [...aliases, 'OSFP', ...(family === 'OSFP-XD' ? ['OSFP-XD'] : []), 'OSFP MSA', 'transceiver module'],
+    notes: `${OSFP_NOTE} Mapping: ${mapping} electrical lanes = ${rate}` +
+      (id === 'osfp-xd-3-2t' ? ', as the MSA FAQ states it: 8 × 200G, not 16 × 200G, even though OSFP-XD has 16 lanes.' : '.') +
+      (gbps === 1600 ? IEEE_NOTE : ''),
+  });
+});
+
 // ---------------------------------------------------------------- export
 
 export const INTERFACES = Object.freeze([
@@ -889,7 +930,7 @@ export const INTERFACES = Object.freeze([
   ...sata, ...sas, ...connectors, ...sdBus, ...sdExpress,
   ...usb, ...tb,
   ...display,
-  ...eth,
+  ...eth, ...osfp,
 ]);
 
 export const BY_ID = new Map(INTERFACES.map((i) => [i.id, i]));

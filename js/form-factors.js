@@ -1,6 +1,8 @@
 // Ethernet transceiver form-factor guide. Separate from the bandwidth catalog (js/data.js):
-// a form factor is a module/cage shape, not a link standard or rate, so nothing here is
-// comparable, selectable or summed. Provenance: docs/transceiver-form-factors-audit.md.
+// a form factor is a module/cage shape, not a link standard or rate.
+// Only the MSA-verified OSFP rows below also have comparator entries (one per OSFP MSA
+// rate/lane mapping, defined in js/data.js); the other guide rows remain out of the
+// comparator and are never compared or summed. Provenance: docs/transceiver-form-factors-audit.md.
 
 export const AUDIT_DATE = '2026-10-18';
 

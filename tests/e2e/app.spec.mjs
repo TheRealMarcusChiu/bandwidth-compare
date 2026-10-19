@@ -225,7 +225,9 @@ test('catalog filters and sets selections', async ({ page }) => {
   await expect(page.locator('#detail-b')).toContainText('Underlying link');
   await page.locator('#cat-q').fill('');
   await page.locator('.chip[data-cat="network"]').click();
-  await expect(page.locator('#cat-body tr:not(.cat-fam)')).toHaveCount(14);
+  // 14 IEEE Ethernet rates + 6 OSFP MSA module capacities.
+  await expect(page.locator('#cat-body tr:not(.cat-fam)')).toHaveCount(20);
+  await expect(page.locator('#cat-body tr.cat-fam th')).toHaveText(['Ethernet', 'OSFP', 'OSFP-XD']);
   await page.locator('#cat-q').fill('nothing-here-at-all');
   await expect(page.locator('#cat-empty')).toBeVisible();
 });
@@ -374,8 +376,9 @@ test('catalog sort: combines with search and chips, persists across selections',
   await page.locator('#cat-q').fill('');
   await page.locator('.chip[data-cat="network"]').click();
   const net = await catIds(page);
-  expect(net).toHaveLength(14);
-  expect(net[0]).toBe('eth-1600g');
+  expect(net).toHaveLength(20); // 14 Ethernet + 6 OSFP MSA
+  expect(net[0]).toBe('osfp-xd-3-2t');
+  expect(net.filter((id) => id.startsWith('eth-'))[0]).toBe('eth-1600g');
   await expect(sort).toHaveValue('bandwidth-desc');
   await page.locator('#cat-q').fill('nothing-here-at-all');
   await expect(page.locator('#cat-empty')).toBeVisible();
@@ -416,7 +419,7 @@ test('catalog sort: compact, fits the viewport and is keyboard operable', async 
   expect(cs).toBeLessThanOrEqual(cw);
   // Dark theme: select uses the surface colour, not a light UA default.
   const bg = await sort.evaluate((e) => getComputedStyle(e).backgroundColor);
-  expect(bg).toBe('rgb(18, 20, 18)');
+  expect(bg).toBe('rgb(20, 17, 11)'); // --surface #14110b
   await page.screenshot({ path: `/tmp/bandwidth-sort-${test.info().project.name}.png`, fullPage: false });
 });
 

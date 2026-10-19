@@ -1,7 +1,12 @@
 import { test, expect } from '@playwright/test';
 
-// Ethernet transceiver form-factor guide: a separate page, not part of the comparator.
+// Ethernet transceiver form-factor guide: a separate page. Only its MSA-verified OSFP
+// capacities are also comparator entries; every other guide row stays out of the comparator.
 const TOTAL = 30;
+const OSFP_NAMES = [
+  'OSFP56 / OSFP400 module (400 Gb/s, 8×50G)', 'OSFP112 / OSFP800 module (800 Gb/s, 8×100G)', 'OSFP224 / OSFP1600 module (1.6 Tb/s, 8×200G)',
+  'OSFP-XD module (800 Gb/s, 16×50G)', 'OSFP-XD module (1.6 Tb/s, 16×100G)', 'OSFP-XD module (3.2 Tb/s, 8×200G)',
+];
 const GROUPS = [['SFP', 6], ['SFP-DD / DSFP', 3], ['QSFP', 6], ['QSFP-DD', 4], ['OSFP', 4], ['Legacy', 7]];
 
 const consoleErrors = new WeakMap();
@@ -89,12 +94,13 @@ test('keyboard: Tab reaches search, typing filters, Escape clears, the table reg
   await expect(page.locator('#ff-scroll')).toHaveAttribute('role', 'region');
 });
 
-test('comparator links to the guide and the guide does not leak into the comparator', async ({ page }) => {
+test('comparator links to the guide; only the MSA-verified OSFP capacities reach the comparator', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('#count')).toHaveText('348');
+  await expect(page.locator('#count')).toHaveText('354');
   await page.locator('#catalog summary').click();
   await page.locator('#cat-q').fill('osfp');
-  await expect(page.locator('#cat-empty')).toBeVisible();
+  await expect(page.locator('#cat-body .cat-name')).toHaveText(OSFP_NAMES);
+  await expect(page.locator('#catalog-count')).toHaveText('6 of 354');
   await page.locator('#cat-q').fill('qsfp-dd1600');
   await expect(page.locator('#cat-empty')).toBeVisible();
   const link = page.locator('a[href="form-factors.html"]');
@@ -104,6 +110,54 @@ test('comparator links to the guide and the guide does not leak into the compara
   await expect(rows(page)).toHaveCount(TOTAL);
   await page.locator('a[href="./"]').first().click();
   await expect(page.locator('#side-a .num')).toHaveText('7.877');
+});
+
+test('comparator: OSFP-XD 3.2T is selectable with its MSA source; QSFP-DD1600 is not', async ({ page }) => {
+  await page.goto('/');
+  // Default selection is unchanged by the additions.
+  await expect(page.locator('#cb-a')).toHaveValue('PCIe 4.0 x4');
+  await expect(page.locator('#cb-b')).toHaveValue('SATA III (6 Gb/s)');
+  await expect(page).toHaveURL(/\?a=pcie4-x4&b=sata3$/);
+  await expect(page.locator('#count')).toHaveText('354');
+  const sheet = await page.evaluate(() => document.documentElement.classList.contains('is-sheet-mode'));
+  const open = async () => {
+    if (sheet) await page.locator('.picker[data-side="b"] .cb-toggle').click();
+    else await page.locator('#cb-b').click();
+    await expect(page.locator('#lb-b')).toBeVisible();
+  };
+  // An unverified guide family is not a selectable result.
+  await open();
+  await page.locator('#cb-b').fill('QSFP-DD1600');
+  await expect(page.locator('#lb-b .cb-empty')).toContainText('Nothing matches');
+  await expect(page.locator('#lb-b [role="option"]')).toHaveCount(0);
+  await page.locator('#cb-b').fill('osfp-xd');
+  await expect(page.locator('#lb-b [role="option"]')).toHaveCount(3);
+  await page.locator('#cb-b').fill('osfp-xd 3.2t');
+  const opts = page.locator('#lb-b [role="option"]');
+  await expect(opts).toHaveCount(1);
+  await expect(opts).toContainText('OSFP-XD module (3.2 Tb/s, 8×200G)');
+  await opts.click();
+  await expect(page).toHaveURL(/\?a=pcie4-x4&b=osfp-xd-3-2t$/);
+  await expect(page.locator('#cb-b')).toHaveValue('OSFP-XD module (3.2 Tb/s, 8×200G)');
+  await expect(page.locator('#side-b .num')).toHaveText('400');
+  await expect(page.locator('#side-b .unit')).toHaveText('GB/s');
+  await expect(page.locator('#side-b .side-tag')).toHaveText('B · OSFP-XD');
+  await expect(page.locator('#side-b .badges')).toContainText('Connector');
+  await expect(page.locator('#side-b .badges')).toContainText('8 × 200G lanes');
+  await expect(page.locator('#side-b .badges')).not.toContainText('Unverified');
+  await page.locator('#cmp-details summary').click();
+  const d = page.locator('#detail-b');
+  await expect(d).toContainText('Value400 GB/s = 3,200 Gb/s');
+  await expect(d).toContainText('StatusConnector / form factor');
+  await expect(d).toContainText('Cited source');
+  await expect(d).toContainText('not 16 × 200G');
+  await expect(d).toContainText('not usable payload');
+  const src = d.locator('.detail-src a[href="https://www.osfpmsa.org/"]');
+  await expect(src).toHaveCount(1);
+  await expect(src).toContainText('OSFP MSA');
+  await expect(d.locator('.detail-src')).toContainText('primary');
+  // The methodology source list carries it too.
+  await expect(page.locator('#sources a[href="https://www.osfpmsa.org/"]')).toHaveCount(1);
 });
 
 test('phone width: no body-level horizontal overflow; the table scrolls inside its region', async ({ browser, baseURL }) => {

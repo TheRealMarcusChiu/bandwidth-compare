@@ -129,9 +129,13 @@ test('notes: theoretical configuration, no support claim; DDR5 subchannels count
 
 // ------------------------------------------------------------ everything else untouched
 
+// Added after the baseline was captured, in a separate audit (tests/unit/osfp.test.mjs).
+const OSFP_IDS = ['osfp-400g', 'osfp-800g', 'osfp-1-6t', 'osfp-xd-800g', 'osfp-xd-1-6t', 'osfp-xd-3-2t'];
+
 test('non-DDR rows (LPDDR, MRDIMM, HBM, GDDR, PCIe, …) are byte-for-byte unchanged and in the same order', () => {
-  const others = INTERFACES.filter((i) => !DDR_FAMILIES.has(i.family));
+  const others = INTERFACES.filter((i) => !DDR_FAMILIES.has(i.family) && !OSFP_IDS.includes(i.id));
   assert.equal(BASELINE.nonDdr.length, 144);
+  assert.ok(BASELINE.nonDdr.every((b) => !OSFP_IDS.includes(b.id)), 'baseline predates OSFP');
   assert.deepEqual(others.map((i) => i.id), BASELINE.nonDdr.map((b) => b.id));
   for (const b of BASELINE.nonDdr) {
     const i = get(b.id);
@@ -146,9 +150,21 @@ test('non-DDR rows (LPDDR, MRDIMM, HBM, GDDR, PCIe, …) are byte-for-byte uncha
   assert.ok(!BY_ID.has('ddr5-mrdimm-8800-2ch'));
 });
 
-test('catalog size: 144 untouched rows + 34 DDR rates × 6 channel counts', () => {
-  assert.equal(INTERFACES.length, 144 + 34 * 6);
-  assert.equal(INTERFACES.length, 348);
+test('the six OSFP MSA additions are the only new non-DDR rows, appended after the baseline', () => {
+  const nonDdr = INTERFACES.filter((i) => !DDR_FAMILIES.has(i.family));
+  assert.equal(nonDdr.length, 150);
+  assert.deepEqual(nonDdr.map((i) => i.id), [...BASELINE.nonDdr.map((b) => b.id), ...OSFP_IDS]);
+  for (const id of OSFP_IDS) {
+    const i = get(id);
+    assert.equal(i.channels, undefined, id);
+    assert.deepEqual(i.sources, ['osfp-msa'], id);
+    assert.equal(i.status, 'connector', id);
+  }
+});
+
+test('catalog size: 150 non-DDR rows (144 baseline + 6 OSFP) + 34 DDR rates × 6 channel counts', () => {
+  assert.equal(INTERFACES.length, 144 + OSFP_IDS.length + 34 * 6);
+  assert.equal(INTERFACES.length, 354);
 });
 
 // ------------------------------------------------------------ search

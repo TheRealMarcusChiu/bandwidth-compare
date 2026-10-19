@@ -14,8 +14,10 @@ const types = {
   '.svg': 'image/svg+xml',
   '.json': 'application/json',
   '.png': 'image/png',
+  '.woff2': 'font/woff2',
+  '.txt': 'text/plain; charset=utf-8',
 };
-const allowed = new Set(['', 'js']); // only serve site files, never node_modules/tests
+const allowed = new Set(['', 'js', 'fonts']); // only serve site files, never node_modules/tests
 
 createServer(async (req, res) => {
   try {
