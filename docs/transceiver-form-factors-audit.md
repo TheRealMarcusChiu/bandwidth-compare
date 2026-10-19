@@ -1,0 +1,89 @@
+# Transceiver form-factor guide audit: 2026-10-18
+
+Scope: add a separate, searchable guide to Ethernet transceiver form factors (`form-factors.html`, data in `js/form-factors.js`). A form factor is a module and cage shape, not a link standard or rate. The guide therefore stays out of the bandwidth catalog: nothing was added to `INTERFACES`, the comparator search index, the A/B selectors, the catalog count (still 348), totals or ratios. `tests/unit/form-factors.test.mjs` asserts this separation and keeps this document in sync with the data.
+
+Method: the only primary source that was fetched and read is the OSFP MSA site. Every other value is user-supplied and is labelled that way on the page and below. A value that the supplied notes don't give is shown as "Not source-verified in this update; consult the exact MSA or module datasheet." It is never inferred. The guide has six columns: Form factor | Ethernet data rate | Fiber/medium | Representative reach | Module-dependent details | Typical connector.
+
+## Row scope
+
+The guide has 30 rows in six groups:
+
+| Group | Rows | Names |
+|---|---|---|
+| SFP | 6 | SFP, SFP+, SFP28, SFP56, SFP112, SFP224 |
+| SFP-DD / DSFP | 3 | SFP-DD56, SFP-DD112, DSFP |
+| QSFP | 6 | QSFP, QSFP+, QSFP28, QSFP56, QSFP112, QSFP224 / QSFP800 |
+| QSFP-DD | 4 | QSFP-DD (200G), QSFP-DD (400G), QSFP-DD800, QSFP-DD1600 |
+| OSFP | 4 | OSFP56 / OSFP400, OSFP112 / OSFP800, OSFP224 / OSFP1600, OSFP-XD |
+| Legacy | 7 | XFP, XENPAK / X2, CFP, CFP2, CFP4, CPAK, CXP |
+
+The combined rows are QSFP224 / QSFP800, OSFP56 / OSFP400, OSFP112 / OSFP800, OSFP224 / OSFP1600 and XENPAK / X2. No row was created for unnamed or truncated material in the supplied notes.
+
+## Source matrix
+
+| Source | URL | Result on 2026-10-18 | Used for |
+|---|---|---|---|
+| OSFP MSA, official site and FAQ | https://www.osfpmsa.org/ | Fetched and read | OSFP and OSFP-XD rate and electrical-lane mappings only. Status badge "OSFP MSA: rate & lanes" |
+| SNIA SFF Specifications | https://www.snia.org/technology-communities/sff/specifications | HTTP 200, title "SFF Specifications \| SNIA \| Experts on Data". The fetch did not expose the underlying document content | Linked as the official specification index only. It is not cited as proof of any number |
+| QSFP-DD MSA | https://www.qsfp-dd.com/ | Timed out, including likely spec and document paths | Linked, but called inaccessible in this audit. No QSFP-DD value is verified against it |
+| Cisco and other vendor datasheets | (not linked) | HTTP 403 to automated requests. Exact SFP56, QSFP28 and coherent 400G/800G datasheets were not matched | Nothing. Reach examples remain user-supplied |
+| Site owner's form-factor notes | (not linked) | User-supplied | All non-OSFP rates, media, reach examples, connectors and lane notes, labelled "User-supplied, unverified" |
+
+## OSFP MSA: claim mapping
+
+The OSFP MSA FAQ states:
+
+- OSFP has 8 high-speed electrical lanes and supports up to 400 Gb/s (8×50G), 800 Gb/s (8×100G) or 1.6 Tb/s (8×200G).
+- OSFP-XD is a 16-lane form factor. Its FAQ lists 800 Gb/s (16×50G), 1.6 Tb/s (16×100G) and 3.2 Tb/s (8×200G).
+
+| Row | Rate | Module-dependent details | MSA claim |
+|---|---|---|---|
+| OSFP56 / OSFP400 | 400G | 8×50G electrical lanes | "400 Gb/s (8×50G)" |
+| OSFP112 / OSFP800 | 800G | 8×100G electrical lanes; "112" is the lane signaling class, not the aggregate module rate | "800 Gb/s (8×100G)" |
+| OSFP224 / OSFP1600 | 1.6T | 8×200G electrical lanes; "224" is the lane signaling class, not the aggregate module rate | "1.6 Tb/s (8×200G)" |
+| OSFP-XD | 800G; 1.6T; 3.2T | 16 electrical lanes: 800G = 16×50G; 1.6T = 16×100G; 3.2T = 8×200G | "800 Gb/s (16×50G)", "1.6 Tb/s (16×100G)", "3.2 Tb/s (8×200G)" |
+
+The OSFP verification covers rate and lane mapping only. Medium, reach and connector for the OSFP rows are not source-verified and show the not-verified note.
+
+**Correction, OSFP-XD 3.2T lane mapping.** The MSA FAQ gives 3.2 Tb/s as 8×200G. The guide reproduces that mapping as published, not 16×200G, even though OSFP-XD is described as a 16-lane form factor. A unit test fails if "16×200G" appears anywhere except in that explicit "not 16×200G" caveat.
+
+The "112" and "224" class names refer roughly to 100G- and 200G-class electrical-lane signaling generations, not to aggregate module capacity. The guide never conflates the two.
+
+## User-supplied values (unverified)
+
+These reach figures are illustrative examples from the site owner's notes. They are not independently verified standards, and the page tells readers to check the exact optic datasheet.
+
+| Row | Rate | Medium | Representative reach | Connector |
+|---|---|---|---|---|
+| SFP | 1G | MMF, SMF, copper | MMF 550 m; SMF 10–80 km (specialty longer); copper 100 m | Duplex LC; simplex LC (BiDi); RJ45 (copper) |
+| SFP+ | 10G | MMF (OM3/OM4), SMF, copper | MMF 300 m OM3 / 400 m OM4; SMF 10/40/80 km (specialty 120 km); RJ45 commonly 30–100 m | LC; RJ45 (copper) |
+| SFP28 | 25G | MMF (OM3/OM4), SMF | MMF 70 m OM3 / 100 m OM4; SMF 10/25/40 km (specialty longer) | LC |
+| SFP56 | 50G | MMF, SMF | MMF 70–100 m; SMF 10–40 km (user-supplied, unverified) | LC |
+| SFP112 | 100G | MMF, SMF | MMF typically 50–100 m; SMF 500 m / 2 km / 10 km, module-dependent (user-supplied, unverified) | LC |
+| SFP224 | 200G | not verified | No single family-wide reach; module-dependent. Emerging generation, marked developing. Current production/availability status was not independently verified; the guide asserts neither production nor non-production | not verified |
+
+Other user-supplied values. Fields not listed show the not-verified note.
+
+- SFP-DD56: 100G, using 2×50G electrical lanes.
+- SFP-DD112: 200G, using 2×100G electrical lanes; module-dependent.
+- QSFP: 4G, kept as supplied and marked "not independently verified". It was not silently changed.
+- QSFP+ 40G, QSFP28 100G, QSFP56 200G, QSFP112 400G.
+- QSFP224 / QSFP800: 800G, using 4×200G electrical lanes (as supplied, not independently verified).
+- QSFP-DD (200G), QSFP-DD (400G), QSFP-DD800, QSFP-DD1600: 200G, 400G, 800G and 1.6T generations. No lane mapping is shown. Each row reads "Lane mapping not source-verified in this update", because the QSFP-DD MSA could not be retrieved. None is elevated to "standard verified".
+
+Named only, with every value not verified: DSFP ("not verified in this update; see the exact MSA or module") and the legacy XFP, XENPAK / X2, CFP, CFP2, CFP4, CPAK and CXP. No rate was invented for any of them.
+
+## Caveats shown on the page
+
+- Reach figures are illustrative and require the exact module datasheet.
+- 112/224 are lane signaling classes, not module rates.
+- OSFP-XD 3.2T is 8×200G as the MSA states it, not 16×200G.
+- OM3, OM4 and OM5 are MMF grades. OS2 is typical SMF cabling. MTP is a branded MPO implementation.
+- The connector column is the media-side optical or copper interface, not the host electrical contacts. DAC is copper. AOC is captive optical fiber and often has no detachable LC/MPO media connector.
+
+## Source gaps and exclusions
+
+- **QSFP-DD MSA** (https://www.qsfp-dd.com/) timed out. QSFP-DD values stay user-supplied and unverified until an exact MSA document is retrieved directly.
+- **Cisco and vendor pages** returned 403. No vendor datasheet backs any reach figure.
+- **SNIA** is cited as the official SFF index only, not as proof of any figure.
+- **Ambiguous date excluded.** The supplied source note included an unattached date, "June 03, 2021". It could not be tied to a cited source, so it is not presented as a source date anywhere in the guide. A unit test asserts that no "2021" date appears in the guide data.

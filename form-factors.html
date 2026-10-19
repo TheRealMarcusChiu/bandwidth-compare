@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ethernet transceiver form factors · BANDWIDTH / compare</title>
+  <meta name="description" content="A searchable guide to Ethernet transceiver form factors (SFP, QSFP, QSFP-DD, OSFP and legacy modules) with media, representative reach and connectors, and the source status of every value.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0c0d0c">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230c0d0c'/%3E%3Crect x='6' y='10' width='20' height='4' rx='1' fill='%23c4d97f'/%3E%3Crect x='6' y='18' width='9' height='4' rx='1' fill='%235b8cc8'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="js/form-factors-page.js"></script>
+</head>
+<body class="ff-page">
+  <a class="skip" href="#main">Skip to guide</a>
+
+  <header class="top">
+    <p class="mark"><a class="mark-link" href="./"><span class="mark-a">BANDWIDTH</span><span class="mark-b"> / compare</span></a></p>
+    <nav class="controls" aria-label="Site">
+      <a class="btn" href="./">← Bandwidth comparison</a>
+    </nav>
+  </header>
+
+  <main id="main" class="ff-main">
+    <h1 class="ff-title">Ethernet transceiver form factors</h1>
+    <p class="ff-lede">A form factor is a module and cage shape, not a link standard or a rate. The same shape carries many optics with different media, reach and connectors, so this guide is kept apart from the bandwidth comparison and its numbers are never compared, totalled or ranked.</p>
+
+    <div class="cat-tools ff-tools">
+      <label class="vh" for="ff-q">Search form factors</label>
+      <input id="ff-q" class="cat-q" type="search" placeholder="Search: SFP112, OSFP-XD, QSFP-DD1600, OM4, LC…" autocomplete="off" spellcheck="false" aria-describedby="ff-count" aria-controls="ff-table">
+      <p class="ff-count" id="ff-count" role="status" aria-live="polite"></p>
+    </div>
+    <p class="cat-empty" id="ff-empty" hidden></p>
+
+    <p class="ff-hint" id="ff-hint">Scroll the table sideways for all six columns.</p>
+    <div class="cat-wrap ff-wrap" id="ff-scroll" role="region" aria-labelledby="ff-caption" aria-describedby="ff-hint" tabindex="0">
+      <table class="cat ff" id="ff-table">
+        <caption class="vh" id="ff-caption">Ethernet transceiver form factors: data rate, medium, representative reach, module-dependent details and typical media-side connector</caption>
+        <thead><tr></tr></thead>
+      </table>
+    </div>
+
+    <section class="ff-notes prose" aria-labelledby="ff-caveats-title">
+      <h2 class="ff-h2" id="ff-caveats-title">Read this first</h2>
+      <ul class="rules" id="ff-caveats">
+        <li><strong>Reach figures are illustrative.</strong> They are user-supplied examples, not verified standards. Reach depends on the exact optic, fiber grade and link budget, so check the exact module datasheet.</li>
+        <li><strong>Signaling class is not module rate.</strong> The <code>112</code> and <code>224</code> in names such as OSFP112 or OSFP224 refer roughly to 100G- and 200G-class electrical-lane signaling, not to the aggregate Ethernet rate of the module.</li>
+        <li><strong>OSFP-XD 3.2T.</strong> The OSFP MSA FAQ lists 3.2 Tb/s as 8×200G. This guide reproduces that mapping as published and does not restate it as 16×200G.</li>
+        <li><strong>Fiber grades.</strong> OM3, OM4 and OM5 are multimode fiber (MMF) grades. OS2 is typical single-mode fiber (SMF) cabling. MTP is a branded MPO implementation.</li>
+        <li><strong>Connectors are media-side.</strong> The connector column means the optical or copper interface the cable plugs into, not the host electrical contacts. DAC is copper; AOC is captive optical fiber and often has no detachable LC or MPO connector.</li>
+        <li><strong>Unknown stays unknown.</strong> A cell reading “Not source-verified” means no value was tied to a source in this update. Nothing was inferred to fill it.</li>
+      </ul>
+      <h2 class="ff-h2">Sources and status</h2>
+      <p>Audited <time datetime="2026-10-18">2026-10-18</time>. Each row’s status badge says what its values rest on. Details are in <code>docs/transceiver-form-factors-audit.md</code> in the repository.</p>
+      <ul class="sources" id="ff-sources"></ul>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Form factors are shapes, not speeds. Check the exact module datasheet.</p>
+    <p class="foot-meta"><span id="ff-total"></span> form factors · static, no tracking</p>
+  </footer>
+</body>
+</html>

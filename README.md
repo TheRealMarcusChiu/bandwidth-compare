@@ -89,11 +89,23 @@ The catalog has a **Sort by** select. The options are original order, bandwidth 
 | `js/compare.js` | Pure logic: formatting, ratio, bar widths, URL state, search, catalog sort (shared with tests) |
 | `js/combobox.js` | Accessible type-to-filter combobox; full-screen picker sheet on narrow/touch screens |
 | `js/app.js` | Rendering and events |
+| `form-factors.html`, `js/form-factors-page.js` | Ethernet transceiver form-factor guide page (separate from the comparator) |
+| `js/form-factors.js` | Guide data, sources and pure search. Not imported by the comparator |
 | `scripts/serve.mjs` | Zero-dependency static server (serves only site files) |
 | `tests/unit/*.test.mjs` | `node --test` suites (`sort.test.mjs` covers catalog sorting; `additions.test.mjs` covers the 2026-10-16 audit rows and keeps `docs/catalog-audit.md` in sync; `channels.test.mjs` covers DDR channel configurations) |
 | `tests/unit/mode.test.mjs` | Mode views, ratio/bars/sort per mode, memory invariance, unsupported rows, URL `m=` |
 | `tests/e2e/app.spec.mjs` | Playwright suite |
 | `tests/e2e/layout.spec.mjs` | Viewport-fit, Comparison details and mobile picker sheet tests (fixed-size contexts, run once) |
+| `tests/unit/form-factors.test.mjs`, `tests/e2e/form-factors.spec.mjs` | Guide rows, search, OSFP mappings, isolation from `INTERFACES`, audit-doc sync; page search, no-results, keyboard, phone overflow |
+
+## Ethernet transceiver form factors
+
+`form-factors.html` is a separate guide, linked from the comparator footer. It covers 30 form factors (SFP, SFP-DD/DSFP, QSFP, QSFP-DD, OSFP and legacy modules) in six columns: form factor, Ethernet data rate, fiber/medium, representative reach, module-dependent details and typical connector. A form factor is a shape, not a link rate, so none of these rows are in `INTERFACES`, the selectors, the catalog or any ratio.
+
+- Search is case-insensitive across every cell. Tokens are ANDed and must start a word, so `SFP112` doesn't match QSFP112. The result count is announced, a no-results message replaces the table, and Escape clears the field.
+- On phones the table scrolls sideways inside a focusable, labelled region, with form-factor names pinned. The page itself never scrolls horizontally.
+- Only the OSFP rows' rates and lane mappings are verified, against the OSFP MSA FAQ (fetched 2026-10-18). OSFP-XD 3.2T is shown as 8×200G, as the MSA states it. Everything else is user-supplied and labelled unverified. The reach figures are illustrative. QSFP-DD values are unverified because the QSFP-DD MSA site timed out. Unknown values read "Not source-verified in this update" and are never inferred.
+- [docs/transceiver-form-factors-audit.md](docs/transceiver-form-factors-audit.md) holds the source matrix, the OSFP claim mapping and the gaps.
 
 ## Raw signaling / Encoding-adjusted
 

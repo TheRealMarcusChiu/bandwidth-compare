@@ -143,7 +143,7 @@
             <li><strong>Raw signaling or encoding-adjusted.</strong> The <em>Figures</em> switch applies to every number on the page. Encoding-adjusted (default) subtracts a documented line code (8b/10b, 128b/130b) from PCIe 1.0–5.0, SATA, SD UHS-II/III and the connectors that carry them; raw signaling shows their line rate. It is still not usable throughput: packet and protocol overhead remain. Memory is the same in both. Rows with no recorded line-code factor (PCIe 6.0+, SAS, DisplayPort, HDMI, USB, Thunderbolt, Ethernet) stay as listed, and their details say so.</li>
             <li><strong>Decimal units.</strong> 1 GB/s = 10<sup>9</sup> bytes/s. 1 Gb/s = 10<sup>9</sup> bits/s. GB/s = Gb/s ÷ 8.</li>
             <li><strong>Memory.</strong> Data rate per pin × bus width ÷ 8. DDR and LPDDR use a 64-bit channel (LPDDR normalized), except LPDDR6 at 24 bits. HBM is per stack.</li>
-            <li><strong>Connectors are not speeds.</strong> U.2, U.3 and M.2 are form factors and NVMe is a protocol; their rows repeat the underlying PCIe or SATA link.</li>
+            <li><strong>Connectors are not speeds.</strong> U.2, U.3 and M.2 are form factors and NVMe is a protocol; their rows repeat the underlying PCIe or SATA link. Ethernet transceiver form factors (SFP, QSFP, OSFP…) are shapes, not rates, and have their own guide, outside this catalog.</li>
           </ul>
           <h3>Basis</h3>
           <dl class="bases" id="bases"></dl>
@@ -157,7 +157,7 @@
   </main>
 
   <footer class="foot">
-    <p>Peak figures per direction. Not a benchmark.</p>
+    <p>Peak figures per direction. Not a benchmark. <a href="form-factors.html">Ethernet transceiver form factors guide</a></p>
     <p class="foot-meta"><span id="count"></span> interfaces · static, no tracking</p>
   </footer>
 
