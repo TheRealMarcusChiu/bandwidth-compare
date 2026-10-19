@@ -42,6 +42,7 @@ export const STATUSES = {
   illustrative: 'Illustrative example',
   developing: 'In development, not ratified',
   connector: 'Connector / form factor',
+  'user-supplied': 'User-supplied form-factor rate (not independently verified)',
 };
 
 /** Compact status flag shown next to the value; the full label lives in Comparison details. */
@@ -53,6 +54,7 @@ export const STATUS_SHORT = {
   illustrative: 'Illustrative',
   developing: 'Not ratified',
   connector: 'Connector',
+  'user-supplied': 'User-supplied',
 };
 
 /** Whether we checked the figure against a cited source. */
@@ -891,8 +893,9 @@ const eth = [
 
 /**
  * OSFP / OSFP-XD aggregate module capacity as published by the OSFP MSA FAQ: one row
- * per rate/lane mapping. Only these MSA-verified rows of the transceiver guide are in
- * the catalog; every other guide row (SFP, SFP-DD, QSFP, QSFP-DD, legacy) stays out.
+ * per rate/lane mapping. These MSA-verified rows of the transceiver guide are the only
+ * source-verified transceiver entries; the guide's other numeric rows follow below as
+ * user-supplied, unverified entries.
  */
 const OSFP_NOTE = 'OSFP MSA aggregate module capacity (form-factor/connector entry), not usable payload throughput. ' +
   'The MSA publishes the module rate and electrical-lane mapping; it does not specify the Ethernet PHY, ' +
@@ -922,6 +925,58 @@ const osfp = [
   });
 });
 
+// ---------------------------------------------------------------- user-supplied form-factor rates
+
+/**
+ * The non-MSA rows of the transceiver form-factor guide page that give an explicit
+ * numeric rate, compared exactly as the site owner supplied them. Unverified: no IEEE,
+ * MSA or datasheet check, no inferred coding/overhead and no guessed lane count. A lane
+ * mapping appears only where the guide itself states one. DSFP and the legacy names give
+ * no rate and stay guide-only.
+ */
+const USER_FF_NOTE = 'Nominal rate from the site owner’s transceiver form-factor guide, compared exactly as supplied; ' +
+  'not independently verified. It is not a verified Ethernet PHY or standard and not payload throughput, ' +
+  'with no reach, medium or production-availability claim. No coding or overhead adjustment is inferred.';
+
+const userFormFactors = [
+  // [id, family, guide name, Gb/s as supplied, guide lane mapping or null, extra note]
+  ['sfp-1g', 'SFP', 'SFP', 1, null],
+  ['sfp-plus-10g', 'SFP', 'SFP+', 10, null],
+  ['sfp28-25g', 'SFP', 'SFP28', 25, null],
+  ['sfp56-50g', 'SFP', 'SFP56', 50, null],
+  ['sfp112-100g', 'SFP', 'SFP112', 100, null],
+  ['sfp224-200g', 'SFP', 'SFP224', 200, null, 'Developing generation: current production/availability status not independently verified.'],
+  ['sfp-dd56-100g', 'SFP-DD', 'SFP-DD56', 100, [2, 50]],
+  ['sfp-dd112-200g', 'SFP-DD', 'SFP-DD112', 200, [2, 100]],
+  ['qsfp-4g', 'QSFP', 'QSFP', 4, null, 'The 4 Gb/s figure is reproduced exactly as supplied and has not been corrected.'],
+  ['qsfp-plus-40g', 'QSFP', 'QSFP+', 40, null],
+  ['qsfp28-100g', 'QSFP', 'QSFP28', 100, null],
+  ['qsfp56-200g', 'QSFP', 'QSFP56', 200, null],
+  ['qsfp112-400g', 'QSFP', 'QSFP112', 400, null],
+  ['qsfp224-800g', 'QSFP', 'QSFP224 / QSFP800', 800, [4, 200]],
+  ['qsfp-dd-200g', 'QSFP-DD', 'QSFP-DD (200G)', 200, null],
+  ['qsfp-dd-400g', 'QSFP-DD', 'QSFP-DD (400G)', 400, null],
+  ['qsfp-dd-800g', 'QSFP-DD', 'QSFP-DD800', 800, null],
+  ['qsfp-dd-1600g', 'QSFP-DD', 'QSFP-DD1600', 1600, null],
+].map(([id, family, guideName, gbps, lanes, extra]) => {
+  const rate = gbps < 1000 ? `${gbps} Gb/s` : `${fmtNum(gbps / 1000)} Tb/s`;
+  const dev = id === 'sfp224-200g';
+  const label = guideName.replace(/ \(\d+G\)$/, '');
+  return adv({
+    id, family, category: 'network', mbps: gbps * 1000,
+    name: `${label} module (${rate}, ${dev ? 'developing, ' : ''}user-supplied)`,
+    width: lanes
+      ? { count: lanes[0], label: `${lanes[0]} × ${lanes[1]}G lanes (unverified)` }
+      : { count: 1, label: 'Lane mapping not source-verified' },
+    formula: `${gbps} Gb/s nominal rate as supplied ÷ 8`,
+    status: dev ? 'developing' : 'user-supplied', verification: 'unverified', sources: ['user-seed'],
+    aliases: [...new Set([guideName, ...guideName.split(' / '), family])].concat('user-supplied', 'transceiver module'),
+    notes: `${USER_FF_NOTE} ` +
+      (lanes ? `Lane mapping as supplied in the guide, unverified: ${lanes[0]} × ${lanes[1]}G electrical lanes.` : 'Lane mapping not source-verified.') +
+      (extra ? ` ${extra}` : ''),
+  });
+});
+
 // ---------------------------------------------------------------- export
 
 export const INTERFACES = Object.freeze([
@@ -930,7 +985,7 @@ export const INTERFACES = Object.freeze([
   ...sata, ...sas, ...connectors, ...sdBus, ...sdExpress,
   ...usb, ...tb,
   ...display,
-  ...eth, ...osfp,
+  ...eth, ...osfp, ...userFormFactors,
 ]);
 
 export const BY_ID = new Map(INTERFACES.map((i) => [i.id, i]));

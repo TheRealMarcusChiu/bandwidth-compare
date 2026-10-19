@@ -136,8 +136,9 @@ const words = (s) => s.toLowerCase().replace(/[^a-z0-9.+]+/g, ' ').trim();
 
 export function buildIndex(items) {
   return items.map((item) => {
-    const hay = [item.name, item.family, item.id, item.width?.label ?? '', ...item.aliases].join(' | ');
-    return { item, words: words(hay), compact: compact(hay) };
+    const fields = [item.name, item.family, item.id, item.width?.label ?? '', ...item.aliases];
+    // Compacted per field, so a match never spans two fields ("…supplied" + "SFP" is not "dsfp").
+    return { item, words: words(fields.join(' | ')), compact: fields.map(compact).join('|') };
   });
 }
 

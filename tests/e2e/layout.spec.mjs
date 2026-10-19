@@ -475,7 +475,7 @@ test('DDR channels: catalog filter and sort show every configuration with explic
     await page.locator('#cat-q').fill('dual channel');
     await page.locator('.chip[data-cat="memory"]').click();
     expect(await page.locator('#cat-body tr:not(.cat-fam)').count()).toBe(34);
-    await expect(page.locator('#catalog-count')).toHaveText('34 of 354');
+    await expect(page.locator('#catalog-count')).toHaveText('34 of 372');
     const [sw, iw] = await page.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
     expect(sw).toBeLessThanOrEqual(iw);
     expect(errors).toEqual([]);

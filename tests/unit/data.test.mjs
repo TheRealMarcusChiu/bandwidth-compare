@@ -261,4 +261,5 @@ test('every status has a short compact label (null only for the plain standard c
   }
   assert.equal(STATUS_SHORT.developing, 'Not ratified');
   assert.equal(STATUS_SHORT.connector, 'Connector');
+  assert.equal(STATUS_SHORT['user-supplied'], 'User-supplied');
 });

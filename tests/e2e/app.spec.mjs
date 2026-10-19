@@ -225,9 +225,9 @@ test('catalog filters and sets selections', async ({ page }) => {
   await expect(page.locator('#detail-b')).toContainText('Underlying link');
   await page.locator('#cat-q').fill('');
   await page.locator('.chip[data-cat="network"]').click();
-  // 14 IEEE Ethernet rates + 6 OSFP MSA module capacities.
-  await expect(page.locator('#cat-body tr:not(.cat-fam)')).toHaveCount(20);
-  await expect(page.locator('#cat-body tr.cat-fam th')).toHaveText(['Ethernet', 'OSFP', 'OSFP-XD']);
+  // 14 IEEE Ethernet rates + 6 OSFP MSA module capacities + 18 user-supplied form-factor rates.
+  await expect(page.locator('#cat-body tr:not(.cat-fam)')).toHaveCount(38);
+  await expect(page.locator('#cat-body tr.cat-fam th')).toHaveText(['Ethernet', 'OSFP', 'OSFP-XD', 'SFP', 'SFP-DD', 'QSFP', 'QSFP-DD']);
   await page.locator('#cat-q').fill('nothing-here-at-all');
   await expect(page.locator('#cat-empty')).toBeVisible();
 });
@@ -376,7 +376,7 @@ test('catalog sort: combines with search and chips, persists across selections',
   await page.locator('#cat-q').fill('');
   await page.locator('.chip[data-cat="network"]').click();
   const net = await catIds(page);
-  expect(net).toHaveLength(20); // 14 Ethernet + 6 OSFP MSA
+  expect(net).toHaveLength(38); // 14 Ethernet + 6 OSFP MSA + 18 user-supplied form factors
   expect(net[0]).toBe('osfp-xd-3-2t');
   expect(net.filter((id) => id.startsWith('eth-'))[0]).toBe('eth-1600g');
   await expect(sort).toHaveValue('bandwidth-desc');

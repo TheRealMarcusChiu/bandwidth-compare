@@ -1,6 +1,6 @@
 # Transceiver form-factor guide audit: 2026-10-18
 
-Scope: add a separate, searchable guide to Ethernet transceiver form factors (`form-factors.html`, data in `js/form-factors.js`). A form factor is a module and cage shape, not a link standard or rate, so the guide is kept apart from the bandwidth catalog. Only the MSA-verified OSFP subset is in the comparator catalog (see "Comparator entries" below); the other guide rows remain out of `INTERFACES`, the comparator search index, the A/B selectors, totals and ratios. `tests/unit/form-factors.test.mjs` and `tests/unit/osfp.test.mjs` assert this split and keep this document in sync with the data.
+Scope: add a separate, searchable guide to Ethernet transceiver form factors (`form-factors.html`, data in `js/form-factors.js`). A form factor is a module and cage shape, not a link standard or rate, so the guide is kept apart from the bandwidth catalog. The MSA-verified OSFP subset is in the comparator catalog as the only source-verified transceiver entries (see "Comparator entries" below). The 18 other guide rows with a numeric rate are comparator entries too, as user-supplied, unverified figures (see "User-supplied comparator entries"). DSFP and the seven legacy names have no numeric rate in the guide, so they stay out of `INTERFACES`, the comparator search index, the A/B selectors, totals and ratios. `tests/unit/form-factors.test.mjs`, `tests/unit/osfp.test.mjs` and `tests/unit/user-transceivers.test.mjs` assert this split and keep this document in sync with the data.
 
 Method: the only primary source that was fetched and read is the OSFP MSA site. Every other value is user-supplied and is labelled that way on the page and below. A value that the supplied notes don't give is shown as "Not source-verified in this update; consult the exact MSA or module datasheet." It is never inferred. The guide has six columns: Form factor | Ethernet data rate | Fiber/medium | Representative reach | Module-dependent details | Typical connector.
 
@@ -27,7 +27,7 @@ The combined rows are QSFP224 / QSFP800, OSFP56 / OSFP400, OSFP112 / OSFP800, OS
 | SNIA SFF Specifications | https://www.snia.org/technology-communities/sff/specifications | HTTP 200, title "SFF Specifications \| SNIA \| Experts on Data". The fetch did not expose the underlying document content | Linked as the official specification index only. It is not cited as proof of any number |
 | QSFP-DD MSA | https://www.qsfp-dd.com/ | Timed out, including likely spec and document paths | Linked, but called inaccessible in this audit. No QSFP-DD value is verified against it |
 | Cisco and other vendor datasheets | (not linked) | HTTP 403 to automated requests. Exact SFP56, QSFP28 and coherent 400G/800G datasheets were not matched | Nothing. Reach examples remain user-supplied |
-| Site owner's form-factor notes | (not linked) | User-supplied | All non-OSFP rates, media, reach examples, connectors and lane notes, labelled "User-supplied, unverified" |
+| Site owner's form-factor notes | (not linked) | User-supplied | All non-OSFP rates, media, reach examples, connectors and lane notes, labelled "User-supplied, unverified". The numeric rates are also the 18 user-supplied comparator entries, cited there as `user-seed` |
 
 ## OSFP MSA: claim mapping
 
@@ -49,9 +49,9 @@ The OSFP verification covers rate and lane mapping only. Medium, reach and conne
 
 The "112" and "224" class names refer roughly to 100G- and 200G-class electrical-lane signaling generations, not to aggregate module capacity. The guide never conflates the two.
 
-## Comparator entries (OSFP MSA subset only)
+## Comparator entries (OSFP MSA subset, source-verified)
 
-Follow-up on 2026-10-18: the four guide rows marked `msa-verified` (OSFP56 / OSFP400, OSFP112 / OSFP800, OSFP224 / OSFP1600, OSFP-XD) were promoted into the comparator catalog in `js/data.js`. OSFP-XD's three rates are split, so there are six entries, one per MSA rate/lane mapping. The catalog grows from 348 to 354 entries (150 non-DDR rows: the 144 baseline rows plus these six, and 34 DDR rates × 6 channel counts).
+Follow-up on 2026-10-18: the four guide rows marked `msa-verified` (OSFP56 / OSFP400, OSFP112 / OSFP800, OSFP224 / OSFP1600, OSFP-XD) were promoted into the comparator catalog in `js/data.js`. OSFP-XD's three rates are split, so there are six entries, one per MSA rate/lane mapping. That step took the catalog from 348 to 354 (150 non-DDR rows: the 144 baseline rows plus these six, and 34 DDR rates × 6 channel counts).
 
 | ID | Name | Width | GB/s | MSA claim |
 |---|---|---|---|---|
@@ -68,7 +68,43 @@ How they are labelled:
 - Notes call the figure the OSFP MSA aggregate module capacity, not usable payload throughput. The MSA publishes the rate and electrical-lane mapping; it does not specify the Ethernet PHY, optical medium or reach, and the rows make no production availability claim.
 - MSA module capacity is not IEEE PHY status. The generic IEEE Ethernet rows are unchanged, including the in-development, unratified 1.6 Tb/s row (`eth-1600g`); the two 1.6 Tb/s OSFP rows point to it rather than implying a ratified 1.6 Tb/s Ethernet PHY.
 
-Not promoted: every other guide row (SFP, SFP-DD / DSFP, QSFP, QSFP-DD and legacy). Their values are user-supplied or not verified, so they stay out of the comparator. Because comparator search matches substrings, "sfp" also finds the OSFP entries; a unit test checks that no unverified family name returns anything other than those six rows.
+These six are the only transceiver entries with `verification: 'sourced'`. The other numeric guide rows were added later as unverified entries (next section); OSFP queries such as "osfp", "OSFP-XD" and "osfp800" still return only these six.
+
+## User-supplied comparator entries (unverified)
+
+Follow-up on 2026-10-18: the 18 non-MSA guide rows that give an explicit numeric rate were added to the comparator catalog in `js/data.js`, after the OSFP rows and in guide order. The catalog grows from 354 to 372 entries (168 non-DDR rows: the 144 baseline rows, the six OSFP rows and these 18, plus 34 DDR rates × 6 channel counts). The guide itself is unchanged at 30 rows.
+
+These are the site owner's values, not verified standards. Each entry:
+
+- Uses the guide's nominal Ethernet data-rate column exactly as supplied, on the shared *Advertised link rate* basis. GB/s is the exact Gb/s ÷ 8; no coding or overhead adjustment is inferred, so raw and encoding-adjusted modes show the same figure. The unusual QSFP 4G value is kept as supplied, not corrected.
+- Cites only `user-seed` (no extra source citations), has `verification: 'unverified'` (the Unverified badge) and status *User-supplied* (`user-supplied`, "User-supplied form-factor rate (not independently verified)"). SFP224 keeps status *In development* (`developing`), is also unverified, and its notes repeat that current production/availability status was not independently verified.
+- Has notes saying the value came from the site owner's transceiver form-factor guide, was not independently verified, and is not a verified Ethernet PHY or standard, not payload throughput, and makes no reach, medium or production-availability claim.
+- Shows a lane mapping only where the guide states one, marked unverified (width "2 × 50G lanes (unverified)" and so on). Every other row's width reads "Lane mapping not source-verified"; no lane count is guessed.
+
+| Guide row | Gb/s as supplied | ID | GB/s | Status | Lane mapping |
+|---|---|---|---|---|---|
+| SFP | 1 | `sfp-1g` | 0.125 | User-supplied | Not source-verified |
+| SFP+ | 10 | `sfp-plus-10g` | 1.25 | User-supplied | Not source-verified |
+| SFP28 | 25 | `sfp28-25g` | 3.125 | User-supplied | Not source-verified |
+| SFP56 | 50 | `sfp56-50g` | 6.25 | User-supplied | Not source-verified |
+| SFP112 | 100 | `sfp112-100g` | 12.5 | User-supplied | Not source-verified |
+| SFP224 | 200 | `sfp224-200g` | 25 | In development | Not source-verified |
+| SFP-DD56 | 100 | `sfp-dd56-100g` | 12.5 | User-supplied | 2 × 50G (as supplied, unverified) |
+| SFP-DD112 | 200 | `sfp-dd112-200g` | 25 | User-supplied | 2 × 100G (as supplied, unverified) |
+| QSFP | 4 | `qsfp-4g` | 0.5 | User-supplied | Not source-verified |
+| QSFP+ | 40 | `qsfp-plus-40g` | 5 | User-supplied | Not source-verified |
+| QSFP28 | 100 | `qsfp28-100g` | 12.5 | User-supplied | Not source-verified |
+| QSFP56 | 200 | `qsfp56-200g` | 25 | User-supplied | Not source-verified |
+| QSFP112 | 400 | `qsfp112-400g` | 50 | User-supplied | Not source-verified |
+| QSFP224 / QSFP800 | 800 | `qsfp224-800g` | 100 | User-supplied | 4 × 200G (as supplied, unverified) |
+| QSFP-DD (200G) | 200 | `qsfp-dd-200g` | 25 | User-supplied | Not source-verified |
+| QSFP-DD (400G) | 400 | `qsfp-dd-400g` | 50 | User-supplied | Not source-verified |
+| QSFP-DD800 | 800 | `qsfp-dd-800g` | 100 | User-supplied | Not source-verified |
+| QSFP-DD1600 | 1600 | `qsfp-dd-1600g` | 200 | User-supplied | Not source-verified |
+
+Not added: DSFP and the seven legacy names (XFP, XENPAK / X2, CFP, CFP2, CFP4, CPAK, CXP) have no numeric rate in the user guide, so there is nothing to compare. They stay listed in the guide only, and a unit test checks that searching any of their names returns no comparator entry.
+
+Search: comparator search matches substrings, so "sfp" finds every OSFP and user-supplied transceiver row, and "sfp112" also finds OSFP112 and QSFP112. Search compacts each field separately, so a match cannot span two fields (for example, "…supplied" followed by "SFP" does not match "dsfp").
 
 ## User-supplied values (unverified)
 

@@ -211,29 +211,44 @@ test('search: case-insensitive, word-start, across every cell', () => {
 
 // ------------------------------------------------------------ isolation from the comparator
 
-// The six comparator entries promoted from the msa-verified OSFP rows (tests/unit/osfp.test.mjs).
+// Comparator entries promoted from the guide: six from the msa-verified OSFP rows
+// (tests/unit/osfp.test.mjs) and 18 from the user-supplied rows with a numeric rate
+// (tests/unit/user-transceivers.test.mjs). DSFP and the legacy names have no rate.
 const OSFP_IDS = ['osfp-400g', 'osfp-800g', 'osfp-1-6t', 'osfp-xd-800g', 'osfp-xd-1-6t', 'osfp-xd-3-2t'];
+const USER_FF_IDS = [
+  'sfp-1g', 'sfp-plus-10g', 'sfp28-25g', 'sfp56-50g', 'sfp112-100g', 'sfp224-200g',
+  'sfp-dd56-100g', 'sfp-dd112-200g',
+  'qsfp-4g', 'qsfp-plus-40g', 'qsfp28-100g', 'qsfp56-200g', 'qsfp112-400g', 'qsfp224-800g',
+  'qsfp-dd-200g', 'qsfp-dd-400g', 'qsfp-dd-800g', 'qsfp-dd-1600g',
+];
 
-test('only the six MSA-verified OSFP capacities are comparison entries; the rest of the guide stays out', async () => {
-  assert.equal(INTERFACES.length, 354, '348 + six OSFP MSA entries');
-  const promoted = INTERFACES.filter((i) => i.id.startsWith('osfp'));
-  assert.deepEqual(promoted.map((i) => i.id), OSFP_IDS);
-  for (const i of promoted) assert.deepEqual(i.sources, ['osfp-msa'], i.id);
-  // Guide names may be reused only by the promoted OSFP entries, and only for msa-verified rows.
+test('only rows with a rate are comparison entries: 6 OSFP MSA + 18 user-supplied; DSFP and legacy stay out', async () => {
+  assert.equal(INTERFACES.length, 372, '348 + six OSFP MSA + 18 user-supplied entries');
+  const promoted = INTERFACES.filter((i) => i.category === 'network' && i.family !== 'Ethernet');
+  assert.deepEqual(promoted.map((i) => i.id), [...OSFP_IDS, ...USER_FF_IDS]);
+  for (const id of OSFP_IDS) assert.deepEqual(INTERFACES.find((i) => i.id === id).sources, ['osfp-msa'], id);
+  for (const id of USER_FF_IDS) assert.deepEqual(INTERFACES.find((i) => i.id === id).sources, ['user-seed'], id);
+  assert.deepEqual(FORM_FACTORS.filter((f) => f.rate !== null && f.status !== 'msa-verified').length, USER_FF_IDS.length);
+  // Rate-less guide names never become comparator ids, names or aliases.
   const names = (rows) => new Set(rows.flatMap((f) => [f.id, f.name.toLowerCase(), ...f.name.toLowerCase().split(' / ')]));
+  const rateless = names(FORM_FACTORS.filter((f) => f.rate === null));
+  assert.equal(FORM_FACTORS.filter((f) => f.rate === null).length, 8);
   const verified = names(FORM_FACTORS.filter((f) => f.status === 'msa-verified'));
-  const others = names(FORM_FACTORS.filter((f) => f.status !== 'msa-verified'));
   for (const i of INTERFACES) {
     for (const v of [i.id, i.name.toLowerCase(), ...(i.aliases || []).map((a) => a.toLowerCase())]) {
-      assert.ok(!others.has(v), `${i.id} collides with unverified form factor ${v}`);
+      assert.ok(!rateless.has(v), `${i.id} collides with rate-less form factor ${v}`);
       if (verified.has(v)) assert.ok(OSFP_IDS.includes(i.id), `${i.id} borrows OSFP name ${v}`);
     }
   }
   const idx = buildIndex(INTERFACES);
   const ids = (q) => search(idx, q).map((i) => i.id);
-  for (const q of ['qsfp', 'qsfp-dd1600', 'qsfp28', 'cfp2', 'dsfp']) assert.deepEqual(ids(q), [], q);
-  // Substring search: "sfp" is inside "osfp", so it may reach the verified OSFP rows and nothing else.
-  for (const q of ['sfp', 'osfp', 'transceiver']) assert.deepEqual(ids(q), OSFP_IDS, q);
+  for (const q of ['cfp2', 'dsfp', 'xfp', 'cxp', 'cpak', 'xenpak']) assert.deepEqual(ids(q), [], q);
+  assert.deepEqual(ids('qsfp-dd1600'), ['qsfp-dd-1600g']);
+  assert.deepEqual(ids('qsfp28'), ['qsfp28-100g']);
+  // Substring search: "sfp" is inside "osfp" and "qsfp", so it reaches every transceiver row.
+  assert.deepEqual(ids('sfp'), [...OSFP_IDS, ...USER_FF_IDS]);
+  assert.deepEqual(ids('transceiver'), [...OSFP_IDS, ...USER_FF_IDS]);
+  assert.deepEqual(ids('osfp'), OSFP_IDS);
   assert.deepEqual(ids('osfp-xd'), OSFP_IDS.slice(3));
   for (const p of ['js/data.js', 'js/compare.js', 'js/app.js', 'js/mode.js', 'js/combobox.js']) {
     assert.doesNotMatch(await read(p), /form-factors/, `${p} must not import the guide`);

@@ -1,6 +1,8 @@
 // OSFP / OSFP-XD module capacities in the comparator catalog.
-// Only the form-factor guide rows marked `msa-verified` (js/form-factors.js) are
-// promoted, one entry per MSA rate/lane mapping. Every other guide row stays out.
+// The form-factor guide rows marked `msa-verified` (js/form-factors.js) are promoted,
+// one entry per MSA rate/lane mapping, and are the only source-verified transceiver
+// entries. The other numeric guide rows are user-supplied, unverified entries
+// (tests/unit/user-transceivers.test.mjs); DSFP and the legacy names have no rate and stay out.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { INTERFACES, BY_ID, SOURCES, STATUSES, STATUS_SHORT } from '../../js/data.js';
@@ -124,15 +126,21 @@ test('SOURCES[osfp-msa] is the primary, official MSA site', () => {
   assert.equal(INTERFACES.filter((i) => i.sources.includes('osfp-msa')).length, 6);
 });
 
-test('only the msa-verified guide rows are promoted; every other family stays out', () => {
+test('only the msa-verified guide rows are source-verified, connector-status entries; rate-less families stay out', () => {
   const verified = FORM_FACTORS.filter((f) => f.status === 'msa-verified');
   assert.deepEqual(verified.map((f) => f.name), ['OSFP56 / OSFP400', 'OSFP112 / OSFP800', 'OSFP224 / OSFP1600', 'OSFP-XD']);
   assert.deepEqual(INTERFACES.filter((i) => i.status === 'connector' && i.category === 'network').map((i) => i.id), OSFP_IDS);
+  const transceivers = INTERFACES.filter((i) => i.category === 'network' && i.family !== 'Ethernet');
+  assert.deepEqual(transceivers.filter((i) => i.verification === 'sourced').map((i) => i.id), OSFP_IDS);
+  for (const i of transceivers.filter((x) => !OSFP_IDS.includes(x.id))) {
+    assert.equal(i.verification, 'unverified', i.id);
+    assert.deepEqual(i.sources, ['user-seed'], i.id);
+  }
   const families = new Set(INTERFACES.map((i) => i.family.toLowerCase()));
-  for (const f of FORM_FACTORS.filter((x) => x.status !== 'msa-verified')) {
+  for (const f of FORM_FACTORS.filter((x) => x.rate === null)) {
     for (const n of f.name.toLowerCase().split(' / ')) {
       assert.ok(!families.has(n), `${f.name} is not a comparator family`);
-      for (const i of INTERFACES) assert.ok(!i.aliases.some((a) => a.toLowerCase() === n), `${i.id} aliases unverified ${n}`);
+      for (const i of INTERFACES) assert.ok(!i.aliases.some((a) => a.toLowerCase() === n), `${i.id} aliases rate-less ${n}`);
     }
   }
 });
@@ -152,37 +160,33 @@ test('search: OSFP names find only the six verified entries', () => {
   assert.ok(!ids('1.6tbe').some((id) => id.startsWith('osfp')));
 });
 
-test('search: unverified guide families never surface as comparator results', () => {
-  for (const f of FORM_FACTORS.filter((x) => x.status !== 'msa-verified')) {
+test('search: OSFP queries are not answered by the unverified rows; rate-less families never surface', () => {
+  for (const q of ['osfp', 'OSFP-XD', 'osfp msa', 'osfp800', 'osfp 1.6t']) {
+    assert.ok(ids(q).every((id) => OSFP_IDS.includes(id)), q);
+  }
+  for (const f of FORM_FACTORS.filter((x) => x.rate === null)) {
     // "X2" (XENPAK / X2) is also every PCIe/USB x2 lane width, so it is not a form-factor probe.
-    for (const q of [f.name, ...f.name.split(' / ')].filter((n) => n !== 'X2')) {
-      // Substring search lets "SFP112" reach "OSFP112"; only verified OSFP rows may answer.
-      const found = ids(q);
-      assert.ok(found.every((id) => OSFP_IDS.includes(id)), `${q} → ${found}`);
-    }
+    for (const q of [f.name, ...f.name.split(' / ')].filter((n) => n !== 'X2')) assert.deepEqual(ids(q), [], q);
   }
-  for (const q of ['qsfp', 'qsfp28', 'qsfp-dd', 'qsfp-dd800', 'qsfp-dd1600', 'qsfp224', 'sfp-dd56', 'dsfp', 'xfp', 'cfp2', 'cxp', 'xenpak']) {
-    assert.deepEqual(ids(q), [], q);
-  }
+  for (const q of ['dsfp', 'xfp', 'cfp2', 'cxp', 'xenpak']) assert.deepEqual(ids(q), [], q);
 });
 
-test('docs and pages: only the MSA-verified OSFP subset is in the comparator, the rest of the guide stays out', async () => {
+test('docs and pages: the MSA-verified OSFP subset is the only source-verified part of the comparator', async () => {
   const { readFile } = await import('node:fs/promises');
   const read = (p) => readFile(new URL(`../../${p}`, import.meta.url), 'utf8');
   const files = ['index.html', 'form-factors.html', 'README.md', 'js/form-factors.js', 'docs/transceiver-form-factors-audit.md'];
-  const subset = /only the (six )?(OSFP MSA-verified|MSA-verified OSFP)[^.]*(comparator|catalog)/i;
   for (const p of files) {
     const text = (await read(p)).replace(/\s+/g, ' ');
-    assert.match(text, subset, `${p} names the OSFP subset`);
-    assert.match(text, /(other|remaining) (guide )?rows[^.]*(remain|stay)[^.]*out|stay out of the comparator/i, `${p}: other rows stay out`);
+    assert.match(text, /MSA-verified OSFP/i, `${p} names the OSFP subset`);
     // No blanket "none of the guide is selectable" claims survive.
-    assert.doesNotMatch(text, /none of these rows are in `INTERFACES`|nothing was added to `INTERFACES`|nothing here is\s+comparable, selectable|outside this catalog\.|still 348|numbers are never compared/i, p);
+    assert.doesNotMatch(text, /none of these rows are in `INTERFACES`|nothing was added to `INTERFACES`|nothing here is\s+comparable, selectable|outside this catalog\.|still 348|numbers are never compared|Only the MSA-verified OSFP subset is in the comparator/i, p);
   }
   const doc = await read('docs/transceiver-form-factors-audit.md');
   for (const id of OSFP_IDS) assert.ok(doc.includes(`\`${id}\``), `audit lists ${id}`);
-  assert.match(doc, /354/);
+  assert.match(doc, /348 to 354/);
+  assert.match(doc, /372/);
   assert.match(doc, /IEEE/);
   const readme = await read('README.md');
-  assert.match(readme, /354/);
-  assert.doesNotMatch(readme, /\b348 (rows|interfaces|entries)\b/);
+  assert.match(readme, /372/);
+  assert.doesNotMatch(readme, /\b(348|354) (rows|interfaces|entries)\b/);
 });

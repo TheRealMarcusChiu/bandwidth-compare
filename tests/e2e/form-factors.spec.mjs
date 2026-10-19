@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-// Ethernet transceiver form-factor guide: a separate page. Only its MSA-verified OSFP
-// capacities are also comparator entries; every other guide row stays out of the comparator.
+// Ethernet transceiver form-factor guide: a separate page. Its MSA-verified OSFP capacities
+// are source-verified comparator entries; its other numeric rates are user-supplied,
+// unverified comparator entries; DSFP and the legacy names (no rate) stay out.
 const TOTAL = 30;
 const OSFP_NAMES = [
   'OSFP56 / OSFP400 module (400 Gb/s, 8×50G)', 'OSFP112 / OSFP800 module (800 Gb/s, 8×100G)', 'OSFP224 / OSFP1600 module (1.6 Tb/s, 8×200G)',
@@ -94,15 +95,22 @@ test('keyboard: Tab reaches search, typing filters, Escape clears, the table reg
   await expect(page.locator('#ff-scroll')).toHaveAttribute('role', 'region');
 });
 
-test('comparator links to the guide; only the MSA-verified OSFP capacities reach the comparator', async ({ page }) => {
+test('comparator links to the guide; rows with a rate reach the comparator, DSFP and legacy do not', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('#count')).toHaveText('354');
+  await expect(page.locator('#count')).toHaveText('372');
   await page.locator('#catalog summary').click();
   await page.locator('#cat-q').fill('osfp');
   await expect(page.locator('#cat-body .cat-name')).toHaveText(OSFP_NAMES);
-  await expect(page.locator('#catalog-count')).toHaveText('6 of 354');
+  await expect(page.locator('#catalog-count')).toHaveText('6 of 372');
   await page.locator('#cat-q').fill('qsfp-dd1600');
-  await expect(page.locator('#cat-empty')).toBeVisible();
+  await expect(page.locator('#cat-body .cat-name')).toHaveText(['QSFP-DD1600 module (1.6 Tb/s, user-supplied)']);
+  await expect(page.locator('#cat-body .cat-flag')).toHaveText(['unverified']);
+  await page.locator('#cat-q').fill('user-supplied');
+  await expect(page.locator('#catalog-count')).toHaveText('18 of 372');
+  for (const q of ['dsfp', 'xfp', 'cfp2', 'cpak', 'cxp', 'xenpak']) {
+    await page.locator('#cat-q').fill(q);
+    await expect(page.locator('#cat-empty'), q).toBeVisible();
+  }
   const link = page.locator('a[href="form-factors.html"]');
   await expect(link).toHaveCount(1);
   await link.click();
@@ -112,22 +120,22 @@ test('comparator links to the guide; only the MSA-verified OSFP capacities reach
   await expect(page.locator('#side-a .num')).toHaveText('7.877');
 });
 
-test('comparator: OSFP-XD 3.2T is selectable with its MSA source; QSFP-DD1600 is not', async ({ page }) => {
+test('comparator: OSFP-XD 3.2T is selectable with its MSA source; DSFP is not', async ({ page }) => {
   await page.goto('/');
   // Default selection is unchanged by the additions.
   await expect(page.locator('#cb-a')).toHaveValue('PCIe 4.0 x4');
   await expect(page.locator('#cb-b')).toHaveValue('SATA III (6 Gb/s)');
   await expect(page).toHaveURL(/\?a=pcie4-x4&b=sata3$/);
-  await expect(page.locator('#count')).toHaveText('354');
+  await expect(page.locator('#count')).toHaveText('372');
   const sheet = await page.evaluate(() => document.documentElement.classList.contains('is-sheet-mode'));
   const open = async () => {
     if (sheet) await page.locator('.picker[data-side="b"] .cb-toggle').click();
     else await page.locator('#cb-b').click();
     await expect(page.locator('#lb-b')).toBeVisible();
   };
-  // An unverified guide family is not a selectable result.
+  // A guide family without a rate is not a selectable result.
   await open();
-  await page.locator('#cb-b').fill('QSFP-DD1600');
+  await page.locator('#cb-b').fill('DSFP');
   await expect(page.locator('#lb-b .cb-empty')).toContainText('Nothing matches');
   await expect(page.locator('#lb-b [role="option"]')).toHaveCount(0);
   await page.locator('#cb-b').fill('osfp-xd');
@@ -158,6 +166,76 @@ test('comparator: OSFP-XD 3.2T is selectable with its MSA source; QSFP-DD1600 is
   await expect(d.locator('.detail-src')).toContainText('primary');
   // The methodology source list carries it too.
   await expect(page.locator('#sources a[href="https://www.osfpmsa.org/"]')).toHaveCount(1);
+});
+
+const pickerOpener = async (page, side) => {
+  const sheet = await page.evaluate(() => document.documentElement.classList.contains('is-sheet-mode'));
+  return async () => {
+    if (sheet) await page.locator(`.picker[data-side="${side}"] .cb-toggle`).click();
+    else await page.locator(`#cb-${side}`).click();
+    await expect(page.locator(`#lb-${side}`)).toBeVisible();
+  };
+};
+
+test('comparator: a user-supplied form factor is selectable and shows the unverified warning and provenance', async ({ page }) => {
+  await page.goto('/');
+  const open = await pickerOpener(page, 'b');
+  await open();
+  await page.locator('#cb-b').fill('QSFP-DD1600');
+  const opts = page.locator('#lb-b [role="option"]');
+  await expect(opts).toHaveCount(1);
+  await expect(opts).toContainText('QSFP-DD1600 module (1.6 Tb/s, user-supplied)');
+  await opts.click();
+  await expect(page).toHaveURL(/\?a=pcie4-x4&b=qsfp-dd-1600g$/);
+  await expect(page.locator('#cb-b')).toHaveValue('QSFP-DD1600 module (1.6 Tb/s, user-supplied)');
+  // 1600 Gb/s as supplied ÷ 8, no coding adjustment.
+  await expect(page.locator('#side-b .num')).toHaveText('200');
+  await expect(page.locator('#side-b .side-tag')).toHaveText('B · QSFP-DD');
+  const badges = page.locator('#side-b .badges');
+  await expect(badges).toContainText('ADV Advertised link rate');
+  await expect(badges).toContainText('Lane mapping not source-verified');
+  await expect(badges.locator('.status-user-supplied')).toHaveText('User-supplied');
+  await expect(badges.locator('.status-user-supplied')).toHaveAttribute('title', 'User-supplied form-factor rate (not independently verified)');
+  await expect(badges.locator('.badge-warn')).toHaveText('Unverified');
+  await expect(badges).not.toContainText('Connector');
+  await expect(page.locator('#notices')).toContainText('Unverified figure');
+  await page.locator('#cmp-details summary').click();
+  const d = page.locator('#detail-b');
+  await expect(d).toContainText('Value200 GB/s = 1,600 Gb/s');
+  await expect(d).toContainText('1600 Gb/s nominal rate as supplied ÷ 8 = 200 GB/s');
+  await expect(d).toContainText('StatusUser-supplied form-factor rate (not independently verified)');
+  await expect(d.locator('.badge-warn')).toHaveText('User-supplied, unverified');
+  await expect(d).toContainText('site owner’s transceiver form-factor guide');
+  await expect(d).toContainText('not independently verified');
+  await expect(d).toContainText('not a verified Ethernet PHY or standard');
+  await expect(d).toContainText('not payload throughput');
+  await expect(d).toContainText('Lane mapping not source-verified.');
+  // Provenance: the site owner's seed data only, with no link and no other citation.
+  const src = d.locator('.detail-src');
+  await expect(src).toHaveCount(1);
+  await expect(src).toContainText('Seed data supplied by the site owner (not independently checked)');
+  await expect(src).toContainText('User supplied · user');
+  await expect(src.locator('a')).toHaveCount(0);
+  await expect(d).not.toContainText('Cited source');
+});
+
+test('comparator: SFP224 keeps its developing caveat; a guide lane mapping is shown as unverified', async ({ page }) => {
+  await page.goto('/?a=sfp224-200g&b=qsfp224-800g&m=raw');
+  await expect(page.locator('#cb-a')).toHaveValue('SFP224 module (200 Gb/s, developing, user-supplied)');
+  await expect(page.locator('#side-a .num')).toHaveText('25');
+  await expect(page.locator('#side-a .badges')).toContainText('Not ratified');
+  await expect(page.locator('#side-a .badge-warn')).toHaveText('Unverified');
+  await expect(page.locator('#side-b .num')).toHaveText('100');
+  await expect(page.locator('#side-b .badges')).toContainText('4 × 200G lanes (unverified)');
+  await expect(page.locator('#side-b .badge-warn')).toHaveText('Unverified');
+  await page.locator('#cmp-details summary').click();
+  await expect(page.locator('#detail-a')).toContainText('In development, not ratified');
+  await expect(page.locator('#detail-a')).toContainText('Developing generation: current production/availability status not independently verified.');
+  await expect(page.locator('#detail-b')).toContainText('Lane mapping as supplied in the guide, unverified: 4 × 200G electrical lanes.');
+  // Raw mode shows the same nominal figure: nothing to un-adjust.
+  await page.goto('/?a=sfp224-200g&b=qsfp224-800g');
+  await expect(page.locator('#side-a .num')).toHaveText('25');
+  await expect(page.locator('#side-b .num')).toHaveText('100');
 });
 
 test('phone width: no body-level horizontal overflow; the table scrolls inside its region', async ({ browser, baseURL }) => {

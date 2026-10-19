@@ -129,17 +129,29 @@ test('notes: theoretical configuration, no support claim; DDR5 subchannels count
 
 // ------------------------------------------------------------ everything else untouched
 
-// Added after the baseline was captured, in a separate audit (tests/unit/osfp.test.mjs).
+// Added after the baseline was captured, in separate audits: the OSFP MSA rows
+// (tests/unit/osfp.test.mjs) and the user-supplied, unverified transceiver rates
+// (tests/unit/user-transceivers.test.mjs).
 const OSFP_IDS = ['osfp-400g', 'osfp-800g', 'osfp-1-6t', 'osfp-xd-800g', 'osfp-xd-1-6t', 'osfp-xd-3-2t'];
+const USER_FF_IDS = [
+  'sfp-1g', 'sfp-plus-10g', 'sfp28-25g', 'sfp56-50g', 'sfp112-100g', 'sfp224-200g',
+  'sfp-dd56-100g', 'sfp-dd112-200g',
+  'qsfp-4g', 'qsfp-plus-40g', 'qsfp28-100g', 'qsfp56-200g', 'qsfp112-400g', 'qsfp224-800g',
+  'qsfp-dd-200g', 'qsfp-dd-400g', 'qsfp-dd-800g', 'qsfp-dd-1600g',
+];
+const LATER = new Set([...OSFP_IDS, ...USER_FF_IDS]);
 
 test('non-DDR rows (LPDDR, MRDIMM, HBM, GDDR, PCIe, …) are byte-for-byte unchanged and in the same order', () => {
-  const others = INTERFACES.filter((i) => !DDR_FAMILIES.has(i.family) && !OSFP_IDS.includes(i.id));
+  const others = INTERFACES.filter((i) => !DDR_FAMILIES.has(i.family) && !LATER.has(i.id));
   assert.equal(BASELINE.nonDdr.length, 144);
-  assert.ok(BASELINE.nonDdr.every((b) => !OSFP_IDS.includes(b.id)), 'baseline predates OSFP');
+  assert.ok(BASELINE.nonDdr.every((b) => !LATER.has(b.id)), 'baseline predates OSFP and the user-supplied transceiver rows');
   assert.deepEqual(others.map((i) => i.id), BASELINE.nonDdr.map((b) => b.id));
   for (const b of BASELINE.nonDdr) {
     const i = get(b.id);
     for (const key of Object.keys(b)) assert.deepEqual(i[key], b[key], `${b.id}.${key}`);
+    // Serialized projection of the captured fields, in the fixture's key order.
+    const picked = Object.fromEntries(Object.keys(b).map((k) => [k, i[k]]));
+    assert.equal(JSON.stringify(picked), JSON.stringify(b), `${b.id} byte-for-byte`);
     assert.equal(i.channels, undefined, `${b.id} has no channel metadata`);
   }
   // LPDDR normalized widths are untouched.
@@ -150,21 +162,30 @@ test('non-DDR rows (LPDDR, MRDIMM, HBM, GDDR, PCIe, …) are byte-for-byte uncha
   assert.ok(!BY_ID.has('ddr5-mrdimm-8800-2ch'));
 });
 
-test('the six OSFP MSA additions are the only new non-DDR rows, appended after the baseline', () => {
+test('the six OSFP MSA and 18 user-supplied transceiver rows are the only new non-DDR rows, appended after the baseline', () => {
   const nonDdr = INTERFACES.filter((i) => !DDR_FAMILIES.has(i.family));
-  assert.equal(nonDdr.length, 150);
-  assert.deepEqual(nonDdr.map((i) => i.id), [...BASELINE.nonDdr.map((b) => b.id), ...OSFP_IDS]);
+  assert.equal(nonDdr.length, 168);
+  assert.equal(USER_FF_IDS.length, 18);
+  assert.deepEqual(nonDdr.map((i) => i.id), [...BASELINE.nonDdr.map((b) => b.id), ...OSFP_IDS, ...USER_FF_IDS]);
   for (const id of OSFP_IDS) {
     const i = get(id);
     assert.equal(i.channels, undefined, id);
     assert.deepEqual(i.sources, ['osfp-msa'], id);
     assert.equal(i.status, 'connector', id);
+    assert.equal(i.verification, 'sourced', id);
+  }
+  for (const id of USER_FF_IDS) {
+    const i = get(id);
+    assert.equal(i.channels, undefined, id);
+    assert.deepEqual(i.sources, ['user-seed'], id);
+    assert.equal(i.status, id === 'sfp224-200g' ? 'developing' : 'user-supplied', id);
+    assert.equal(i.verification, 'unverified', id);
   }
 });
 
-test('catalog size: 150 non-DDR rows (144 baseline + 6 OSFP) + 34 DDR rates × 6 channel counts', () => {
-  assert.equal(INTERFACES.length, 144 + OSFP_IDS.length + 34 * 6);
-  assert.equal(INTERFACES.length, 354);
+test('catalog size: 168 non-DDR rows (144 baseline + 6 OSFP + 18 user-supplied) + 34 DDR rates × 6 channel counts', () => {
+  assert.equal(INTERFACES.length, 144 + OSFP_IDS.length + USER_FF_IDS.length + 34 * 6);
+  assert.equal(INTERFACES.length, 372);
 });
 
 // ------------------------------------------------------------ search
